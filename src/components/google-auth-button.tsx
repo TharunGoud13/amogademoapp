@@ -1,13 +1,13 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { Icons } from './icons';
+import { login } from '@/app/actions';
 
 export default function GoogleSignInButton() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  // const callbackUrl = searchParams.get('callbackUrl');
 
   return (
     <Button
@@ -15,8 +15,9 @@ export default function GoogleSignInButton() {
       variant="outline"
       type="button"
       onClick={() =>
+        login("google")
         // signIn('github', { callbackUrl: callbackUrl ?? '/dashboard' })
-        console.log("google sign in not implemented yet")
+        // console.log("google sign in not implemented yet")
       }
     >
       <Icons.google className="mr-2 h-4 w-4" />

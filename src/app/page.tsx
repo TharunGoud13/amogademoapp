@@ -1,28 +1,25 @@
-"use client"
+import { Mail } from "@/components/mail/mail";
+import { cookies } from "next/headers";
 import { FC } from "react";
-import { redirect } from "next/navigation";
-
+import { accounts,mails } from "@/components/mail/data";
 
 
 const Home:FC = () => {
-  const userSession = localStorage.getItem('user');
-
-  const handleLogout = ():FC => {
-    localStorage.removeItem('user');
-    redirect('/sigin')
-  }
-
-
-
-
-
-  return (
-    <div>
-      <h1>AmogademoApp</h1>
-      <p>Welcome to the Amogademo App!</p>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  );
+  const layout = cookies().get("react-resizable-panels:layout")
+  const collapsed = cookies().get("react-resizable-panels:collapsed")
+  const defaultLayout = layout ? JSON.parse(layout.value) : undefined
+  const defaultCollapsed = collapsed ? JSON.parse(collapsed.value) : undefined
+  return(
+    
+      <Mail
+          accounts={accounts}
+          mails={mails}
+          defaultLayout={defaultLayout}
+          defaultCollapsed={defaultCollapsed}
+          navCollapsedSize={4}
+        />
+    
+  )
 }
 
 export default Home;

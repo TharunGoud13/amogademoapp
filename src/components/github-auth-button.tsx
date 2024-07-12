@@ -1,13 +1,13 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { Icons } from './icons';
+import { login } from '@/app/actions';
 
 export default function GithubSignInButton() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  // const callbackUrl = searchParams.get('callbackUrl');
 
   return (
     <Button
@@ -16,7 +16,7 @@ export default function GithubSignInButton() {
       type="button"
       onClick={() =>
         // signIn('github', { callbackUrl: callbackUrl ?? '/dashboard' })
-        console.log('Sign in with Github')
+        login("github")
       }
     >
       <Icons.gitHub className="mr-2 h-4 w-4" />
