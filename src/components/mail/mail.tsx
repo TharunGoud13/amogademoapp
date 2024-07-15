@@ -59,7 +59,7 @@ interface MailProps {
   navCollapsedSize: number
 }
 
-export async function Mail({
+export  function Mail({
   accounts,
   mails,
   defaultLayout = [265, 440, 655],
@@ -69,8 +69,6 @@ export async function Mail({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [mail] = useMail()
 
-  const session = await auth()
-  console.log("User Details: ",session?.user)
 
   return (
     <TooltipProvider delayDuration={0}>

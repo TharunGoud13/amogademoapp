@@ -18,7 +18,7 @@ const TopBar: FC = async () => {
   return (
     <div className="bg-white flex items-center justify-between shadow-sm fixed p-2.5 w-full z-[1000]">
       <div className="flex gap-3.5 items-center justify-between">
-        {/* <Link href={'/'} className="relative gap-2.5 z-20 flex items-center text-lg font-medium"> */}
+        <Link href={'/'} className="relative gap-2.5 z-20 flex items-center text-lg font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -32,12 +32,12 @@ const TopBar: FC = async () => {
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
           morr
-        {/* </Link> */}
+        </Link>
         
-          {/* <Link href="/salesanalytics">Dashboard</Link>
-          <Link href="/storemenu">Menu</Link> */}
-          <h1>Dashboard</h1>
-          <h1>Menu</h1>
+           <Link href="/salesanalytics">Dashboard</Link>
+          <Link href="/storemenu">Menu</Link>
+         {/* <h1>Dashboard</h1>
+          <h1>Menu</h1>*/}
       
       </div>
       <div className="flex gap-3 items-center">
@@ -46,9 +46,9 @@ const TopBar: FC = async () => {
           Logout
         </button>
         </form>
-        {/* <Link href="/store_chat"> */}
+        <Link href="/store_chat">
         <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" />
-        {/* </Link> */}
+        </Link>
         <Popover trigger="hover" placement="bottom">
         <Avatar className="cursor-pointer">
             <Image src={session?.user?.image as string} height={100} width={100} alt="user-profile"/>

@@ -42,7 +42,7 @@ export default function LoginForm() {
     defaultValues
   });
 
-  const onSubmit = async (data: UserFormValue) => {
+  const onSubmit =  (data: UserFormValue) => {
     // Print all form values
     console.log(data);
     // Handle form submission, such as sending data to your API or authentication logic
