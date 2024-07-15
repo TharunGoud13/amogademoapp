@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -30,8 +30,8 @@ type UserFormValue = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
   const {toast} = useToast();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  // const searchParams = useSearchParams();
+  // const callbackUrl = searchParams.get('callbackUrl');
   const [loading, setLoading] = useState(false);
   const defaultValues = {
     email: '',
