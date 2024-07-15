@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -47,7 +47,7 @@ type UserFormValue = z.infer<typeof formSchema>;
 export default function UserAuthForm() {
   const router = useRouter();
   // const cookieStore = cookies()
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   //const callbackUrl = searchParams.get("callbackUrl");
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
@@ -88,19 +88,13 @@ export default function UserAuthForm() {
     console.log("result",response.status)
 
     if(response.status == 201){
-      router.push("/")
+      // router.push("/")
       let text:any = document.getElementById("success")
       text.textContent="User Created Successfully"
-      toast({
-        title:"Success",
-        description:"User Created Successfully", 
-      })
+      
     }
     else{
-      toast({
-        title:"Oops",
-        description:"Something went wrong please try again."
-      })
+      console.log("Error creating user", result)
     }
     // Handle form submission, such as sending data to your API or authentication logic
     // signIn('credentials', {

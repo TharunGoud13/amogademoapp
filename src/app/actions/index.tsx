@@ -4,10 +4,10 @@ import { signIn,signOut } from "@/auth"
 
 export async function login(formData:any){
     const source = formData
-    console.log("-------",source)
+    console.log("Login Source : ",source)
     await signIn(source,{redirectTo:"/"})
 }
 
 export async function logout(){
-    await signOut({redirectTo:"/sigin"})
+    await signOut({redirectTo:'/signIn'})
 }

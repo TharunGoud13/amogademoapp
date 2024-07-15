@@ -1,24 +1,29 @@
 import { Mail } from "@/components/mail/mail";
 import { cookies } from "next/headers";
 import { FC } from "react";
-import { accounts,mails } from "@/components/mail/data";
+import { accounts, mails } from "@/components/mail/data";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 
-const Home:FC = () => {
+const Home: FC = async() => {
+  const session = await auth();
+
+  if(!session?.user) redirect('/signIn')
   const layout = cookies().get("react-resizable-panels:layout")
   const collapsed = cookies().get("react-resizable-panels:collapsed")
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined
   const defaultCollapsed = collapsed ? JSON.parse(collapsed.value) : undefined
-  return(
-    
+  return (
+    <div>
       <Mail
-          accounts={accounts}
-          mails={mails}
-          defaultLayout={defaultLayout}
-          defaultCollapsed={defaultCollapsed}
-          navCollapsedSize={4}
-        />
-    
+        accounts={accounts}
+        mails={mails}
+        defaultLayout={defaultLayout}
+        defaultCollapsed={defaultCollapsed}
+        navCollapsedSize={4}
+      />
+    </div>
   )
 }
 

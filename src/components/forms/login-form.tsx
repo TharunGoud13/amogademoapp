@@ -19,36 +19,23 @@ import GoogleSignInButton from '../google-auth-button';
 import GithubSignInButton from '../github-auth-button'; 
 import LinkedInSignInButton from '../linkedin-auth-button';
 import Link from 'next/link';
+import { useToast } from '../ui/use-toast';
 
 const formSchema = z.object({
-  firstName: z.string().nonempty({ message: 'First name is required' }),
-  lastName: z.string().nonempty({ message: 'Last name is required' }),
   email: z.string().email({ message: 'Enter a valid email address' }),
-  mobile: z.string().nonempty({ message: 'Mobile number is required' }),
-  businessName: z.string().nonempty({ message: 'Business name is required' }),
-  businessNumber: z.string().nonempty({ message: 'Business Number is required' }),
-  storeName: z.string().nonempty({ message: 'Store name is required' }),
   password: z.string().nonempty({ message: 'Password is required' }),
-  retypePassword: z.string().nonempty({ message: 'Retype password is required' })
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
-  // const cookieStore = cookies()
+  const {toast} = useToast();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, setLoading] = useState(false);
   const defaultValues = {
-    firstName: '',
-    lastName: '',
     email: '',
-    mobile: '',
-    businessName: '',
-    businessNumber: "",
-    storeName: '',
     password: '',
-    retypePassword: ''
   };
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
@@ -65,7 +52,6 @@ export default function LoginForm() {
     // });
   };
 
-
   return (
     <>
       <Form {...form}>
@@ -73,42 +59,6 @@ export default function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-2"
         >
-          {/* <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="First name"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Last name"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
           <FormField
             control={form.control}
             name="email"
@@ -127,78 +77,6 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Mobile"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="businessName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Business Name *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Business name"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="businessNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Business Number *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Business Number"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* <FormField
-            control={form.control}
-            name="storeName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Store Name *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Store name"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
           <FormField
             control={form.control}
             name="password"
@@ -217,31 +95,14 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name="retypePassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Retype Password *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Retype password"
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+          
           <Button disabled={loading} className="ml-auto w-full" type="submit">
             Login
           </Button>
         </form>
       </Form>
       <div className='flex justify-center items-center'>
-        <Link href="/signin" className='underline'>
+        <Link href="/signIn" className='underline'>
         <p>Dont have an account? Sign Up</p></Link>
       </div>
       <div className="relative">
