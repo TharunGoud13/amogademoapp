@@ -1,15 +1,10 @@
-import { CREATE_USER_API } from "@/components/envConfig"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from 'next/server';
 
-
-// api/signIn/route.ts
-
-import { NextApiRequest, NextApiResponse } from 'next';
-
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   if (req.method === 'POST') {
     try {
-      const { password, retypePassword, ...formData } = req.body;
+      const body = await req.json();
+      const { password, retypePassword, ...formData } = body;
 
       const myHeaders = new Headers();
       myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
@@ -25,17 +20,16 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
       const response = await fetch("https://us4okg8.219.93.129.146.sslip.io/contacts", requestOptions);
       const result = await response.text();
-      
+
       if (response.ok) {
-        res.status(response.status).json({ message: "User Created Successfully" });
+        return NextResponse.json({ message: "User Created Successfully" }, { status: response.status });
       } else {
-        res.status(response.status).json({ message: "Something went wrong, please try again.", details: result });
+        return NextResponse.json({ message: "Something went wrong, please try again.", details: result }, { status: response.status });
       }
     } catch (error) {
-      res.status(500).json({ message: "An error occurred while creating the user.", error: error });
+      return NextResponse.json({ message: "An error occurred while creating the user.", error: error }, { status: 500 });
     }
   } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405, headers: { Allow: 'POST' } });
   }
 }
