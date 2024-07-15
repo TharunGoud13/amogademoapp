@@ -9,5 +9,5 @@ export async function login(formData:any){
 }
 
 export async function logout(){
-    await signOut({redirectTo:'/signIn'})
+    await signOut({redirectTo:'/login'})
 }
