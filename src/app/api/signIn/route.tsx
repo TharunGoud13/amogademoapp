@@ -6,7 +6,7 @@ import { NextResponse } from "next/server"
 
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
       const { password, retypePassword, ...formData } = req.body;
