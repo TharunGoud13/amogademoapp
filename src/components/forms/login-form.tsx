@@ -102,7 +102,7 @@ export default function LoginForm() {
         </form>
       </Form>
       <div className='flex justify-center items-center'>
-        <Link href="/signIn" className='underline'>
+        <Link href="/storejoin" className='underline'>
         <p>Dont have an account? Sign Up</p></Link>
       </div>
       <div className="relative">

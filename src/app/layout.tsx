@@ -19,7 +19,7 @@ export default function RootLayout({
 }>)
  {
   const pathname = usePathname()
-  const showTopbar = pathname !== '/signIn' && pathname!== '/login'
+  const showTopbar = pathname !== '/storejoin' && pathname!== '/login'
   return (
     <html lang="en">
       <body className={inter.className}>

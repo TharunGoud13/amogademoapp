@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 const Home: FC = async() => {
   const session = await auth();
 
-  if(!session?.user) redirect('/signIn')
+  if(!session?.user) redirect('/login')
   const layout = cookies().get("react-resizable-panels:layout")
   const collapsed = cookies().get("react-resizable-panels:collapsed")
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined
