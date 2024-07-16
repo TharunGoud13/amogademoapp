@@ -1,9 +1,7 @@
 
-// import { Overview } from '@/components/overview';
-// import AreaChartComponent from '@/components/overview';
+
 import Overview from '@/components/overview';
 import { RecentSales } from '@/components/recent-sales';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -16,8 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function page() {
   return (
-    <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+    <ScrollArea className="h-full pt-[4%]">
+      <div className="flex-1 space-y-4 p-4 pt-[20%] md:pt-[1%] md:p-8">
         
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>

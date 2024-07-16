@@ -14,8 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const session = await auth()
-  if(!session?.user)redirect('/login')
+  
   const layout = cookies().get("react-resizable-panels:layout");
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
 

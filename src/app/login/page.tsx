@@ -61,7 +61,7 @@ export default function Login() {
             </p>
           </div>
           <LoginForm />
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          {/* <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{' '}
             <Link
               href="/terms"
@@ -77,7 +77,7 @@ export default function Login() {
               Privacy Policy
             </Link>
             .
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

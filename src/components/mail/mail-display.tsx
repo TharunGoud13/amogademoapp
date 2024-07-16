@@ -50,10 +50,9 @@ interface MailDisplayProps {
   mail: Mail | null
 }
 
-export async function MailDisplay({ mail }: MailDisplayProps) {
+export function MailDisplay({ mail }: MailDisplayProps) {
   const today = new Date()
 
-  const session = await auth()
 
   return (
     <div className="flex h-full flex-col">
@@ -207,10 +206,10 @@ export async function MailDisplay({ mail }: MailDisplayProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="grid gap-1">
-                <div className="font-semibold">{session?.user?.name}</div>
+                <div className="font-semibold">{mail.name}</div>
                 <div className="line-clamp-1 text-xs">{mail.subject}</div>
                 <div className="line-clamp-1 text-xs">
-                  <span className="font-medium">Reply-To:</span> {session?.user?.email}
+                  <span className="font-medium">Reply-To:</span> {mail.email}
                 </div>
               </div>
             </div>
