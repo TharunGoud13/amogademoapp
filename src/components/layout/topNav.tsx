@@ -34,7 +34,7 @@ const TopBar: FC = async () => {
           morr
         </Link>
         
-           <Link href="/salesanalytics">Dashboard</Link>
+           <Link href="/dashboard">Dashboard</Link>
           <Link href="/storemenu">Menu</Link>
          {/* <h1>Dashboard</h1>
           <h1>Menu</h1>*/}
