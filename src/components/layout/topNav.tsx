@@ -5,14 +5,15 @@ import UserNav from './user-nav';
 import Link from 'next/link';
 import { logout } from '@/app/actions';
 import { MdOutlineLogout } from "react-icons/md";
+import { BsChat } from "react-icons/bs";
 
 export default function Header() {
-  
+
   return (
-    <div className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
+    <div className="supports-backdrop-blur:bg-background/60 fixed  left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
       <nav className="flex h-14 items-center justify-between px-4">
         <div className="hidden lg:block">
-          <div className='flex gap-10'>
+          <div className='flex gap-4'>
           <Link
             href='/'
           >
@@ -48,6 +49,9 @@ export default function Header() {
         </button>
         
         </form>
+        <Link href="/store_chat" className='hidden lg:block'>
+        <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" />
+        </Link>
           <UserNav />
           <ThemeToggle />
         </div>
