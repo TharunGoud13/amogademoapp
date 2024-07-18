@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const headers = new Headers()
-headers.append("Auth",process.env.GET_ORDER_API_KEY as string)
+headers.append("Auth","fdFSDFERfsdgd")
 
 const requestOptions = {
   method: "GET",
