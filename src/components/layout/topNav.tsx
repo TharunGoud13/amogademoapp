@@ -33,6 +33,7 @@ export default function Header() {
           </Link>
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/storemenu">Menu</Link>
+          <Link href="/taskbox">Task</Link>
           </div>
         </div>
           <div className={cn('block lg:!hidden')}>
