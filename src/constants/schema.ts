@@ -10,4 +10,23 @@ export const taskSchema = z.object({
   priority: z.string(),
 })
 
+export const productSchema = z.object({
+  order_id: z.number(),
+  item_id: z.number(),
+  product_id: z.number(),
+  variation_id: z.number(),
+  business_number: z.string(),
+  business_name: z.string(),
+  order_status: z.string(),
+  quantity: z.number(),
+  subtotal: z.string(),
+  subtotal_tax: z.string(),
+  total:z.string(),
+  total_tax: z.string(),
+  taxes:z.object({
+    total: z.record(z.string()),
+    subtotal: z.record(z.string()),
+  }),
+})
+
 export type Task = z.infer<typeof taskSchema>

@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 }
 
 // Simulate a database read for tasks.
+// using filesystem we read the data to a variable by giving it a file path
 async function getTasks() {
   const data = await fs.readFile(
     path.join(process.cwd(), "src/constants/tasks.json"),

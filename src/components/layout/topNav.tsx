@@ -34,6 +34,9 @@ export default function Header() {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/storemenu">Menu</Link>
           <Link href="/taskbox">Task</Link>
+          <Link href="/products">Products</Link>
+          {/* <Link href="/ask">Ask</Link> */}
+
           </div>
         </div>
           <div className={cn('block lg:!hidden')}>
