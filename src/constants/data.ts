@@ -132,10 +132,10 @@ export const navItems: NavItem[] = [
     label: 'Menu'
   },
   {
-    title: 'Store Chat',
-    href: '/store_chat',
+    title: 'Products',
+    href: '/products',
     icon: 'post',
-    label: 'Store_Chat'
+    label: 'Products'
   },
   
 ];
