@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 type CompProps = {};
 export default function ThemeToggle({}: CompProps) {
-  const { setTheme } = useTheme();
+  const { setTheme,themes } = useTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,15 +22,13 @@ export default function ThemeToggle({}: CompProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className=' mr-[20px] mt-[20px]'>
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          Light
+        {themes.map((theme) => (
+          <DropdownMenuItem key={theme} onClick={() => setTheme(theme)}>
+          {theme}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
-          System
-        </DropdownMenuItem>
+        ))}
+        
+        
       </DropdownMenuContent>
     </DropdownMenu>
   );

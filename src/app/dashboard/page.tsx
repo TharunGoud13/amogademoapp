@@ -1,6 +1,5 @@
 
-
-import Overview from '@/components/overview';
+import { Overview } from '@/components/overview';
 import { RecentSales } from '@/components/recent-sales';
 import {
   Card,
