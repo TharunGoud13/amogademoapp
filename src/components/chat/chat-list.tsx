@@ -1,31 +1,48 @@
 import { Message, UserData } from "@/app/data";
 import { cn } from "@/lib/utils";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import ChatBottombar from "./chat-bottombar";
 import { AnimatePresence, motion } from "framer-motion";
+import { io } from "socket.io-client";
 
 interface ChatListProps {
-  messages?: Message[];
   selectedUser: UserData;
-  sendMessage: (newMessage: Message) => void;
   isMobile: boolean;
+  socket: any;
+  session: any;
+  messages: Message[];
+  sendMessage: (newMessage:Message) => void;
 }
 
 export function ChatList({
-  messages,
   selectedUser,
+  messages,
   sendMessage,
-  isMobile
+  isMobile,
+  socket,session
 }: ChatListProps) {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  console.log("selectedUser----", selectedUser)
+
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  
+
+  useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  
 
   return (
     <div className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col">
@@ -34,9 +51,11 @@ export function ChatList({
         className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col"
       >
         <AnimatePresence>
-          {messages?.map((message, index) => (
+          {messages.map((message, index) => (
+
+            
             <motion.div
-              key={index}
+              key={message.id}
               layout
               initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
               animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
@@ -46,7 +65,7 @@ export function ChatList({
                 layout: {
                   type: "spring",
                   bounce: 0.3,
-                  duration: messages.indexOf(message) * 0.05 + 0.2,
+                  duration: index * 0.05 + 0.2,
                 },
               }}
               style={{
@@ -55,11 +74,13 @@ export function ChatList({
               }}
               className={cn(
                 "flex flex-col gap-2 p-4 whitespace-pre-wrap",
-                message.name !== selectedUser.name ? "items-end" : "items-start"
+                message.name != selectedUser.name ? "items-end" : "items-start"
               )}
-            > 
+            >
+              
               <div className="flex gap-3 items-center">
-                {message.name === selectedUser.name && (
+              
+                {message.name == selectedUser.name && (
                   <Avatar className="flex justify-center items-center">
                     <AvatarImage
                       src={message.avatar}
@@ -87,7 +108,7 @@ export function ChatList({
           ))}
         </AnimatePresence>
       </div>
-      <ChatBottombar sendMessage={sendMessage} isMobile={isMobile}/>
+      <ChatBottombar sendMessage={sendMessage} session={session} socket={socket} isMobile={isMobile} />
     </div>
   );
 }

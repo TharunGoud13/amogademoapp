@@ -10,26 +10,36 @@ import {
 import { cn } from "@/lib/utils";
 import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
+import { io } from "socket.io-client";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
+  session:any;
 }
 
 export function ChatLayout({
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize,
+  session
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [selectedUser, setSelectedUser] = React.useState(userData[0]);
+  const [selectedUser, setSelectedUser] = React.useState(session?.user);
   const [isMobile, setIsMobile] = useState(false);
+
+  let socket: any;
+  socket = io("http://localhost:3001");
 
   useEffect(() => {
     const checkScreenWidth = () => {
       setIsMobile(window.innerWidth <= 768);
     };
+
+    
+
+    socket.emit("join_room", session?.user?.name);
 
     // Initial check
     checkScreenWidth();
@@ -40,8 +50,9 @@ export function ChatLayout({
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("resize", checkScreenWidth);
+      
     };
-  }, []);
+  }, [socket,session]);
 
   return (
     <ResizablePanelGroup
@@ -89,9 +100,11 @@ export function ChatLayout({
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         <Chat
-          messages={selectedUser.messages}
-          selectedUser={selectedUser}
+          // messages={selectedUser.messages}
+          selectedUser={selectedUser }
           isMobile={isMobile}
+          session={session}
+          socket={socket}
         />
       </ResizablePanel>
     </ResizablePanelGroup>
