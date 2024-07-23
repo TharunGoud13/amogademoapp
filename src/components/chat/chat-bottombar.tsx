@@ -8,7 +8,7 @@ import {
     ThumbsUp,
   } from "lucide-react";
   import Link from "next/link";
-  import React, { useRef, useState } from "react";
+  import React, { useEffect, useRef, useState } from "react";
   import { buttonVariants } from "../ui/button";
   import { cn } from "@/lib/utils";
   import { AnimatePresence, motion } from "framer-motion";
@@ -21,12 +21,16 @@ import {
   interface ChatBottombarProps {
     sendMessage: (newMessage: Message) => void;
     isMobile: boolean;
+    session:any;
+    socket: any;
+    setMessages:any;
+    addMessage:any
   }
   
   export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
   
   export default function ChatBottombar({
-    sendMessage, isMobile,
+    sendMessage, isMobile,session,socket,setMessages,addMessage
   }: ChatBottombarProps) {
     const [message, setMessage] = useState("");
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -38,11 +42,13 @@ import {
     const handleThumbsUp = () => {
       const newMessage: Message = {
         id: message.length + 1,
-        name: loggedInUserData.name,
-        avatar: loggedInUserData.avatar,
+        name: session?.user.name,
+        avatar: session?.user.image,
         message: "👍",
+        room:"user"
       };
-      sendMessage(newMessage);
+      // sendMessage(newMessage);
+      socket.emit("send_msg",newMessage)
       setMessage("");
     };
   
@@ -50,11 +56,15 @@ import {
       if (message.trim()) {
         const newMessage: Message = {
           id: message.length + 1,
-          name: loggedInUserData.name,
-          avatar: loggedInUserData.avatar,
+          name: session?.user.name,
+          avatar: session?.user.image,
           message: message.trim(),
+          room:"user"
         };
-        sendMessage(newMessage);
+        
+        // sendMessage(newMessage);
+        addMessage(newMessage)
+        socket.emit("send_msg",newMessage)
         setMessage("");
   
         if (inputRef.current) {
@@ -62,6 +72,16 @@ import {
         }
       }
     };
+
+    
+
+    // useEffect(() => {
+    //   socket.on("receive_msg", (data: Message) => {
+    //     setMessages((prevMessages:any) => [...prevMessages, data]);
+    //   });
+    // }, );
+
+    
   
     const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (event.key === "Enter" && !event.shiftKey) {

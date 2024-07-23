@@ -10,21 +10,32 @@ import {
 import { cn } from "@/lib/utils";
 import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
+import { io } from "socket.io-client";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
+  session: any
 }
 
 export function ChatLayout({
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize,
+  session
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [selectedUser, setSelectedUser] = React.useState(userData[0]);
+  const [selectedUser, setSelectedUser] = React.useState(session?.user);
   const [isMobile, setIsMobile] = useState(false);
+
+  let socket:any;
+  socket = io("https://amogadashboard-service.onrender.com");
+
+  useEffect(() => {
+    socket.emit("join_room", "user");
+  },[socket])
+
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -75,7 +86,7 @@ export function ChatLayout({
           isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
         )}
       >
-        <Sidebar
+        {/* <Sidebar
           isCollapsed={isCollapsed || isMobile}
           links={userData.map((user) => ({
             name: user.name,
@@ -84,14 +95,15 @@ export function ChatLayout({
             variant: selectedUser.name === user.name ? "grey" : "ghost",
           }))}
           isMobile={isMobile}
-        />
+        /> */}
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         <Chat
-          messages={selectedUser.messages}
           selectedUser={selectedUser}
           isMobile={isMobile}
+          session={session}
+          socket={socket}
         />
       </ResizablePanel>
     </ResizablePanelGroup>

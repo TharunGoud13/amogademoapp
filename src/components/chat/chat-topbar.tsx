@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/button';
 
 interface ChatTopbarProps {
-    selectedUser: UserData;
+    selectedUser: any;
     }
     
     export const TopbarIcons = [{ icon: Phone }, { icon: Video }, { icon: Info }];
@@ -19,7 +19,7 @@ export default function ChatTopbar({selectedUser}: ChatTopbarProps) {
         <div className="flex items-center gap-2">
           <Avatar className="flex justify-center items-center">
             <AvatarImage
-              src={selectedUser.avatar}
+              src={selectedUser.image}
               alt={selectedUser.name}
               width={6}
               height={6}

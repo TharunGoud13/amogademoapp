@@ -90,9 +90,10 @@ export type LoggedInUserData = (typeof loggedInUserData);
 
 export interface Message {
     id: number;
-    avatar: string;
     name: string;
-    message: string;
+    avatar: string;
+    message: string | number;
+    room:string
 }
 
 export interface User {

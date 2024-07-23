@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
+  const session = await auth()
   
   const layout = cookies().get("react-resizable-panels:layout");
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
@@ -25,7 +26,7 @@ export default async function Home() {
       </div>
 
       <div className="z-10 border rounded-lg  w-full h-full text-sm lg:flex">
-        <ChatLayout defaultLayout={defaultLayout} navCollapsedSize={8} />
+        <ChatLayout defaultLayout={defaultLayout} session={session} navCollapsedSize={8} />
       </div>
 
       
