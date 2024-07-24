@@ -1,45 +1,58 @@
 import { Message, UserData } from "@/app/data";
 import ChatTopbar from "./chat-topbar";
 import { ChatList } from "./chat-list";
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 interface ChatProps {
-  
   selectedUser: UserData;
   isMobile: boolean;
-  session:any;
-  socket:any
+  session: any;
+  socket: any;
 }
 
-export function Chat({ selectedUser, isMobile,session,socket }: ChatProps) {
-  const [messages, setMessages] = React.useState<Message[]>(
-      []
-  );
-  console.log("messages:", messages);
+export function Chat({ selectedUser, isMobile, session, socket }: ChatProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const addMessage = (newMessage: Message) => {
+  const addMessage = useCallback((newMessage: Message) => {
     setMessages((prevMessages) => {
-      // Check if the message already exists to prevent duplication
       if (!prevMessages.some(msg => msg.id === newMessage.id)) {
         return [...prevMessages, newMessage];
       }
       return prevMessages;
     });
-  };
+  }, []);
 
-  React.useEffect(() => {
-    socket.on("receive_msg", (data: Message) => {
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleReceiveMessage = (data: Message) => {
       addMessage(data);
-    });
+    };
+
+    const handleLoadMessages = (loadedMessages: Message[]) => {
+      setMessages(loadedMessages);
+    };
+
+    socket.on("receive_msg", handleReceiveMessage);
+    socket.on("load_messages", handleLoadMessages);
+
+    // Join room when component mounts or selectedUser changes
+    socket.emit("join_room", selectedUser.id);
 
     return () => {
-      socket.off("receive_msg");
+      socket.off("receive_msg", handleReceiveMessage);
+      socket.off("load_messages", handleLoadMessages);
     };
-  }, [socket]);
+  }, [socket, selectedUser.id, addMessage]);
 
-  const sendMessage = (newMessage: Message) => {
-    // setMessages((prevMessages) => [...prevMessages, newMessage]);
-  };
+  const sendMessage = useCallback((newMessage: Omit<Message, 'id' | 'createdAt'>) => {
+    if (socket) {
+      socket.emit("send_msg", {
+        ...newMessage,
+        room: selectedUser.id,
+      });
+    }
+  }, [socket, selectedUser.id]);
 
   return (
     <div className="flex flex-col justify-between w-full h-full">

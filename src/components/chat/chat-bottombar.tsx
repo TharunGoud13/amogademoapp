@@ -50,6 +50,8 @@ export default function ChatBottombar({
       room: "user"
     };
     // sendMessage(newMessage);
+    addMessage(newMessage)
+
     socket.emit("send_msg", newMessage)
     setMessage("");
   };
