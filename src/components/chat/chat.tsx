@@ -13,6 +13,8 @@ interface ChatProps {
 export function Chat({ selectedUser, isMobile, session, socket }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
+  console.log("messages----",messages)
+
   const addMessage = useCallback((newMessage: Message) => {
     setMessages((prevMessages) => {
       if (!prevMessages.some(msg => msg.id === newMessage.id)) {
