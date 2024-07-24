@@ -30,7 +30,7 @@ export function ChatLayout({
   const [isMobile, setIsMobile] = useState(false);
 
   let socket:any;
-  socket = io("https://amogadashboard-service.onrender.com");
+  socket = io("https://chat-service-luje.onrender.com");
 
   useEffect(() => {
     socket.emit("join_room", "user");
