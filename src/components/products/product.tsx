@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { columns } from "./product-column";
 import { ProductTable } from "./product-table";
-import { GET_ORDER_ITEMS } from "../envConfig";
+import { GET_ORDER_ITEMS } from "@/constants/envConfig";
 
 export const metadata: Metadata = {
   title: "Products",

@@ -133,7 +133,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Store Chat',
-    href: '/store_chat',
+    href: '/chat',
     icon: 'post',
     label: 'Store_Chat'
   },

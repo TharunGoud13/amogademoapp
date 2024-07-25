@@ -5,6 +5,8 @@ import TopBar from "@/components/layout/topNav";
 import Providers from "@/components/layout/providers";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
+import NextTopLoader from 'nextjs-toploader';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,9 +29,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <NextTopLoader/>
         <Providers session={session}>
           <div>
-            {!hideTopBar && <TopBar />}
+            {!hideTopBar && <TopBar />}           
             {children}
           </div>
         </Providers>

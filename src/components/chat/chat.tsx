@@ -8,9 +8,11 @@ interface ChatProps {
   isMobile: boolean;
   session: any;
   socket: any;
+  contactData: any;
+  contactUser:any
 }
 
-export function Chat({ selectedUser, isMobile, session, socket }: ChatProps) {
+export function Chat({ selectedUser, isMobile, session, socket,contactData,contactUser }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   console.log("messages----",messages)
@@ -39,26 +41,27 @@ export function Chat({ selectedUser, isMobile, session, socket }: ChatProps) {
     socket.on("load_messages", handleLoadMessages);
 
     // Join room when component mounts or selectedUser changes
-    socket.emit("join_room", selectedUser.id);
+    socket.emit("join_room", { userId: selectedUser.id, contactId: contactUser.id });
 
     return () => {
       socket.off("receive_msg", handleReceiveMessage);
       socket.off("load_messages", handleLoadMessages);
     };
-  }, [socket, selectedUser.id, addMessage]);
+  }, [socket, selectedUser.id, addMessage,contactUser.id]);
 
   const sendMessage = useCallback((newMessage: Omit<Message, 'id' | 'createdAt'>) => {
     if (socket) {
       socket.emit("send_msg", {
         ...newMessage,
-        room: selectedUser.id,
+        senderId: selectedUser.id,
+        receiverId: contactUser.id,
       });
     }
-  }, [socket, selectedUser.id]);
+  }, [socket, selectedUser.id,contactUser.id]);
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      <ChatTopbar selectedUser={selectedUser} />
+      <ChatTopbar selectedUser={selectedUser} contactData={contactData} />
 
       <ChatList
         messages={messages}

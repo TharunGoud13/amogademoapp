@@ -21,7 +21,7 @@ import LinkedInSignInButton from "../linkedin-auth-button";
 import Link from "next/link";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
-import { CREATE_USER_API } from "../envConfig";
+import { CREATE_USER_API } from "../../constants/envConfig";
 
 const formSchema = z.object({
   first_name: z.string().nonempty({ message: "First name is required" }),

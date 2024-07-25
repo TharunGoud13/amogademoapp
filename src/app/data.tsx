@@ -99,6 +99,6 @@ export interface Message {
 export interface User {
     id: number;
     avatar: string;
-    messages: Message[];
+    messages: { id: number; avatar: string; name: string; message: string; }[];
     name: string;
 }

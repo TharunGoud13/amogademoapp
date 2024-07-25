@@ -53,7 +53,7 @@ export default function Header() {
         </button>
         
         </form>
-        <Link href="/store_chat" className='hidden lg:block'>
+        <Link href="/chat" className='hidden lg:block'>
         <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" />
         </Link>
           <UserNav />
