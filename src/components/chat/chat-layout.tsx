@@ -36,8 +36,8 @@ export function ChatLayout({
 
   let socket: any;
   // socket = io("https://chat-service-luje.onrender.com");
-  // socket = io("https://chat-service-luje.onrender.com");
-  socket = io("http://localhost:3001");
+  socket = io("https://chat-service-luje.onrender.com");
+  // socket = io("http://localhost:3001");
 
   useEffect(() => {
     socket.emit("join_room", "user");
