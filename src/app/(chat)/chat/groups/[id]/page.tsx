@@ -1,10 +1,10 @@
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
-import { GET_ONE_CONTACT_API } from "@/constants/envConfig";
+import { GET_SINGLE_GROUP } from "@/constants/envConfig";
 
-async function getContactData(id: string) {
-  const url = `${GET_ONE_CONTACT_API}${id}`;
+async function getGroupData(id: string) {
+  const url = `${GET_SINGLE_GROUP}${id}`;
 
 
   const myHeaders = new Headers();
@@ -22,12 +22,12 @@ async function getContactData(id: string) {
 }
 
 const ChatPage = async ({ params }: { params: { id: string } }) => {
-    console.log("-----------id", params);
+    
   const session = await auth();
   const layout = cookies().get("react-resizable-panels:layout");
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
 
-  const contactData = await getContactData(params.id);
+  const groupsData = await getGroupData(params.id);
 
 
   return (
@@ -36,7 +36,7 @@ const ChatPage = async ({ params }: { params: { id: string } }) => {
         defaultLayout={defaultLayout}
         session={session}
         navCollapsedSize={8}
-        contactData={contactData} groupsData={undefined} />
+        groupsData={groupsData} contactData={undefined}      />
     </div>
   );
 }

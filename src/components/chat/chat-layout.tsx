@@ -11,13 +11,15 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
 import { io } from "socket.io-client";
+import { GET_CHAT_GROUP_USERS } from "@/constants/envConfig";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
   session: any;
-  contactData:any
+  contactData: any;
+  groupsData: any;
 }
 
 export function ChatLayout({
@@ -25,21 +27,21 @@ export function ChatLayout({
   defaultCollapsed = false,
   navCollapsedSize,
   session,
-  contactData
+  contactData, groupsData
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const [selectedUser, setSelectedUser] = React.useState(session?.user);
   const [isMobile, setIsMobile] = useState(false);
-  const contactUser = contactData
+  const [groupUsers, setGroupUsers] = useState([]);
 
-  let socket:any;
+  let socket: any;
   // socket = io("https://chat-service-luje.onrender.com");
   // socket = io("https://chat-service-luje.onrender.com");
   socket = io("http://localhost:3001");
 
   useEffect(() => {
     socket.emit("join_room", "user");
-  },[socket])
+  }, [socket])
 
 
   useEffect(() => {
@@ -59,14 +61,43 @@ export function ChatLayout({
     };
   }, []);
 
+  useEffect(() => {
+    const getChatGroupUsers = async () => {
+      try {
+        const url = `${GET_CHAT_GROUP_USERS}`;
+        const myHeaders = new Headers();
+        // myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+
+        const requestOptions: RequestInit = {
+          method: "GET",
+          // headers: myHeaders,
+          redirect: "follow"
+        };
+
+        const response = await fetch(url, requestOptions);
+        if (!response.ok) {
+          throw new Error("Failed to fetch group users");
+        }
+        const data = await response.json();
+        setGroupUsers(data);
+      }
+      catch (error) {
+        console.error("Error fetching group users:", error);
+      }
+    }
+    getChatGroupUsers();
+
+  },[])
+
   return (
-        <Chat
-          selectedUser={selectedUser}
-          isMobile={isMobile}
-          session={session}
-          socket={socket}
-          contactData={contactData}
-          contactUser={contactUser}
-        />   
+    <Chat
+      selectedUser={selectedUser}
+      isMobile={isMobile}
+      session={session}
+      socket={socket}
+      contactData={contactData}
+      groupsData={groupsData}
+      groupUsers={groupUsers}
+    />
   );
 }

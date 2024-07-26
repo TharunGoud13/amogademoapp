@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
-import { GET_CONTACTS_API } from "@/constants/envConfig";
+import { GET_GROUPS } from "@/constants/envConfig";
 
-async function getContacts() {
-    const url = GET_CONTACTS_API
+async function getGroups() {
+    const url = GET_GROUPS
 
     const myHeaders = new Headers();
     myHeaders.append("Authorization",`Bearer ${process.env.GET_CONTACTS_KEY}`);
@@ -20,30 +20,31 @@ async function getContacts() {
 }
 
 
-const Contacts = async () => {
-    const contacts = await getContacts();
+const Groups = async () => {
+    const groups = await getGroups();
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 h-fit w-full">
-            {contacts.map((contact: any, index: any) => <Link href={`/chat/${contact.user_catalog_id}`}  key={index} className="border p-2.5 transition ease-in-out delay-150 rounded-lg hover:scale-105">
+            {groups.map((group: any, index: any) => <Link href={`/chat/groups/${group.chat_group_id}`}  key={index} className="border p-2.5 transition ease-in-out delay-150 rounded-lg hover:scale-105">
                 <div className="flex gap-4 items-center">
-                    {contact?.avatar_url ?
+                    {group?.icon ?
                         <Avatar className="w-12 h-12">
-                            <Image src={contact?.avatar_url} alt="user" width={80} height={80} />
+                            <Image src={group?.icon} alt="user" width={80} height={80} />
                         </Avatar>
                         : <Avatar>
-                            <AvatarFallback>{contact?.user_name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>}
+                            <AvatarFallback>{group?.group_name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>}
                     <div className="space-y-1">
-                        <h1 className="font-bold">{contact?.user_name}</h1>
-                        <h1>{contact?.user_email}</h1>
+                        <h1 className="font-bold">{group?.group_name}</h1>
+                        <h1>Owner: {group?.owner_fullname}</h1>
                     </div>
                 </div>
                 <div className="space-y-2 text-muted-foreground pt-2.5">
-                    <h1>{contact?.user_mobile}</h1>
-                    <h1>{contact?.business_city}</h1>
+                    <h1>{group?.mobile}</h1>
+                    <h1>{group?.email}</h1>
+                    <h1>{group?.city}</h1>
                 </div>
             </Link>)}
         </div>
     )
 }
 
-export default Contacts;
+export default Groups;

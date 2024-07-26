@@ -1,9 +1,16 @@
-import React from 'react'
+import Groups from "@/components/chat/groups";
 
-const page = () => {
+export const metadata = {
+  title: 'Groups',
+  description: 'Group Chat.'
+};
+
+const Home = async () => {
   return (
-    <div>page</div>
-  )
+    <div className="z-10 py-5 rounded-lg w-full  text-sm lg:flex">
+      <Groups />
+    </div>
+  );
 }
 
-export default page
+export default Home;
