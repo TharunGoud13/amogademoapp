@@ -17,14 +17,10 @@ interface ChatTopbarProps {
 
 
 export default function ChatTopbar({ contactData, groupsData, groupUsers }: ChatTopbarProps) {
-  console.log("contactData----", contactData)
-  console.log("groupsData----", groupsData)
-  console.log("groupUsers----", groupUsers)
 
   const displayData = (contactData && contactData[0]) || (groupsData && groupsData[0]) || {};
 
   const currentGroupUsers = groupUsers.filter(((user: any,) => user?.group_id === (groupsData && groupsData[0])?.chat_group_id))
-  console.log("currentGroupUsers----", currentGroupUsers)
 
 
   return (

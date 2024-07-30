@@ -69,6 +69,28 @@ export default function UserAuthForm() {
   });
 
   const onSubmit = async (data: UserFormValue) => {
+    //added create_user_catalog API for user_catalog ID
+    const payload = {
+      user_name:data.username,
+      user_email:data.email,
+      user_mobile:data.user_mobile
+    }
+    const requestOptions1:any = {
+      method:"POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }
+
+    try{
+      const response1 = await fetch("https://no0wgko.219.93.129.146.sslip.io/user_catalog",requestOptions1)
+      const data = await response1.json()
+      return data
+    }
+    catch(error){
+      console.log("error---",error)
+    }
     const { password, retypePassword, ...formData } = data
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${CREATE_USER_KEY}`);

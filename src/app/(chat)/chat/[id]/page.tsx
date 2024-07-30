@@ -22,7 +22,6 @@ async function getContactData(id: string) {
 }
 
 const ChatPage = async ({ params }: { params: { id: string } }) => {
-    console.log("-----------id", params);
   const session = await auth();
   const layout = cookies().get("react-resizable-panels:layout");
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined;

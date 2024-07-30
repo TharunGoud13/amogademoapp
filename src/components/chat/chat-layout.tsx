@@ -34,13 +34,14 @@ export function ChatLayout({
   const [isMobile, setIsMobile] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
 
-  let socket: any;
-  // socket = io("https://chat-service-luje.onrender.com");
-  socket = io("https://chat-service-luje.onrender.com");
-  // socket = io("http://localhost:3001");
+  // const socket = io("http://localhost:3001");
+  const socket = io("https://chat-service-luje.onrender.com")
 
   useEffect(() => {
     socket.emit("join_room", "user");
+    return () => {
+      socket.disconnect();
+    };
   }, [socket])
 
 
@@ -48,19 +49,16 @@ export function ChatLayout({
     const checkScreenWidth = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-
-    // Initial check
     checkScreenWidth();
-
     // Event listener for screen width changes
     window.addEventListener("resize", checkScreenWidth);
-
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("resize", checkScreenWidth);
     };
   }, []);
 
+  // api for getting chat group users
   useEffect(() => {
     const getChatGroupUsers = async () => {
       try {

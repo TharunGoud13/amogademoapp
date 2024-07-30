@@ -2,6 +2,7 @@ import { Message, UserData } from "@/app/data";
 import ChatTopbar from "./chat-topbar";
 import { ChatList } from "./chat-list";
 import React, { useEffect, useState, useCallback } from "react";
+import { GET_CHAT_MESSAGES } from "@/constants/envConfig";
 
 interface ChatProps {
   selectedUser: UserData;
@@ -12,7 +13,6 @@ interface ChatProps {
   groupsData:any;
   groupUsers:any
 }
-
 
 export  function Chat({ selectedUser, isMobile, session, socket,contactData,groupsData,groupUsers }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,55 +28,63 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
     });
   }, []);
 
+  //api call for getting messages and socket for receiving messages
+
+  const fetchMessages = useCallback(async() => {
+    try{
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+    
+      const requestOptions: RequestInit = {
+        method: "GET",
+        redirect: "follow"
+      };
+    
+      const response = await fetch(`${GET_CHAT_MESSAGES}${contactData[0].user_catalog_id}`, requestOptions);
+      const data = await response.json();
+      setMessages(data)
+      return data;
+    }
+    catch(error){
+      console.log("error fetching messages----", error)
+    }
+  },[contactData])
+
   useEffect(() => {
-    if (!socket) return;
+    // Join the room when the component mounts or when the selected user changes
+    fetchMessages()
+    if (selectedUser) {
+      socket.emit('join_room', selectedUser.id);
+    }
 
-    const handleReceiveMessage = (data: Message) => {
+    // Listen for incoming messages
+    socket.on("receive_msg", (data: Message) => {
       addMessage(data);
-    };
-
-    const handleLoadMessages = (loadedMessages: Message[]) => {
-      setMessages(loadedMessages);
-    };
-
-    socket.on("receive_msg", handleReceiveMessage);
-    socket.on("load_messages", handleLoadMessages);
-
-    // Join room when component mounts or selectedUser changes
-    socket.emit("join_room",   selectedUser.id );
+    });
 
     return () => {
-      socket.off("receive_msg", handleReceiveMessage);
-      socket.off("load_messages", handleLoadMessages);
+      // Leave the room when the component unmounts or when the selected user changes
+      if (selectedUser) {
+        socket.emit('leave_room', selectedUser.id);
+      }
+      socket.off("receive_msg");
     };
-  }, [socket, selectedUser.id, addMessage]);
-
-  const sendMessage = useCallback((newMessage: Omit<Message, 'id' | 'createdAt'>) => {
-    if (socket) {
-      socket.emit("send_msg", {
-        ...newMessage,
-        room: selectedUser.id,
-      });
-    }
-  }, [socket, selectedUser.id]);
-
+  }, [socket, selectedUser, addMessage,fetchMessages]);
   
-
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <ChatTopbar selectedUser={selectedUser} contactData={contactData} groupsData={groupsData} 
         groupUsers={groupUsers}
         />
-
       <ChatList
         messages={messages}
         selectedUser={selectedUser}
-        sendMessage={sendMessage}
         addMessage={addMessage}
         setMessages={setMessages}
         isMobile={isMobile}
         session={session}
         socket={socket}
+        contactData={contactData}
       />
     </div>
   );

@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
 import { GET_CONTACTS_API } from "@/constants/envConfig";
+import { auth } from "@/auth";
+import ClientContacts from "./clientContacts";
 
 async function getContacts() {
     const url = GET_CONTACTS_API
@@ -22,28 +24,13 @@ async function getContacts() {
 
 const Contacts = async () => {
     const contacts = await getContacts();
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 h-fit w-full">
-            {contacts.map((contact: any, index: any) => <Link href={`/chat/${contact.user_catalog_id}`}  key={index} className="border p-2.5 transition ease-in-out delay-150 rounded-lg hover:scale-105">
-                <div className="flex gap-4 items-center">
-                    {contact?.avatar_url ?
-                        <Avatar className="w-12 h-12">
-                            <Image src={contact?.avatar_url} alt="user" width={80} height={80} />
-                        </Avatar>
-                        : <Avatar>
-                            <AvatarFallback>{contact?.user_name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>}
-                    <div className="space-y-1">
-                        <h1 className="font-bold">{contact?.user_name}</h1>
-                        <h1>{contact?.user_email}</h1>
-                    </div>
-                </div>
-                <div className="space-y-2 text-muted-foreground pt-2.5">
-                    <h1>{contact?.user_mobile}</h1>
-                    <h1>{contact?.business_city}</h1>
-                </div>
-            </Link>)}
-        </div>
-    )
+    const session = await auth()
+    console.log("email----",session?.user?.email)
+
+    const currentUser = contacts.find((user: any) => user?.user_email === session?.user?.email)
+    console.log("user--", currentUser)
+
+        return <ClientContacts contacts={contacts} currentUser={currentUser}/>
 }
 
 export default Contacts;
