@@ -2,6 +2,8 @@
 import React from 'react';
 import ThemeProvider from './ThemeToggle/theme-provider';
 import { SessionProvider, SessionProviderProps } from 'next-auth/react';
+import { Provider} from "react-redux"
+import store from '../../lib/store/store'
 export default function Providers({
   session,
   children
@@ -10,11 +12,11 @@ export default function Providers({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <Provider store={store}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem themes={['light','dark','zinc','blue','green','violet']}>
         <SessionProvider session={session}>{children}</SessionProvider>
       </ThemeProvider>
-    </>
+    </Provider>
   );
 }
   

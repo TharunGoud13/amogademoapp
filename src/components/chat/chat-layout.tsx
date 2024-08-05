@@ -1,14 +1,5 @@
 "use client";
-
-import { userData } from "@/app/data";
 import React, { useEffect, useState } from "react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import { cn } from "@/lib/utils";
-import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
 import { io } from "socket.io-client";
 import { GET_CHAT_GROUP_USERS } from "@/constants/envConfig";
@@ -29,15 +20,15 @@ export function ChatLayout({
   session,
   contactData, groupsData
 }: ChatLayoutProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const [selectedUser, setSelectedUser] = React.useState(session?.user);
   const [isMobile, setIsMobile] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
 
-  // const socket = io("http://localhost:3001");
-  const socket = io("https://chat-service-luje.onrender.com")
+  const socket = io("http://localhost:3001");
+  // const socket = io("https://chat-service-luje.onrender.com")
 
   useEffect(() => {
+    // emit - send event from client to server
     socket.emit("join_room", "user");
     return () => {
       socket.disconnect();
@@ -64,11 +55,11 @@ export function ChatLayout({
       try {
         const url = `${GET_CHAT_GROUP_USERS}`;
         const myHeaders = new Headers();
-        // myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+        myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
 
         const requestOptions: RequestInit = {
           method: "GET",
-          // headers: myHeaders,
+          headers: myHeaders,
           redirect: "follow"
         };
 

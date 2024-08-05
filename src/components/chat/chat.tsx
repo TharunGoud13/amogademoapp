@@ -17,9 +17,11 @@ interface ChatProps {
 export  function Chat({ selectedUser, isMobile, session, socket,contactData,groupsData,groupUsers }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
-  console.log("messages----",messages)
+  // console.log("messages----",messages)
 
   const addMessage = useCallback((newMessage: Message) => {
+    // each message has some id so here we are checking if previous message has same id or not.
+    // if id are different then we are adding new message to the array
     setMessages((prevMessages) => {
       if (!prevMessages.some(msg => msg.id === newMessage.id)) {
         return [...prevMessages, newMessage];
@@ -37,6 +39,7 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
     
       const requestOptions: RequestInit = {
         method: "GET",
+        headers: myHeaders,
         redirect: "follow"
       };
     

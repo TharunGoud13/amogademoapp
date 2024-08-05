@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Message, loggedInUserData } from "@/app/data";
@@ -28,13 +28,15 @@ interface ChatBottombarProps {
   socket: any;
   setMessages: any;
   addMessage: any;
-  contactData:any
+  contactData:any;
+  replyTo:any;
+  setReplyTo:any;
 }
 
-export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
+export const BottombarIcons = [ { icon: Paperclip }];
 
 export default function ChatBottombar({
-  isMobile, session, socket, setMessages, addMessage,contactData
+  isMobile, session, socket, setMessages, addMessage,contactData,replyTo,setReplyTo
 }: ChatBottombarProps) {
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -44,6 +46,11 @@ export default function ChatBottombar({
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
+
+  // generate random number for each chat message to give value for chat_message_id
+  function generateRandomId() {
+    return Math.floor(100000 + Math.random() * 900000); 
+  }
   // getting user_catalog_id from cookies
   let cookiesData = Cookies.get('currentUser')
   const userData = cookiesData ? JSON.parse(cookiesData) : null;
@@ -68,34 +75,40 @@ export default function ChatBottombar({
   // new message is to send for socket and payload is static data for api payload
   const handleSend = async () => {
     if (message.trim()) {
+      const newMessageId = generateRandomId()
       const newMessage: any = {
         id: uuidv4(),
         status: "sent",
         chat_message_type: "customer_order-notifier",
         chat_message: message.trim(),
-        reactions: null,
+        reactions: [],
         receiver_user_id: receiver_user_id,
         sender_id: sender_id,
         room: "user",
         sender_display_name: userData?.user_name,
+        chat_message_id:newMessageId,
+        replied_to_message_id: replyTo?.chat_message_id || null,
       };
 
       const payload = {
         status: "sent",
         chat_message_type: "customer_order-notifier",
         chat_message: message.trim(),
-        reactions: null,
+        reactions: [],
         receiver_user_id: receiver_user_id,
         sender_id: sender_id,
+        chat_message_id:newMessageId,
+
+        replied_to_message_id: replyTo?.chat_message_id || null, 
       };
 
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload),
-        redirect: "follow" as RequestRedirect
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+    
+      const requestOptions: RequestInit = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
       };
 
       try {
@@ -106,6 +119,7 @@ export default function ChatBottombar({
         if (response.ok) {
           socket.emit("send_msg", newMessage);
           addMessage(newMessage);
+          setReplyTo(null);
           setMessage("");
 
           if (inputRef.current) {
@@ -137,62 +151,7 @@ export default function ChatBottombar({
   return (
     <div className="p-2 flex justify-between w-full items-center gap-2">
       <div className="flex">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Link
-              href="#"
-              className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
-                "h-9 w-9",
-                "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-              )}
-            >
-              <PlusCircle size={20} className="text-muted-foreground" />
-            </Link>
-          </PopoverTrigger>
-          <PopoverContent
-            side="top"
-            className="w-full p-2">
-            {message.trim() || isMobile ? (
-              <div className="flex gap-2">
-                <Link
-                  href="#"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "h-9 w-9",
-                    "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-                  )}
-                >
-                  <Mic size={20} className="text-muted-foreground" />
-                </Link>
-                {BottombarIcons.map((icon, index) => (
-                  <Link
-                    key={index}
-                    href="#"
-                    className={cn(
-                      buttonVariants({ variant: "ghost", size: "icon" }),
-                      "h-9 w-9",
-                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-                    )}
-                  >
-                    <icon.icon size={20} className="text-muted-foreground" />
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Link
-                href="#"
-                className={cn(
-                  buttonVariants({ variant: "ghost", size: "icon" }),
-                  "h-9 w-9",
-                  "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-                )}
-              >
-                <Mic size={20} className="text-muted-foreground" />
-              </Link>
-            )}
-          </PopoverContent>
-        </Popover>
+        
         {!message.trim() && !isMobile && (
           <div className="flex">
             {BottombarIcons.map((icon, index) => (
@@ -235,7 +194,7 @@ export default function ChatBottombar({
             onKeyDown={handleKeyPress}
             onChange={handleInputChange}
             name="message"
-            placeholder="Aa"
+            placeholder="Type your message..."
             className=" w-full border rounded-full flex items-center h-9 resize-none overflow-hidden bg-background"
           ></Textarea>
           <div className="absolute right-2 bottom-0.5  ">
@@ -249,17 +208,11 @@ export default function ChatBottombar({
         </motion.div>
 
         {message.trim() ? (
-          <Link
-            href="#"
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon" }),
-              "h-9 w-9",
-              "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white shrink-0"
-            )}
+          <Button
             onClick={handleSend}
           >
-            <SendHorizontal size={20} className="text-muted-foreground" />
-          </Link>
+            Send
+          </Button>
         ) : (
           <Link
             href="#"
