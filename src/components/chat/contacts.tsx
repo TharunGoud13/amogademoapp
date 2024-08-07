@@ -25,10 +25,10 @@ async function getContacts() {
 const Contacts = async () => {
     const contacts = await getContacts();
     const session = await auth()
-    console.log("email----",session?.user?.email)
+    // console.log("email----",session?.user?.email)
 
     const currentUser = contacts.find((user: any) => user?.user_email === session?.user?.email)
-    console.log("user--", currentUser)
+    // console.log("user--", currentUser)
 
         return <ClientContacts contacts={contacts} currentUser={currentUser}/>
 }

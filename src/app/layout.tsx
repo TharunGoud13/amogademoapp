@@ -6,6 +6,7 @@ import Providers from "@/components/layout/providers";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import NextTopLoader from 'nextjs-toploader';
+import { Toaster } from "@/components/ui/toaster";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,20 +22,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const headersList = headers();
-  const pathname = headersList.get('x-pathname') || '/';
-
-  const hideTopBar = pathname === '/login' || pathname === '/storejoin';
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <NextTopLoader/>
-        <Providers session={session}>
-          <div>
-            {!hideTopBar && <TopBar />}           
+        <Providers session={session}>          
             {children}
-          </div>
+            <Toaster />
         </Providers>
       </body>
     </html>

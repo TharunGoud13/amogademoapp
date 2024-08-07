@@ -10,46 +10,68 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
+import { signIn,useSession } from 'next-auth/react';
 // import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import GoogleSignInButton from '../google-auth-button';
 import GithubSignInButton from '../github-auth-button'; 
 import LinkedInSignInButton from '../linkedin-auth-button';
 import Link from 'next/link';
-import { useToast } from '../ui/use-toast';
+import { useRouter } from 'next/navigation';
+import {toast} from '../ui/use-toast'
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' }),
+  email: z.string().email({ message: 'Enter a valid email address' }).min(2,{ message: 'Enter valid email ' }),
   password: z.string().nonempty({ message: 'Password is required' }),
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
-  const {toast} = useToast();
-  // const searchParams = useSearchParams();
-  // const callbackUrl = searchParams.get('callbackUrl');
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const {data:session,status} = useSession(); 
   const defaultValues = {
     email: '',
     password: '',
   };
+
+  console.log("session",session)
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues
   });
 
-  const onSubmit =  (data: UserFormValue) => {
-    // Print all form values
-    console.log(data);
-    // Handle form submission, such as sending data to your API or authentication logic
-    // signIn('credentials', {
-    //   email: data.email,
-    //   callbackUrl: callbackUrl ?? '/dashboard'
-    // });
+
+  const onSubmit = async (data: UserFormValue) => {
+    setLoading(true);
+    try {
+      const result:any = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      // if (result?.url) {
+      //   throw new Error(result.error);
+      // }
+      if (!result?.error) { 
+        router.push('/chat');
+      }
+      else {
+        let text:any = document.getElementById("error-text")
+        text.textContent = "Invalid credentials, please try again.";
+        toast({description:"Invalid credentials, please try again.",variant:"destructive"});
+        router.push('/login');
+      }
+    } catch (error) {
+      router.push('/login'); 
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -95,6 +117,7 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          <p id="error-text" className='font-md text-red-500'></p>
           
           <Button disabled={loading} className="ml-auto w-full" type="submit">
             Login

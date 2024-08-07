@@ -24,8 +24,8 @@ export function ChatLayout({
   const [isMobile, setIsMobile] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
 
-  const socket = io("http://localhost:3001");
-  // const socket = io("https://chat-service-luje.onrender.com")
+  // const socket = io("http://localhost:3001");
+  const socket = io("https://chat-service-luje.onrender.com")
 
   useEffect(() => {
     // emit - send event from client to server
@@ -55,7 +55,7 @@ export function ChatLayout({
       try {
         const url = `${GET_CHAT_GROUP_USERS}`;
         const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
 
         const requestOptions: RequestInit = {
           method: "GET",

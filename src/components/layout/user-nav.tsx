@@ -21,9 +21,10 @@ export default  async function UserNav() {
   return (
     <DropdownMenu>
   <DropdownMenuTrigger>
+    {session?.user?.image ?
     <Avatar>
       <Image src={session?.user?.image as string} alt="user-profile" height={100} width={100} />
-    </Avatar>
+    </Avatar> : <Avatar><AvatarFallback>{session?.user?.name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>}
   </DropdownMenuTrigger>
   <DropdownMenuContent className=" fixed left-[-200px] top-[20px] ">
     <DropdownMenuLabel>{session?.user?.name}</DropdownMenuLabel>

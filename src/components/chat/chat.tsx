@@ -35,15 +35,16 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
   const fetchMessages = useCallback(async() => {
     try{
       const myHeaders = new Headers();
-      myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
-    
+      myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+      
       const requestOptions: RequestInit = {
         method: "GET",
         headers: myHeaders,
         redirect: "follow"
       };
-    
-      const response = await fetch(`${GET_CHAT_MESSAGES}${contactData[0].user_catalog_id}`, requestOptions);
+      
+      const response = await fetch(`${GET_CHAT_MESSAGES}${contactData[0]?.user_catalog_id}`, requestOptions);
+      
       const data = await response.json();
       setMessages(data)
       return data;

@@ -103,11 +103,13 @@ export default function ChatBottombar({
       };
 
       const myHeaders = new Headers();
-      myHeaders.append("Authorization", `Bearer ${process.env.GET_ONE_CONTACT_KEY}`);
+      myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+      myHeaders.append("Content-Type", "application/json");
     
       const requestOptions: RequestInit = {
-        method: "GET",
+        method: "POST",
         headers: myHeaders,
+        body:JSON.stringify(payload),
         redirect: "follow"
       };
 
