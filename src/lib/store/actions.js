@@ -1,9 +1,26 @@
 // Action Types
-export const FETCH_DATA_REQUEST = 'FETCH_DATA_REQUEST';
-export const FETCH_DATA_SUCCESS = 'FETCH_DATA_SUCCESS';
-export const FETCH_DATA_FAILURE = 'FETCH_DATA_FAILURE';
+export const GET_CHAT_GROUP = "GET_CHAT_GROUP";
+export const GET_CHAT_GROUP_SUCCESS = "GET_CHAT_GROUP_SUCCESS";
+export const GET_CHAT_GROUP_FAILURE = "GET_CHAT_GROUP_FAILURE";
 
 // Action Creators
-export const fetchDataRequest = () => ({ type: FETCH_DATA_REQUEST });
-export const fetchDataSuccess = (data) => (console.log("ddddd",data),{ type: FETCH_DATA_SUCCESS, payload: data });
-export const fetchDataFailure = (error) => ({ type: FETCH_DATA_FAILURE, payload: error });
+export const getChatGroup = (payload) => {
+    return{
+        type: GET_CHAT_GROUP,
+        payload
+    }
+}
+
+export const getChatGroupSuccess = (payload) => {
+    return{
+        type: GET_CHAT_GROUP_SUCCESS,
+        payload
+    }
+}
+
+export const getChatGroupFailure = (error) => {
+    return{
+        type: GET_CHAT_GROUP_FAILURE,
+        payload: error
+    }
+}

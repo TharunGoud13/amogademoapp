@@ -1,22 +1,21 @@
-import { FETCH_DATA_REQUEST, FETCH_DATA_SUCCESS, FETCH_DATA_FAILURE } from './actions';
+import { GET_CHAT_GROUP,GET_CHAT_GROUP_SUCCESS,GET_CHAT_GROUP_FAILURE } from './actions';
 
 // Initial State
 const initialState = {
-  data: [],
-  loading: false,
-  error: null,
+  getChatGroupResponse:[],
+  getChatGroupLoading: false,
+  getChatGroupError: null
 };
 
 // Reducer
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_DATA_REQUEST:
-      return { ...state, loading: true, error: null };
-    case FETCH_DATA_SUCCESS:
-        console.log(action.payload);
-      return { ...state, loading: false, data: action.payload };
-    case FETCH_DATA_FAILURE:
-      return { ...state, loading: false, error: action.payload };
+    case GET_CHAT_GROUP:
+      return { ...state, getChatGroupLoading: true, error: null };
+    case GET_CHAT_GROUP_SUCCESS:
+      return { ...state, getChatGroupLoading: false, getChatGroupResponse: action.payload };
+    case GET_CHAT_GROUP_FAILURE:
+      return { ...state, getChatGroupLoading: false, getChatGroupError: action.payload };
     default:
       return state;
   }

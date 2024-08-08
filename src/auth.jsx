@@ -48,7 +48,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } =  NextAuth(
 
           if (user) {
             // Return user object if credentials are valid
-            return { id: user.user_catalog_id, email: user.user_email, name: user.user_name,mobile:user.user_mobile,business_number:user.business_number, picture:user.user_picture };
+            return { id: user.user_catalog_id, email: user.user_email, name: user.user_name,mobile:user.user_mobile,business_number:user.business_number, picture:user.user_picture,business_name: user.business_name };
           } else {
             // Return null if user data is invalid
             return null;
@@ -77,6 +77,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } =  NextAuth(
         session.user.name = token?.name;
         session.user.mobile = token?.user?.mobile;
         session.user.business_number = token?.user?.business_number;
+        session.user.business_name = token?.user?.business_name;
         
       }
       return session;

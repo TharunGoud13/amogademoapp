@@ -1,7 +1,10 @@
 "use client"
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import CreateGroupForm from "@/components/chat/createGroupForm";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const staticTabs = [
   { tab: "Contacts", route: "/chat" },
@@ -9,6 +12,7 @@ const staticTabs = [
 ];
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
+  const [displayForm,setDisplayForm] = useState(false)
     const pathname = usePathname();
   const segments = pathname.split("/");
   
@@ -33,6 +37,14 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
             </div>
           ))}
         </div>
+        <Popover>
+          <PopoverTrigger asChild>
+          <Button onClick={() => setDisplayForm(!displayForm)}>Add Group</Button>
+          </PopoverTrigger>
+          <PopoverContent className="relative left-[-32px] mt-2 w-[25vw]">
+          {<CreateGroupForm onClose={() => setDisplayForm(false)}/>}
+          </PopoverContent>
+        </Popover>
       </div>
       {children}
     </main>

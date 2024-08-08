@@ -102,4 +102,7 @@ export interface User {
     avatar: string;
     messages: { id: number; avatar: string; name: string; message: string; }[];
     name: string;
+    mobile: string | number;
+    business_name: string;
+    business_number:string | number;
 }
