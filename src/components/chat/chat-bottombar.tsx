@@ -31,17 +31,19 @@ interface ChatBottombarProps {
   contactData:any;
   replyTo:any;
   setReplyTo:any;
+  groupsData:any
 }
 
 export const BottombarIcons = [ { icon: Paperclip }];
 
 export default function ChatBottombar({
-  isMobile, session, socket, setMessages, addMessage,contactData,replyTo,setReplyTo
+  isMobile, session, socket, setMessages, addMessage,contactData,replyTo,setReplyTo,groupsData
 }: ChatBottombarProps) {
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // getting message receiver_user_id from contactData from userCatalog api
-  let receiver_user_id = contactData[0]?.user_catalog_id;
+  let receiver_user_id = contactData && contactData[0]?.user_catalog_id
+  let receiver_group_id = groupsData && groupsData[0]?.chat_group_id
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
@@ -83,6 +85,7 @@ export default function ChatBottombar({
         chat_message: message.trim(),
         reactions: [],
         receiver_user_id: receiver_user_id,
+        receiver_group_id: receiver_group_id,
         sender_id: sender_id,
         room: "user",
         sender_display_name: userData?.user_name,
@@ -96,6 +99,7 @@ export default function ChatBottombar({
         chat_message: message.trim(),
         reactions: [],
         receiver_user_id: receiver_user_id,
+        receiver_group_id:receiver_group_id,
         sender_id: sender_id,
         chat_message_id:newMessageId,
 

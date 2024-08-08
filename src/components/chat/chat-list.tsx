@@ -18,7 +18,8 @@ interface ChatListProps {
   socket: any;
   setMessages: any;
   addMessage: any;
-  contactData: any
+  contactData: any;
+  groupsData:any
 }
 
 export function ChatList({
@@ -28,7 +29,7 @@ export function ChatList({
   setMessages,
   isMobile,
   session,
-  socket, addMessage
+  socket, addMessage,groupsData
 }: ChatListProps) {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [replyTo, setReplyTo] = useState<any>(null);
@@ -39,8 +40,9 @@ export function ChatList({
   const cookiesdata = Cookies.get('currentUser')
   const userData = cookiesdata ? JSON.parse(cookiesdata) : null
   const currentUserId = userData?.user_catalog_id
+  console.log("currentUserId----", currentUserId)
 
-  console.log("messages----",messages)
+  console.log("session----",session)
 
   React.useEffect(() => {
     if (messagesContainerRef.current) {
@@ -121,7 +123,7 @@ export function ChatList({
                 {message.sender_id != currentUserId && (
                   <Avatar className="flex justify-center items-center">
                     <AvatarFallback className="flex-1">
-                      {contactData[0]?.user_name?.charAt(0).toUpperCase()}
+                      {contactData && contactData[0]?.user_name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                     <AvatarImage
                       src={message.avatar}
@@ -167,7 +169,7 @@ export function ChatList({
                 {message.sender_id == currentUserId && (
                   <Avatar className="flex justify-center items-center">
                     <AvatarImage
-                      src={session?.user?.image}
+                      src={session?.user?.image ? session?.user?.image : session?.user?.name?.charAt(0).toUpperCase()}
                       alt={message.name}
                       width={6}
                       height={6}
@@ -207,7 +209,8 @@ export function ChatList({
 
       <ChatBottombar
         contactData={contactData} addMessage={addMessage} setMessages={setMessages} socket={socket}
-        isMobile={isMobile} session={session} replyTo={replyTo} setReplyTo={setReplyTo} />
+        isMobile={isMobile} session={session} replyTo={replyTo} setReplyTo={setReplyTo}
+        groupsData={groupsData} />
     </div>
   );
 }

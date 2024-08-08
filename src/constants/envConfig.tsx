@@ -6,5 +6,5 @@ export const GET_ONE_CONTACT_API = "https://no0wgko.219.93.129.146.sslip.io/user
 export const GET_GROUPS="https://no0wgko.219.93.129.146.sslip.io/chat_group"
 export const GET_SINGLE_GROUP="https://no0wgko.219.93.129.146.sslip.io/chat_group?chat_group_id=eq."
 export const GET_CHAT_GROUP_USERS="https://no0wgko.219.93.129.146.sslip.io/chat_group_users"
-export const GET_CHAT_MESSAGES="https://no0wgko.219.93.129.146.sslip.io/chat_message?receiver_user_id=eq."
+export const GET_CHAT_MESSAGES="https://no0wgko.219.93.129.146.sslip.io/chat_message"
 export const CREATE_CHAT_MESSAGE="https://no0wgko.219.93.129.146.sslip.io/chat_message"

@@ -42,9 +42,16 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
         headers: myHeaders,
         redirect: "follow"
       };
+
+      let url = `${GET_CHAT_MESSAGES}`
       
-      const response = await fetch(`${GET_CHAT_MESSAGES}${contactData[0]?.user_catalog_id}`, requestOptions);
-      
+      if(contactData && contactData.length > 0){
+        url += `?receiver_user_id=eq.${contactData[0].user_catalog_id}`
+      }
+      else{
+        url += `?receiver_group_id=eq.${groupsData && groupsData[0] && groupsData[0].chat_group_id}`
+      }
+      const response = await fetch(url, requestOptions);
       const data = await response.json();
       setMessages(data)
       return data;
@@ -52,7 +59,7 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
     catch(error){
       console.log("error fetching messages----", error)
     }
-  },[contactData])
+  },[contactData,groupsData])
 
   useEffect(() => {
     // Join the room when the component mounts or when the selected user changes
@@ -89,6 +96,7 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
         session={session}
         socket={socket}
         contactData={contactData}
+        groupsData={groupsData}
       />
     </div>
   );
