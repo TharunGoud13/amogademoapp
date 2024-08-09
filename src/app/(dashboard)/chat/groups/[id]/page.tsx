@@ -1,4 +1,4 @@
-import { ChatLayout } from "@/components/chat/chat-layout";
+import  ChatLayout  from "@/components/chat/chat-layout";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { GET_SINGLE_GROUP } from "@/constants/envConfig";
@@ -28,7 +28,6 @@ const ChatPage = async ({ params }: { params: { id: string } }) => {
   const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
 
   const groupsData = await getGroupData(params.id);
-  console.log("groupsData----",groupsData)
 
 
   return (

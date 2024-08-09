@@ -40,9 +40,6 @@ export function ChatList({
   const cookiesdata = Cookies.get('currentUser')
   const userData = cookiesdata ? JSON.parse(cookiesdata) : null
   const currentUserId = userData?.user_catalog_id
-  console.log("currentUserId----", currentUserId)
-
-  console.log("session----",session)
 
   React.useEffect(() => {
     if (messagesContainerRef.current) {

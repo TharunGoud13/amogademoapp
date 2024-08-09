@@ -1,4 +1,4 @@
-import { ChatLayout } from "@/components/chat/chat-layout";
+import  ChatLayout  from "@/components/chat/chat-layout";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { GET_ONE_CONTACT_API } from "@/constants/envConfig";

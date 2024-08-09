@@ -11,10 +11,9 @@ interface ChatProps {
   socket: any;
   contactData: any;
   groupsData:any;
-  groupUsers:any
 }
 
-export  function Chat({ selectedUser, isMobile, session, socket,contactData,groupsData,groupUsers }: ChatProps) {
+export  function Chat({ selectedUser, isMobile, session, socket,contactData,groupsData }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   // console.log("messages----",messages)
@@ -85,7 +84,7 @@ export  function Chat({ selectedUser, isMobile, session, socket,contactData,grou
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <ChatTopbar selectedUser={selectedUser} contactData={contactData} groupsData={groupsData} 
-        groupUsers={groupUsers}
+        
         />
       <ChatList
         messages={messages}

@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Chat } from "./chat";
 import { io } from "socket.io-client";
-import { GET_CHAT_GROUP_USERS } from "@/constants/envConfig";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
@@ -13,16 +12,15 @@ interface ChatLayoutProps {
   groupsData: any;
 }
 
-export function ChatLayout({
+const ChatLayout:FC<any> = ({
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize,
   session,
-  contactData, groupsData
-}: ChatLayoutProps) {
+  contactData, groupsData,getChatGroupUsers,getChatGroupUsersResponse
+}) => {
   const [selectedUser, setSelectedUser] = React.useState(session?.user);
   const [isMobile, setIsMobile] = useState(false);
-  const [groupUsers, setGroupUsers] = useState([]);
 
   // const socket = io("http://localhost:3001");
   const socket = io("https://chat-service-luje.onrender.com")
@@ -49,35 +47,6 @@ export function ChatLayout({
     };
   }, []);
 
-  // api for getting chat group users
-  useEffect(() => {
-    const getChatGroupUsers = async () => {
-      try {
-        const url = `${GET_CHAT_GROUP_USERS}`;
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
-
-        const requestOptions: RequestInit = {
-          method: "GET",
-          headers: myHeaders,
-          redirect: "follow"
-        };
-
-        const response = await fetch(url, requestOptions);
-        if (!response.ok) {
-          throw new Error("Failed to fetch group users");
-        }
-        const data = await response.json();
-        setGroupUsers(data);
-      }
-      catch (error) {
-        console.error("Error fetching group users:", error);
-      }
-    }
-    getChatGroupUsers();
-
-  },[])
-
   return (
     <Chat
       selectedUser={selectedUser}
@@ -86,7 +55,8 @@ export function ChatLayout({
       socket={socket}
       contactData={contactData}
       groupsData={groupsData}
-      groupUsers={groupUsers}
     />
   );
 }
+
+export default ChatLayout;
