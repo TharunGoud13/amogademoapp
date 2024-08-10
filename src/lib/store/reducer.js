@@ -11,6 +11,7 @@ import {
   GROUP_USERS,
   GROUP_USERS_SUCCESS,
   GROUP_USERS_FAILURE,
+  BOM_RAW,BOM_RAW_SUCCESS,BOM_RAW_FAILURE
 } from "./actions";
 
 // Initial State
@@ -27,6 +28,9 @@ const initialState = {
   groupUsersResponse: [],
   groupUsersLoading: false,
   groupUsersError: null,
+  bomRawResponse: [],
+  bomRawLoading: false,
+  bomRawError: null,
 };
 
 // Reducer
@@ -104,6 +108,25 @@ const reducer = (state = initialState, action) => {
         groupUsersLoading: false,
         groupUsersError: action.payload,
       };
+    case BOM_RAW:
+      return {
+        ...state,
+        bomRawLoading: true,
+        bomRawError: null,
+      };
+    case BOM_RAW_SUCCESS:
+      return {
+        ...state,
+        bomRawLoading: false,
+        bomRawResponse: action.payload,
+      };
+    case BOM_RAW_FAILURE:
+      return {
+        ...state,
+        bomRawLoading: false,
+        bomRawError: action.payload,
+      };
+    // Handle other cases as needed...
     default:
       return state;
   }

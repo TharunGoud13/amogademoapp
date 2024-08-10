@@ -9,11 +9,12 @@ import {
   getChatGroupUsersSuccess,
   getChatGroupUsersFailure,
   GROUP_USERS,
-  groupUsersSuccess,groupUsersFailure
+  groupUsersSuccess,groupUsersFailure,
+  BOM_RAW,bomRawSuccess,bomRawFailure
 } from "./actions";
 import { takeLatest, call, put } from "redux-saga/effects";
 import axios from "axios";
-import { GET_CHAT_GROUP_USERS, GET_CONTACTS_API, GET_GROUPS, GET_USERS_OF_GROUP } from "@/constants/envConfig";
+import { BOM_RAW_URL, GET_CHAT_GROUP_USERS, GET_CONTACTS_API, GET_GROUPS, GET_USERS_OF_GROUP } from "@/constants/envConfig";
 
 
 const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8"
@@ -79,9 +80,30 @@ function* groupUsersSaga({payload}) {
 
 }
 
+function* bomRawSaga({payload}) {
+  console.log("payload---",payload)
+  let url = `${BOM_RAW_URL}`
+  if(payload){
+    url += `?part_name=eq.${payload}`
+  }
+  console.log("url---",url)
+  try{
+    const response = yield call(axios.get,url,{
+      headers:{
+        Authorization:token
+      }
+    })
+    yield put(bomRawSuccess(response.data));
+  }
+  catch(error){
+    yield put(bomRawFailure(error));
+  }
+}
+
 export default function* rootSaga() {
   yield takeLatest(GET_CHAT_GROUP, getUsersSaga);
   yield takeLatest(GET_USERS, getUsersDataSaga);
   yield takeLatest(GET_CHAT_GROUP_USERS_LIST, getChatGroupUsersSaga);
   yield takeLatest(GROUP_USERS, groupUsersSaga);
+  yield takeLatest(BOM_RAW, bomRawSaga);
 }

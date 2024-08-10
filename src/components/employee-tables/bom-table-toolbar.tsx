@@ -12,28 +12,41 @@ import { DataTableFacetedFilter } from "./bom-table-faceted-filter"
 
 // import { priorities, statuses } from "../data/data"
 import { priorities,statuses } from "@/constants/taskdata"
+import { FC, useState } from "react"
+import { bomRaw } from "@/lib/store/actions"
+import { connect } from "react-redux"
 // import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
 }
 
-export function DataTableToolbar<TData>({
-  table,
-}: DataTableToolbarProps<TData>) {
+
+
+const  DataTableToolbar:FC<any> = ({
+  table,bomRaw
+}) => {
+  const [searchValue,setSearchValue] = useState("")
   const isFiltered = table.getState().columnFilters.length > 0
+
+  const handleSearch = (event:any) => {
+    if(event.key === "Enter") {
+      bomRaw(searchValue)
+      console.log("value---",searchValue)
+  }
+}
 
   return (
     <div className="flex  items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        {/* <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          // onChange={(event) =>
-          //   table.getColumn("title")?.setFilterValue(event.target.value)
-          // }
+        <Input
+          placeholder="Filter Part Name..."
+          onChange={(event) =>
+            setSearchValue(event.target.value)
+          }
+          onKeyPress={(e) => handleSearch(e)}
           className="h-8 w-[150px] lg:w-[250px]"
-        /> */}
+        />
         {/* {table.getColumn("status") && (
           <DataTableFacetedFilter
             column={table.getColumn("status")}
@@ -63,3 +76,10 @@ export function DataTableToolbar<TData>({
     </div>
   )
 }
+
+const mapStateToProps = (state: any) => ({})
+
+const mapDispatchToProps = {
+  bomRaw
+}
+export default connect(mapStateToProps,mapDispatchToProps)(DataTableToolbar);

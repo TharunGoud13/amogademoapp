@@ -29,7 +29,7 @@ import {
 
 
 import { DataTablePagination } from "./bom-table-pagination"
-import { DataTableToolbar } from "./bom-table-toolbar"
+import  DataTableToolbar  from "./bom-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]

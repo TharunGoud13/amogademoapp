@@ -17,6 +17,11 @@ export const GROUP_USERS = "GROUP_USERS";
 export const GROUP_USERS_SUCCESS = "GROUP_USERS_SUCCESS";
 export const GROUP_USERS_FAILURE = "GROUP_USERS_FAILURE";
 
+//bom raw
+export const BOM_RAW = "BOM_RAW";  
+export const BOM_RAW_SUCCESS = "BOM_RAW_SUCCESS";
+export const BOM_RAW_FAILURE = "BOM_RAW_FAILURE";
+
 // Action Creators
 export const getChatGroup = (payload) => {
     return{
@@ -99,6 +104,27 @@ export const groupUsersSuccess = (payload) => {
 export const groupUsersFailure = (error) => {
     return{
         type: GROUP_USERS_FAILURE,
+        payload: error
+    }
+}
+
+export const bomRaw = (payload) => {
+    return{
+        type: BOM_RAW,
+        payload
+    }
+}
+
+export const bomRawSuccess = (payload) => {
+    return{
+        type: BOM_RAW_SUCCESS,
+        payload
+    }
+}
+
+export const bomRawFailure = (error) => {
+    return{
+        type: BOM_RAW_FAILURE,
         payload: error
     }
 }
