@@ -25,6 +25,8 @@ const ChatLayout: FC<any> = ({
       : io("https://chat-service-luje.onrender.com");
   }, []);
 
+  console.log("socket----",socket)
+
   const handleConnect = useCallback(() => {
     console.log("Socket connected");
     if (session?.user?.id) {

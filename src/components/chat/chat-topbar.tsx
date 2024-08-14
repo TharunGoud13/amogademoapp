@@ -48,7 +48,7 @@ const currentGroupUsers = groupUsers && groupUsers.filter(((user: any,) => user?
 
 
 const userTypingData = typingUsers[displayData?.user_catalog_id];
-console.log("isUserTyping", userTypingData)
+
   return (
     <div className="w-full h-20 flex p-4 justify-between items-center border-b">
       <div className="flex items-center gap-2">
