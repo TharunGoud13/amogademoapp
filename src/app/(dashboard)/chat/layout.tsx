@@ -28,7 +28,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <main className="flex flex-col h-[calc(100dvh)] p-4 md:px-8 pb-20 gap-4">
+    <main className="flex flex-col  p-4 md:px-8 pb-20 gap-4">
       <div className="flex justify-between w-full items-center">
         <div className="flex gap-5">
           {tabs.map((tab, index) => (

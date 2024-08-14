@@ -17,7 +17,7 @@ import axios from "axios";
 import { BOM_RAW_URL, GET_CHAT_GROUP_USERS, GET_CONTACTS_API, GET_GROUPS, GET_USERS_OF_GROUP } from "@/constants/envConfig";
 
 
-const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8"
+const token = `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
 function* getUsersSaga() {
   try {
     const response = yield call(axios.get, GET_GROUPS, {
@@ -53,7 +53,6 @@ function* getChatGroupUsersSaga() {
         Authorization:token
       },
     })
-    console.log("response---",response.data)
     yield put(getChatGroupUsersSuccess(response.data));
   }
   catch (error) {
@@ -62,16 +61,13 @@ function* getChatGroupUsersSaga() {
 }
 
 function* groupUsersSaga({payload}) {
-  console.log("payload---",payload)
   const url = `${GET_USERS_OF_GROUP}${payload}`
-  console.log("url---",url)
   try{
     const response = yield call(axios.get, url,{
       headers:{
         Authorization:token
       }
     })
-    console.log("groupUsers response---",response.data)
     yield put(groupUsersSuccess(response.data));
   }
   catch (error) {
@@ -81,12 +77,10 @@ function* groupUsersSaga({payload}) {
 }
 
 function* bomRawSaga({payload}) {
-  console.log("payload---",payload)
   let url = `${BOM_RAW_URL}`
   if(payload){
     url += `?part_name=eq.${payload}`
   }
-  console.log("url---",url)
   try{
     const response = yield call(axios.get,url,{
       headers:{

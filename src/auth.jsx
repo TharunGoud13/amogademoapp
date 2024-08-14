@@ -29,7 +29,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } =  NextAuth(
 
         try {
           const myHeaders = new Headers();
-          myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+          myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
           myHeaders.append("Content-Type", "application/json");
           const response = await fetch('https://no0wgko.219.93.129.146.sslip.io/user_catalog', {
             method: 'GET',

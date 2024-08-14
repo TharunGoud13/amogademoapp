@@ -11,3 +11,4 @@ export const CREATE_CHAT_MESSAGE="https://no0wgko.219.93.129.146.sslip.io/chat_m
 export const GET_USERS_OF_GROUP="https://no0wgko.219.93.129.146.sslip.io/chat_group_users?group_id=eq."
 export const DELETE_USERS_FROM_GROUP="https://no0wgko.219.93.129.146.sslip.io/chat_group_users"
 export const BOM_RAW_URL="https://no0wgko.219.93.129.146.sslip.io/bom_raw"
+export const GET_FILE_MESSAGES = "https://no0wgko.219.93.129.146.sslip.io/document"

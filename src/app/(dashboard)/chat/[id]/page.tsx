@@ -30,7 +30,7 @@ const ChatPage = async ({ params }: { params: { id: string } }) => {
 
 
   return (
-    <div className="z-10 border rounded-lg w-full h-[90%] text-sm lg:flex">
+    <div className="z-10 border rounded-lg w-full h-full text-sm lg:flex">
       <ChatLayout 
         defaultLayout={defaultLayout}
         session={session}

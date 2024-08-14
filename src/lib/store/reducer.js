@@ -11,7 +11,8 @@ import {
   GROUP_USERS,
   GROUP_USERS_SUCCESS,
   GROUP_USERS_FAILURE,
-  BOM_RAW,BOM_RAW_SUCCESS,BOM_RAW_FAILURE
+  BOM_RAW,BOM_RAW_SUCCESS,BOM_RAW_FAILURE,userActiveStatus,
+  USER_ACTIVE_STATUS
 } from "./actions";
 
 // Initial State
@@ -31,6 +32,7 @@ const initialState = {
   bomRawResponse: [],
   bomRawLoading: false,
   bomRawError: null,
+  userActiveStatusResponse:[]
 };
 
 // Reducer
@@ -126,6 +128,11 @@ const reducer = (state = initialState, action) => {
         bomRawLoading: false,
         bomRawError: action.payload,
       };
+      case USER_ACTIVE_STATUS:
+        return{
+          ...state,
+          userActiveStatusResponse: action.payload
+        }
     // Handle other cases as needed...
     default:
       return state;

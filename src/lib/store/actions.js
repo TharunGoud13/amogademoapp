@@ -22,6 +22,9 @@ export const BOM_RAW = "BOM_RAW";
 export const BOM_RAW_SUCCESS = "BOM_RAW_SUCCESS";
 export const BOM_RAW_FAILURE = "BOM_RAW_FAILURE";
 
+//user active status
+export const USER_ACTIVE_STATUS = "USER_ACTIVE_STATUS";
+
 // Action Creators
 export const getChatGroup = (payload) => {
     return{
@@ -126,5 +129,12 @@ export const bomRawFailure = (error) => {
     return{
         type: BOM_RAW_FAILURE,
         payload: error
+    }
+}
+
+export const userActiveStatus = (payload) => {
+    return{
+        type: USER_ACTIVE_STATUS,
+        payload
     }
 }

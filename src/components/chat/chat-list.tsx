@@ -5,9 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ChatBottombar from "./chat-bottombar";
 import { AnimatePresence, motion } from "framer-motion";
 import Cookies from 'js-cookie'
-import { Reply, X, Smile } from "lucide-react";
+import { Reply, X, Smile, Paperclip } from "lucide-react";
 import ReactionPopover from "../reactionpopover";
 import { CREATE_CHAT_MESSAGE } from "@/constants/envConfig";
+import { FaFile } from "react-icons/fa6";
 
 
 interface ChatListProps {
@@ -19,7 +20,7 @@ interface ChatListProps {
   setMessages: any;
   addMessage: any;
   contactData: any;
-  groupsData:any
+  groupsData: any
 }
 
 export function ChatList({
@@ -29,12 +30,12 @@ export function ChatList({
   setMessages,
   isMobile,
   session,
-  socket, addMessage,groupsData
+  socket, addMessage, groupsData
 }: ChatListProps) {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [replyTo, setReplyTo] = useState<any>(null);
   const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
-  
+  const [files, setFiles] = useState<any>([])
 
   // getting current logged in user id to align messages based on login user and message receiving person
   const cookiesdata = Cookies.get('currentUser')
@@ -75,10 +76,16 @@ export function ChatList({
     }));
   };
 
-  const handleReaction = (messageId: any,emoji: any) => {
-    console.log("Reaction added",messageId,emoji);
-  }  
-  
+  const handleReaction = (messageId: any, emoji: any) => {
+    console.log("Reaction added", messageId, emoji);
+  }
+
+  const handleFileUpload = (fileInfo: { id: string, name: string, url: string }) => {
+    setFiles((prevFiles: any) => [...prevFiles, fileInfo]);
+  };
+
+
+
   return (
     <div className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col">
       <div
@@ -147,8 +154,20 @@ export function ChatList({
                 </button>
 
                 <span className="bg-accent p-3 rounded-md max-w-xs relative">
-                {/* {console.log("reaction----",message.reactions)} */}
-                  {message.chat_message}
+                  {/* {console.log("message----",message)} */}
+                  {message?.document_file ?
+                    <div className="flex">
+                      <FaFile className="text-lg"/>
+                      
+                      {message.document_type.startsWith('image/') ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={`data:${message.document_type};base64,${message.document_file}`} alt={message.document_name} />
+                      ) : (
+                        <a href={`data:${message.document_type};base64,${message.document_file}`} download={message.document_name}> {message.document_name}</a>
+                      )}
+                      <p>{message?.document_type}</p>
+                    </div> :
+                    message?.chat_message}
                   {message.reactions && Array.isArray(message.reactions) && message.reactions.length > 0 && (
                     <div className="absolute bottom-0 left-0 transform translate-y-1/2 flex -space-x-1 flex-wrap">
                       {message.reactions.map((reaction: { emoji: string, user_id: string }, index: number) => (
@@ -207,7 +226,7 @@ export function ChatList({
       <ChatBottombar
         contactData={contactData} addMessage={addMessage} setMessages={setMessages} socket={socket}
         isMobile={isMobile} session={session} replyTo={replyTo} setReplyTo={setReplyTo}
-        groupsData={groupsData} />
+        groupsData={groupsData} setFiles={setFiles} onFileUpload={handleFileUpload} />
     </div>
   );
 }

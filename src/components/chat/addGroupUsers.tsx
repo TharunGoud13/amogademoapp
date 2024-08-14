@@ -10,7 +10,7 @@ import { GET_CHAT_GROUP_USERS } from '@/constants/envConfig'
 import { Skeleton } from '../ui/skeleton'
 
 const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData,getChatGroupUsers,getUsersLoading }) => {
-    console.log("groupsData", groupsData[0]?.chat_group_id)
+    
     useEffect(() => {
         getUsers(),
         getChatGroupUsers()
