@@ -18,7 +18,7 @@ import { useSession } from 'next-auth/react';
 import { FC, useEffect } from 'react';
 import { connect } from 'react-redux';
 
-const Dashboard:FC<any> = ({loginLog})  => {
+const Dashboard = ({loginLog}:any)  => {
   const { data: session }: any = useSession()
 
   const trackPageLoad = async () => {
