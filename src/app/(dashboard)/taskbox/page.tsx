@@ -10,7 +10,7 @@ import { columns } from "@/components/task-tables/task-columns"
 // import { UserNav } from "./components/user-nav"
 // import { taskSchema } from "./data/schema"
 import { taskSchema } from "@/constants/schema"
-import { TaskTable } from "@/components/task-tables/task-table"
+import  TaskTable from "@/components/task-tables/task-table"
 
 export const metadata: Metadata = {
   title: "Tasks",

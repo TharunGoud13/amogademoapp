@@ -1,5 +1,5 @@
 "use client"
-import { getChatGroupUsers, getUsers } from '@/lib/store/actions'
+import { getChatGroupUsers, getUsers, loginLog } from '@/lib/store/actions'
 import React, { FC, useEffect } from 'react'
 import { connect } from 'react-redux'
 import ClientContacts from './clientContacts'
@@ -8,15 +8,19 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import Image from 'next/image'
 import { GET_CHAT_GROUP_USERS } from '@/constants/envConfig'
 import { Skeleton } from '../ui/skeleton'
+import { context, trace } from '@opentelemetry/api'
+import IpAddress from '@/lib/IpAddress'
+import { useSession } from 'next-auth/react'
 
-const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData,getChatGroupUsers,getUsersLoading }) => {
-    
+const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData, getChatGroupUsers, getUsersLoading, loginLog }) => {
+    const {data: session} = useSession()
+
     useEffect(() => {
         getUsers(),
         getChatGroupUsers()
-    }, [getUsers,getChatGroupUsers])
+    }, [getUsers, getChatGroupUsers])
 
-    const handleAddUsersToGroup = async(contact: any) => {
+    const handleAddUsersToGroup = async (contact: any) => {
         const payload = {
             "status": contact?.status,
             "group_id": groupsData[0]?.chat_group_id,
@@ -38,45 +42,88 @@ const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData,getChat
             "created_user_id": null,
         }
         const myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+        myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify(payload);
 
-        const requestOptions:any = {
+        const requestOptions: any = {
             method: "POST",
             headers: myHeaders,
             body: raw,
             redirect: "follow"
-          };
-        
-        const response = await fetch(GET_CHAT_GROUP_USERS,requestOptions)
+        };
+        const tracer = trace.getTracer('add-user-to-group-tracer');
+        const span = tracer.startSpan('add-user-to-group-span');
+        const response = await fetch(GET_CHAT_GROUP_USERS, requestOptions)
         const result = await response.text();
-        if(response.status == 201){
+        if (response.status == 201) {
             await getChatGroupUsers()
+            context.with(trace.setSpan(context.active(), span), async () => {
+
+                // Call loginLog action with the relevant data
+                loginLog({
+                    description: 'User Added to Group Successfully',
+                    session: session?.user,
+                    event_type: "Add User to Group",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'POST',
+                    http_url: `${GET_CHAT_GROUP_USERS}`,
+                    response_status_code: 201,
+                    response_status: 'SUCCESS',
+
+                });
+                span.addEvent("add-user-to-group-tracer")
+                span.setAttribute("http.status_code", "201");
+                span.setAttribute("http.method", "POST");
+                span.setAttribute("http.url", `${GET_CHAT_GROUP_USERS}`);
+                span.setAttribute("http.status_message", "Success");
+                span.end();
+            });
         }
-        console.log("response---",response)
+        else{
+            context.with(trace.setSpan(context.active(), span), async () => {
+                // Call loginLog action with the relevant data
+                loginLog({
+                    description: 'Add User to Group Error',
+                    session: session?.user,
+                    event_type: "Add User to Group",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'POST',
+                    http_url: `${GET_CHAT_GROUP_USERS}`,
+                    response_status_code: 500,
+                    response_status: 'Failed',
+    
+                });
+                span.addEvent("add-user-to-group-failed")
+                span.setAttribute("http.status_code", 500);
+                span.setAttribute("http.method", "POST");
+                span.setAttribute("http.url", `${GET_CHAT_GROUP_USERS}`);
+                span.setAttribute("http.status_message", "Failure");
+                span.end();  
+            });
+        }
         return result
     }
 
-    if(getUsersLoading){
-        return(
+    if (getUsersLoading) {
+        return (
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-8 h-fit w-full">
-                {Array.from({length:5}).map((_,index) => (
+                {Array.from({ length: 5 }).map((_, index) => (
                     <div key={index} className="border p-2.5 transition ease-in-out delay-150 rounded-lg">
-                    <div className="flex gap-4 items-center">
-                      <Skeleton className="w-12 h-12 rounded-full" />
-                      <div className="space-y-1">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-4 w-24" />
-                      </div>
+                        <div className="flex gap-4 items-center">
+                            <Skeleton className="w-12 h-12 rounded-full" />
+                            <div className="space-y-1">
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-4 w-24" />
+                            </div>
+                        </div>
+                        <div className="space-y-2 text-muted-foreground pt-2.5">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-4 w-24" />
+                        </div>
                     </div>
-                    <div className="space-y-2 text-muted-foreground pt-2.5">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
-                  </div>
                 ))}
 
             </div>
@@ -117,12 +164,13 @@ const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData,getChat
 
 const mapStateToProps = (state: any) => ({
     getUsersResponse: state.getUsersResponse,
-    getUsersLoading:state.getUsersLoading
+    getUsersLoading: state.getUsersLoading
 })
 
 const mapDispatchToProps = {
     getUsers,
-    getChatGroupUsers
+    getChatGroupUsers,
+    loginLog
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddGroupUsers)

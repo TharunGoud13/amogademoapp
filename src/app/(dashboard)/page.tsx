@@ -1,4 +1,4 @@
-import { Mail } from "@/components/mail/mail";
+import  Mail  from "@/components/mail/mail";
 import { cookies } from "next/headers";
 import { FC } from "react";
 import { accounts, mails } from "@/components/mail/data";

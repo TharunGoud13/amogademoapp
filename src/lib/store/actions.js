@@ -25,6 +25,11 @@ export const BOM_RAW_FAILURE = "BOM_RAW_FAILURE";
 //user active status
 export const USER_ACTIVE_STATUS = "USER_ACTIVE_STATUS";
 
+// create log and insert to DB for user login
+export const LOGIN_LOG = "LOGIN_LOG";
+export const LOGIN_LOG_SUCCESS = "LOGIN_LOG_SUCCESS";
+export const LOGIN_LOG_FAILURE = "LOGIN_LOG_FAILURE";
+
 // Action Creators
 export const getChatGroup = (payload) => {
     return{
@@ -136,5 +141,26 @@ export const userActiveStatus = (payload) => {
     return{
         type: USER_ACTIVE_STATUS,
         payload
+    }
+}
+
+export const loginLog = (payload) => {
+    return{
+        type: LOGIN_LOG,
+        payload
+    }
+}
+
+export const loginLogSuccess = (payload) => {
+    return{
+        type: LOGIN_LOG_SUCCESS,
+        payload
+    }
+}
+
+export const loginLogFailure = (error) => {
+    return{
+        type: LOGIN_LOG_FAILURE,
+        payload: error
     }
 }

@@ -28,16 +28,23 @@ import {
 
 import { DataTablePagination } from "./product-table-pagination"
 import { DataTableToolbar } from "./product-table-toolbar"
+import { trace,context } from "@opentelemetry/api"
+import { useSession } from "next-auth/react"
+import IpAddress from "@/lib/IpAddress"
+import { loginLog } from "@/lib/store/actions"
+import { connect } from "react-redux"
+import { GET_ORDER_ITEMS } from "@/constants/envConfig"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function ProductTable<TData, TValue>({
+const ProductTable:React.FC<any> = ({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  loginLog
+}) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -45,6 +52,55 @@ export function ProductTable<TData, TValue>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const {data: session}:any = useSession()
+     
+        const trackPageLoad = async() => {
+        const tracer = trace.getTracer('mail--tracer');
+        
+        const span = tracer.startSpan('products-page-load', {
+            attributes: {
+                description: 'Products Page Viewed',
+                user_id: session?.user?.id,
+                user_name: session?.user?.name,
+                user_email: session?.user?.email,
+                event_type: "Mail Page",
+                user_ip_address:await IpAddress(),
+    
+            }
+        });
+        
+        context.with(trace.setSpan(context.active(), span), async() => {  
+            // Call loginLog action with the relevant data
+            loginLog({
+                description: 'Products Page Viewed',
+                event_type: "Products Page",  
+                session:session?.user,
+                user_ip_address: await IpAddress(),
+                http_method: 'GET',
+                http_url: `${GET_ORDER_ITEMS}`,
+                response_status_code: 200,
+                response_status: 'SUCCESS',
+            });
+            span.addEvent("products-page-loaded")
+            span.setAttribute("http.status_code", "200");
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.url", `${GET_ORDER_ITEMS}`);
+            span.end();
+        });
+        setTimeout(() => {
+            span.end();
+        }, 100);
+    
+        return () => {
+            if (span.isRecording()) {
+                span.end();
+            }
+        }};
+    
+
+    React.useEffect(() => {
+      trackPageLoad()
+    },[])
 
   const table = useReactTable({
     data,
@@ -125,3 +181,11 @@ export function ProductTable<TData, TValue>({
     </div>
   )
 }
+
+const mapStateToProps = (state:any) => ({})
+
+const mapDispatchToProps = {
+  loginLog
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(ProductTable);

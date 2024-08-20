@@ -19,10 +19,10 @@ import GoogleSignInButton from "../google-auth-button";
 import GithubSignInButton from "../github-auth-button";
 import LinkedInSignInButton from "../linkedin-auth-button";
 import Link from "next/link";
-import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { CREATE_USER_API, GET_CONTACTS_API } from "../../constants/envConfig";
 import {toast} from '../ui/use-toast'
+
 
 const formSchema = z.object({
   first_name: z.string().nonempty({ message: "First name is required" }),
@@ -51,7 +51,6 @@ const formSchema = z.object({
 
   });
 
-const CREATE_USER_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8"
 
 type UserFormValue = z.infer<typeof formSchema>;
 
@@ -95,20 +94,17 @@ export default function UserAuthForm() {
     }
 
     const myHeaders1 = new Headers();
-    myHeaders1.append("Authorization", `Bearer ${CREATE_USER_KEY}`);
+    myHeaders1.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
     myHeaders1.append("Content-Type", "application/json");
     const requestOptions1: any = {
       method: "POST",
       headers: myHeaders1,
       body: JSON.stringify(payload)
     }
-    console.log("payload---", payload)
 
     try {
       const response1 = await fetch(GET_CONTACTS_API, requestOptions1)
       const data = await response1.text()
-      console.log("data----",data)
-      console.log("response1----",response1.status)
       if(response1.status == 201) {
       toast({description:"User Created Successfully",variant:"default"})
       let text:any = document.getElementById("success-text");
@@ -116,41 +112,9 @@ export default function UserAuthForm() {
       }
       return data
     }
-    catch (error) {
-      console.log("error---", error)
+    catch (error:any) {
+      throw new Error("Error",error);
     }
-    // // const { password, retypePassword, ...formData } = data
-    // const myHeaders = new Headers();
-    // myHeaders.append("Authorization", `Bearer ${CREATE_USER_KEY}`);
-    // myHeaders.append("Content-Type", "application/json");
-    // const raw = JSON.stringify(data);
-    // const requestOptions: any = {
-    //   method: "POST",
-    //   headers: myHeaders,
-    //   body: raw,
-    //   redirect: "follow"
-    // };
-    // setLoading(true)
-    // const response = await fetch(CREATE_USER_API, requestOptions)
-    // const result = await response.text()
-    // setLoading(false)
-
-    // console.log("result", response.status)
-
-    // if (response.status == 201) {
-    //   // router.push("/")
-    //   let text: any = document.getElementById("success")
-    //   text.textContent = "User Created Successfully"
-
-    // }
-    // else {
-    //   console.log("Error creating user", result)
-    // }
-    // // Handle form submission, such as sending data to your API or authentication logic
-    // // signIn('credentials', {
-    // //   email: data.email,
-    // //   callbackUrl: callbackUrl ?? '/dashboard'
-    // // });
   };
 
   return (
@@ -244,6 +208,7 @@ export default function UserAuthForm() {
                     type="number"
                     placeholder="Mobile"
                     disabled={loading}
+                    inputMode="numeric"
                     {...field}
                   />
                 </FormControl>
@@ -280,6 +245,7 @@ export default function UserAuthForm() {
                     type="text"
                     placeholder="Business Number"
                     disabled={loading}
+                    inputMode="numeric"
                     {...field}
                   />
                 </FormControl>

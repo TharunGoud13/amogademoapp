@@ -1,4 +1,4 @@
-import { groupUsers } from '@/lib/store/actions'
+import { groupUsers, loginLog } from '@/lib/store/actions'
 import React, { FC, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Skeleton } from '../ui/skeleton'
@@ -7,8 +7,12 @@ import Image from 'next/image'
 import { MdDeleteOutline } from "react-icons/md";
 import { DELETE_USERS_FROM_GROUP } from '@/constants/envConfig'
 import { toast } from '../ui/use-toast'
+import { context, trace } from '@opentelemetry/api'
+import IpAddress from '@/lib/IpAddress'
+import { useSession } from 'next-auth/react'
 
-const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoading}) => {
+const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoading,loginLog}) => {
+    const {data:session} = useSession()
 
     useEffect(() => {
         groupUsers(id)
@@ -50,12 +54,54 @@ const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoad
             redirect: "follow"
           };
         const response = await fetch(`${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`,requestOptions)
-        
+        const tracer = trace.getTracer('delete-user-from-group-tracer');
+        const span = tracer.startSpan('delete-user-from-group-span');
           if(response.status == 204){
             toast({description:"User deleted successfully",variant:"default"})
+            context.with(trace.setSpan(context.active(), span), async () => {
+                loginLog({
+                    description: 'User Deleted Successfully',
+                    session: session?.user,
+                    event_type: "Delete User From Group Group",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'DELETE',
+                    http_url: `${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`,
+                    response_status_code: 204,
+                    response_status: 'SUCCESS',
+
+                });
+                span.addEvent("delete-user-from-group-tracer")
+                span.setAttribute("http.status_code", "204");
+                span.setAttribute("http.method", "DELETE");
+                span.setAttribute("http.url", `${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`);
+                span.setAttribute("http.status_message", "Success");
+                span.end();
+                });
+                
           }
+                
           else{
             toast({description:"Something went wrong",variant:"destructive"})
+            context.with(trace.setSpan(context.active(), span), async () => {
+                
+                loginLog({
+                    description: 'Delete User From Group Error',
+                    session: session?.user,
+                    event_type: "Delete Users From Group",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'DELETE',
+                    http_url: `${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`,
+                    response_status_code: 500,
+                    response_status: 'Failed',
+    
+                });
+                span.addEvent("delete-user-from-group-failed")
+                span.setAttribute("http.status_code", 500);
+                span.setAttribute("http.method", "DELETE");
+                span.setAttribute("http.url", `${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`);
+                span.setAttribute("http.status_message", "Failure");
+                span.end();  
+            });
   
           }
         
@@ -104,7 +150,8 @@ const mapStateToProps = (state:any) => ({
 })
 
 const mapDispatchToProps = {
-    groupUsers
+    groupUsers,
+    loginLog
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(EditGroupUsers);

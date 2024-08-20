@@ -11,8 +11,14 @@ import {
   GROUP_USERS,
   GROUP_USERS_SUCCESS,
   GROUP_USERS_FAILURE,
-  BOM_RAW,BOM_RAW_SUCCESS,BOM_RAW_FAILURE,userActiveStatus,
-  USER_ACTIVE_STATUS
+  BOM_RAW,
+  BOM_RAW_SUCCESS,
+  BOM_RAW_FAILURE,
+  userActiveStatus,
+  USER_ACTIVE_STATUS,
+  LOGIN_LOG,
+  LOGIN_LOG_SUCCESS,
+  LOGIN_LOG_FAILURE,
 } from "./actions";
 
 // Initial State
@@ -32,7 +38,10 @@ const initialState = {
   bomRawResponse: [],
   bomRawLoading: false,
   bomRawError: null,
-  userActiveStatusResponse:[]
+  userActiveStatusResponse: [],
+  loginLogResponse: [],
+  loginLogLoading: false,
+  loginLogError: null,
 };
 
 // Reducer
@@ -128,11 +137,29 @@ const reducer = (state = initialState, action) => {
         bomRawLoading: false,
         bomRawError: action.payload,
       };
-      case USER_ACTIVE_STATUS:
-        return{
-          ...state,
-          userActiveStatusResponse: action.payload
-        }
+    case USER_ACTIVE_STATUS:
+      return {
+        ...state,
+        userActiveStatusResponse: action.payload,
+      };
+    case LOGIN_LOG:
+      return {
+        ...state,
+        loginLogLoading: true,
+        loginLogError: null,
+      };
+    case LOGIN_LOG_SUCCESS:
+      return {
+        ...state,
+        loginLogLoading: false,
+        loginLogResponse: action.payload,
+      };
+    case LOGIN_LOG_FAILURE:
+      return {
+        ...state,
+        loginLogLoading: false,
+        loginLogError: action.payload,
+      };
     // Handle other cases as needed...
     default:
       return state;

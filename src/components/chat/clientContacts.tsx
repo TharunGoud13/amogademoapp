@@ -6,20 +6,94 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
+import { connect } from "react-redux";
+import { loginLog } from "@/lib/store/actions";
+import { trace, context } from "@opentelemetry/api";
+import IpAddress from "@/lib/IpAddress";
+import { useSession } from "next-auth/react";
+import { GET_CONTACTS_API } from "@/constants/envConfig";
 
-const ClientContacts = ({ contacts, currentUser }: { contacts: any[], currentUser: any }) => {
+const ClientContacts = ({ contacts, currentUser, loginLog,getUsersError }: { contacts: any[], currentUser: any, loginLog: any, getUsersError: any }) => {
+    const { data: session } = useSession();
     const userData = {
         user_catalog_id: currentUser?.user_catalog_id,
         user_name: currentUser?.user_name,
         user_email: currentUser?.user_email,
         user_mobile: currentUser?.user_mobile,
-        
+
     }
     useEffect(() => {
         if (currentUser) {
-            Cookies.set('currentUser', JSON.stringify(userData), { expires: 7 }); 
+            Cookies.set('currentUser', JSON.stringify(userData), { expires: 7 });
         }
-    }, [currentUser,userData]);
+    }, [currentUser, userData]);
+
+    const trackPageLoad = async () => {
+        const tracer = trace.getTracer('client-contacts-tracer');
+
+        const span = tracer.startSpan('page-load', {
+            attributes: {
+                description: 'Contacts Page Viewed',
+                user_id: currentUser?.user_catalog_id,
+                user_name: currentUser?.user_name,
+                user_email: currentUser?.user_email,
+                event_type: "Chat Contacts",
+                user_ip_address: await IpAddress(),
+            }
+        });
+        context.with(trace.setSpan(context.active(), span), async () => {
+            loginLog({
+                description: 'Contacts Page Viewed',
+                session: session?.user,
+                event_type: "Chat Contacts",
+                user_ip_address: await IpAddress(),
+                http_method: 'GET',
+                http_url: `${GET_CONTACTS_API}`,
+                response_status_code: 200,
+                response_status: 'SUCCESS',
+
+            });
+            span.addEvent("contacts-page-loaded")
+            span.setAttribute("http.status_code", "200");
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.url", `${GET_CONTACTS_API}`);
+            span.setAttribute("http.status_message", "Success");
+            span.end();  
+        });
+        if(getUsersError){
+            loginLog({
+                description: 'Contacts Page Error',
+                session:session?.user,
+                event_type: "Chat Contacts",
+                user_ip_address: await IpAddress(),
+                http_method: 'GET',
+                http_url:`${GET_CONTACTS_API}`,
+                response_status_code: 500,
+                response_status: 'Something went wrong",',
+
+
+            });
+            span.addEvent("groups-page-error")
+            span.setAttribute("http.status_code", "500");
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.url", `${GET_CONTACTS_API}`);
+            span.setAttribute("http.status_message", "Something went wrong");
+            span.end(); 
+        }
+        setTimeout(() => {
+            span.end();
+        }, 100);
+
+        return () => {
+            if (span.isRecording()) {
+                span.end();
+            }
+        }
+    };
+
+    useEffect(() => {
+        trackPageLoad()
+    }, [])
 
 
     return (
@@ -49,4 +123,13 @@ const ClientContacts = ({ contacts, currentUser }: { contacts: any[], currentUse
     )
 }
 
-export default ClientContacts;
+const mapStateToProps = (state: any) => ({
+    loginLogResponse: state.loginLogResponse,
+    getUsersError: state.getUsersError
+})
+
+const mapDispatchToProps = {
+    loginLog
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClientContacts);

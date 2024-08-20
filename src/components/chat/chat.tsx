@@ -70,8 +70,8 @@ export  function Chat({ selectedUser, isMobile, session,userStatus,socket,contac
       );
 
       setMessages(combinedMessages);
-    } catch (error) {
-      console.log("error fetching messages and files:", error);
+    } catch (error:any) {
+      throw new Error(error)
     }
   }, [contactData, groupsData]);
 
