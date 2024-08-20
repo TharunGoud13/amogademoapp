@@ -198,8 +198,10 @@ const Dashboard:FC<any> = ({loginLog})  => {
   );
 }
 
+const mapStateToProps = (state:any) => ({})
+
 const mapDispatchToProps = {
   loginLog
 }
 
-export default connect(null,mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps,mapDispatchToProps)(Dashboard);
