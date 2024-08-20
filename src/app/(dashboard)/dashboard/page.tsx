@@ -18,43 +18,43 @@ import { useSession } from 'next-auth/react';
 import { FC, useEffect } from 'react';
 import { connect } from 'react-redux';
 
-const Dashboard = ({loginLog}:any)  => {
-  const { data: session }: any = useSession()
+export default function page() {
+  // const { data: session }: any = useSession()
 
-  const trackPageLoad = async () => {
-    const tracer = trace.getTracer('mail--tracer');
-    const span = tracer.startSpan('products-page-load', {
-      attributes: {
-        description: 'Products Page Viewed',
-        user_id: session?.user?.id,
-        user_name: session?.user?.name,
-        user_email: session?.user?.email,
-        event_type: "Mail Page",     
-      }
-    });
+  // const trackPageLoad = async () => {
+  //   const tracer = trace.getTracer('mail--tracer');
+  //   const span = tracer.startSpan('products-page-load', {
+  //     attributes: {
+  //       description: 'Products Page Viewed',
+  //       user_id: session?.user?.id,
+  //       user_name: session?.user?.name,
+  //       user_email: session?.user?.email,
+  //       event_type: "Mail Page",     
+  //     }
+  //   });
 
-    context.with(trace.setSpan(context.active(), span), async () => {
-      loginLog({
-        description: 'Dashboard Page Viewed',
-        event_type: "Dashboard Page",
-        session: session?.user,
-        user_ip_address: await IpAddress(),
-      });
-    });
-    setTimeout(() => {
-      span.end();
-    }, 100);
+  //   context.with(trace.setSpan(context.active(), span), async () => {
+  //     loginLog({
+  //       description: 'Dashboard Page Viewed',
+  //       event_type: "Dashboard Page",
+  //       session: session?.user,
+  //       user_ip_address: await IpAddress(),
+  //     });
+  //   });
+  //   setTimeout(() => {
+  //     span.end();
+  //   }, 100);
 
-    return () => {
-      if (span.isRecording()) {
-        span.end();
-      }
-    }
-  };
+  //   return () => {
+  //     if (span.isRecording()) {
+  //       span.end();
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    trackPageLoad()
-  }, [])
+  // useEffect(() => {
+  //   trackPageLoad()
+  // }, [])
   return (
     <ScrollArea className="h-full pt-[4%]">
       <div className="flex-1 space-y-4 p-4 pt-[20%] md:pt-[1%] md:p-8">
@@ -198,10 +198,10 @@ const Dashboard = ({loginLog}:any)  => {
   );
 }
 
-const mapStateToProps = (state:any) => ({})
+// const mapStateToProps = (state:any) => ({})
 
-const mapDispatchToProps = {
-  loginLog
-}
+// const mapDispatchToProps = {
+//   loginLog
+// }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Dashboard);
+// export default connect(mapStateToProps,mapDispatchToProps)(Dashboard);
