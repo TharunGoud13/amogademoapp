@@ -29,16 +29,22 @@ import {
 import { DataTablePagination } from "./data-table-pagination"
 // import { DataTableToolbar } from "./data-table-toolbar"
 import { DataTableToolbar } from "./data-table-toolbar"
+import { loginLog } from "@/lib/store/actions"
+import { connect } from "react-redux"
+import { context, trace } from "@opentelemetry/api"
+import IpAddress from "@/lib/IpAddress"
+import { useSession } from "next-auth/react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function TaskTable<TData, TValue>({
+const TaskTable: React.FC<any> = ({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  loginLog
+}) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -46,6 +52,48 @@ export function TaskTable<TData, TValue>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
+
+  const { data: session }: any = useSession()
+  const trackPageLoad = async () => {
+    const tracer = trace.getTracer('mail--tracer');
+    const currentTime = new Date().toUTCString();
+
+    const span = tracer.startSpan('products-page-load', {
+      attributes: {
+        description: 'Products Page Viewed',
+        user_id: session?.user?.id,
+        user_name: session?.user?.name,
+        user_email: session?.user?.email,
+        event_type: "Mail Page",
+        user_ip_address: await IpAddress(),
+
+      }
+    });
+
+    context.with(trace.setSpan(context.active(), span), async () => {
+      // Call loginLog action with the relevant data
+      loginLog({
+        description: 'Tasks Page Viewed',
+        event_type: "Tasks Page",
+        session: session?.user,
+        user_ip_address: await IpAddress(),
+      });
+    });
+    setTimeout(() => {
+      span.end();
+    }, 100);
+
+    return () => {
+      if (span.isRecording()) {
+        span.end();
+      }
+    }
+  };
+
+
+  React.useEffect(() => {
+    trackPageLoad()
+  }, [])
 
   const table = useReactTable({
     data,
@@ -83,9 +131,9 @@ export function TaskTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -126,3 +174,12 @@ export function TaskTable<TData, TValue>({
     </div>
   )
 }
+
+const mapStateToProps = (state: any) => ({})
+
+const mapDispatchToProps = {
+  loginLog
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskTable)

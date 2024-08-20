@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { logout } from '@/app/actions';
 import { MdOutlineLogout } from "react-icons/md";
 import { BsChat } from "react-icons/bs";
+import LogoutButton from '../forms/logout-button';
 
 export default function Header() {
 
@@ -35,7 +36,6 @@ export default function Header() {
           <Link href="/storemenu">Menu</Link>
           <Link href="/taskbox">Task</Link>
           <Link href="/products">Products</Link>
-          {/* <Link href="/ask">Ask</Link> */}
 
           </div>
         </div>
@@ -44,15 +44,7 @@ export default function Header() {
           </div>
 
         <div className="flex items-center gap-2">
-        <form action={logout}>
-        <button className="p-2.5 hidden lg:block dark:border-white  dark:bg-black dark:text-white font-semibold  rounded-lg bg-gray-100">
-          Logout
-        </button>
-        <button className="p-2.5  lg:hidden font-semibold dark:text-white dark:bg-black rounded-lg bg-gray-100">
-        <MdOutlineLogout/>
-        </button>
-        
-        </form>
+        <LogoutButton/>
         <Link href="/chat" className='hidden lg:block'>
         <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" />
         </Link>

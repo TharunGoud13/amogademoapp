@@ -44,6 +44,11 @@ import  {type Mail } from "./data";
 // import { useMail } from "@/app/(app)/examples/mail/use-mail"
 import { useMail } from "./use-mail";
 import { auth } from "@/auth";
+import { trace, context } from "@opentelemetry/api";
+import { useSession } from "next-auth/react";
+import IpAddress from "@/lib/IpAddress";
+import { loginLog } from "@/lib/store/actions";
+import { connect } from "react-redux";
 
 
 
@@ -56,18 +61,58 @@ interface MailProps {
   mails: Mail[]
   defaultLayout: number[] | undefined
   defaultCollapsed?: boolean
-  navCollapsedSize: number
+  navCollapsedSize: number,loginLog:any
 }
 
-export  function Mail({
+const Mail = ({
   accounts,
   mails,
   defaultLayout = [265, 440, 655],
   defaultCollapsed = false,
   navCollapsedSize,
-}: MailProps) {
+  loginLog
+}: MailProps) =>  {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [mail] = useMail()
+  const {data:session}:any = useSession()
+
+  React.useEffect(() => {
+        
+    const trackPageLoad = async() => {
+    const tracer = trace.getTracer('mail--tracer');
+    const span = tracer.startSpan('page-load', {
+        attributes: {
+            description: 'Groups Page Viewed',
+            user_id: session?.user?.id,
+            user_name: session?.user?.name,
+            user_email: session?.user?.email,
+            event_type: "Mail Page",
+            user_ip_address:await IpAddress(),
+
+        }
+    });
+    
+    context.with(trace.setSpan(context.active(), span), async() => {  
+        // Call loginLog action with the relevant data
+        loginLog({
+            description: 'Mail Page Viewed',
+            event_type: "Mail Page",  
+            session:session?.user,
+            user_ip_address: await IpAddress(),
+        });
+    });
+    setTimeout(() => {
+        span.end();
+    }, 100);
+
+    return () => {
+        if (span.isRecording()) {
+            span.end();
+        }
+    }};
+    trackPageLoad()
+}, []);
+
 
 
   return (
@@ -232,3 +277,11 @@ export  function Mail({
     </TooltipProvider>
   )
 }
+
+const mapStateToProps = (state:any) => ({})
+
+const mapDispatchToProps = {
+  loginLog
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Mail);

@@ -4,22 +4,101 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
 import { GET_GROUPS } from "@/constants/envConfig";
 import { connect } from "react-redux";
-import { getChatGroup } from "@/lib/store/actions";
+import { getChatGroup, loginLog } from "@/lib/store/actions";
 import { FC, useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { FiEdit } from "react-icons/fi";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import EditGroupUsers from "./editGroupUsers";
+import { trace, context } from "@opentelemetry/api";
+import { useSession } from "next-auth/react";
+import IpAddress from "@/lib/IpAddress";
+import getCurrentBrowser from '@/lib/getCurrentBrowser'
 
+const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoading, loginLog,getChatGroupError }) => {
 
-const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoading }) => {
     useEffect(() => {
         getChatGroup()
     }, [getChatGroup])
 
+    const { data: session }: any = useSession()
+    let browser = getCurrentBrowser()
+
     let groups: any = getChatGroupResponse
 
-    console.log("getChatGroupLoading", getChatGroupLoading)
+    const trackPageLoad = async () => {
+        const tracer = trace.getTracer('groups-tracer');
+        const currentTime = new Date().toUTCString();
+
+        const span = tracer.startSpan('page-load', {
+            attributes: {
+                description: 'Groups Page Viewed',
+                user_id: session?.user?.id,
+                user_name: session?.user?.name,
+                user_email: session?.user?.email,
+                event_type: "Chat Groups",
+                user_ip_address: await IpAddress(),
+                created_datetime: currentTime,
+                browser: browser,
+                session_id: session?.user?.id
+
+            }
+        });
+
+        context.with(trace.setSpan(context.active(), span), async () => {
+            loginLog({
+                description: 'Groups Page Viewed',
+                session:session?.user,
+                event_type: "Chat Groups",
+                user_ip_address: await IpAddress(),
+                http_method: 'GET',
+                http_url:`${GET_GROUPS}`,
+                response_status_code: 200,
+                response_status: 'SUCCESS',
+
+            });
+            span.addEvent("groups-page-loaded")
+            span.setAttribute("http.status_code", "200");
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.url", `${GET_GROUPS}`);
+            span.setAttribute("http.status_message", "Success");
+            span.end();                                     
+            if(getChatGroupError){
+                loginLog({
+                    description: 'Groups Page Error',
+                    session:session?.user,
+                    event_type: "Chat Groups",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'GET',
+                    http_url:`${GET_GROUPS}`,
+                    response_status_code: 500,
+                    response_status: 'Something went wrong",',
+
+    
+                });
+                span.addEvent("groups-page-error")
+                span.setAttribute("http.status_code", "500");
+                span.setAttribute("http.method", "GET");
+                span.setAttribute("http.url", `${GET_GROUPS}`);
+                span.setAttribute("http.status_message", "Something went wrong");
+                span.end(); 
+            }
+        });
+        setTimeout(() => {
+            span.end();
+        }, 100);
+
+        return () => {
+            if (span.isRecording()) {
+                span.end();
+            }
+        }
+    };
+
+
+    useEffect(() => {
+        trackPageLoad()
+    }, [])
 
     if (getChatGroupLoading) {
         return (
@@ -43,10 +122,6 @@ const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoadi
 
             </div>
         )
-    }
-
-    const handleEdit = (id: any) => {
-        console.log("id======", id)
     }
 
     return (
@@ -78,10 +153,10 @@ const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoadi
                         <div className="flex flex-col justify-center items-center">
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <p className="text-lg cursor-pointer" onClick={() => handleEdit(group?.chat_group_id)}><FiEdit /></p>
+                                    <p className="text-lg cursor-pointer"><FiEdit /></p>
                                 </PopoverTrigger>
                                 <PopoverContent className=' w-[25vw] h-[50vh] overflow-x-hidden overflow-y-auto'>
-                                    <EditGroupUsers id={group?.chat_group_id}/>
+                                    <EditGroupUsers id={group?.chat_group_id} />
                                 </PopoverContent>
                             </Popover>
 
@@ -94,9 +169,10 @@ const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoadi
 
 const mapStateToProps = (state: any) => ({
     getChatGroupResponse: state.getChatGroupResponse,
-    getChatGroupLoading: state.getChatGroupLoading
+    getChatGroupLoading: state.getChatGroupLoading,
+    getChatGroupError:state.getChatGroupError
 })
 
-const mapDispatchToProps = { getChatGroup }
+const mapDispatchToProps = { getChatGroup, loginLog }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Groups);

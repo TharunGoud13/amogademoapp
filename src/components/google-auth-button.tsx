@@ -17,7 +17,6 @@ export default function GoogleSignInButton() {
       onClick={() =>
         login("google")
         // signIn('github', { callbackUrl: callbackUrl ?? '/dashboard' })
-        // console.log("google sign in not implemented yet")
       }
     >
       <Icons.google className="mr-2 h-4 w-4" />

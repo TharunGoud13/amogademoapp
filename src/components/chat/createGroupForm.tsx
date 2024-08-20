@@ -8,10 +8,13 @@ import { Button } from '../ui/button';
 import { useSession } from 'next-auth/react';
 import {toast} from '../ui/use-toast'
 import { connect } from 'react-redux';
-import { getChatGroup } from '@/lib/store/actions';
+import { getChatGroup, loginLog } from '@/lib/store/actions';
+import { GET_GROUPS } from '@/constants/envConfig';
+import { context, trace } from '@opentelemetry/api';
+import IpAddress from '@/lib/IpAddress';
 
 
-const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse}) => {
+const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse,loginLog}) => {
     const session = useSession();
     const sessionUser: any = session?.data?.user;
 
@@ -40,7 +43,7 @@ const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse}) =>
             
         }
         const myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+        myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify(payload);
@@ -52,16 +55,61 @@ const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse}) =>
             redirect: "follow"
         };
 
-        const response = await fetch("https://no0wgko.219.93.129.146.sslip.io/chat_group", requestOptions)
+        const tracer = trace.getTracer('create-group-form-tracer');
+        const span = tracer.startSpan('create-group-span');
+
+        const response = await fetch(`${GET_GROUPS}`, requestOptions)
         const result = await response.text();
         if(response.status == 201){
             await getChatGroup()
             toast({description:"Group Created Successfully",variant:"default"})
             onClose()
+            context.with(trace.setSpan(context.active(), span), async () => {
+           
+                // Call loginLog action with the relevant data
+                loginLog({
+                    description: 'New Group Created Successfully',
+                    session: session?.data?.user,
+                    event_type: "Group Creation",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'POST',
+                    http_url: `${GET_GROUPS}`,
+                    response_status_code: 201,
+                    response_status: 'SUCCESS',
+    
+                });
+                span.addEvent("groups-creation-page-loaded")
+                span.setAttribute("http.status_code", "201");
+                span.setAttribute("http.method", "POST");
+                span.setAttribute("http.url", `${GET_GROUPS}`);
+                span.setAttribute("http.status_message", "Success");
+                span.end();  
+            });
+
         }
         else{
             toast({description:"Something went wrong",variant:"destructive"})
             onClose()
+            context.with(trace.setSpan(context.active(), span), async () => {
+                // Call loginLog action with the relevant data
+                loginLog({
+                    description: ' Group Creation Error',
+                    session: session?.data?.user,
+                    event_type: "Group Creation",
+                    user_ip_address: await IpAddress(),
+                    http_method: 'POST',
+                    http_url: `${GET_GROUPS}`,
+                    response_status_code: 500,
+                    response_status: 'Failed',
+    
+                });
+                span.addEvent("groups-creation-page-failed")
+                span.setAttribute("http.status_code", 500);
+                span.setAttribute("http.method", "POST");
+                span.setAttribute("http.url", `${GET_GROUPS}`);
+                span.setAttribute("http.status_message", "Failure");
+                span.end();  
+            });
         }
         return result
             
@@ -99,7 +147,8 @@ const mapStateToProps = (state:any) => ({
 })
 
 const mapDispatchToProps = {
-    getChatGroup
+    getChatGroup,
+    loginLog
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(CreateGroupForm)

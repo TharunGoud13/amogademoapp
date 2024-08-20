@@ -25,7 +25,6 @@ const ChatLayout: FC<any> = ({
       : io("https://chat-service-luje.onrender.com");
   }, []);
 
-  console.log("socket----",socket)
 
   const handleConnect = useCallback(() => {
     console.log("Socket connected");
@@ -36,10 +35,10 @@ const ChatLayout: FC<any> = ({
   }, [session?.user?.id, socket]);
 
   const handleUserStatusChange = useCallback((data: any) => {
-    console.log("Event data:", data);
+    
     if (data && typeof data === 'object') {
       const { userId, status } = data;
-      console.log(`User ${userId} is ${status} now`);
+      
       setUserStatus((prevStatus: any) => {
         const existingStatusIndex = prevStatus.findIndex((item: any) => item.id === userId);
         if (existingStatusIndex !== -1) {
@@ -55,7 +54,7 @@ const ChatLayout: FC<any> = ({
         return [...prevStatus, { id: userId, status }];
       });
     } else {
-      console.log("Unexpected data format:", data);
+      throw new Error("Unexpected data format",data);
     }
   }, []);
 

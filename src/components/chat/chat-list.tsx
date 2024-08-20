@@ -68,8 +68,7 @@ export function ChatList({
     return map;
   }, [messages]);
 
-  const toggleReactions = (messageId: string) => {
-    { console.log() }
+  const toggleReactions = (messageId: string) => { 
     setShowReactions(prev => ({
       ...prev,
       [messageId]: !prev[messageId]
@@ -154,7 +153,7 @@ export function ChatList({
                 </button>
 
                 <span className="bg-accent p-3 rounded-md max-w-xs relative">
-                  {/* {console.log("message----",message)} */}
+                  
                   {message?.document_file ?
                     <div className="flex">
                       <FaFile className="text-lg"/>
@@ -191,7 +190,6 @@ export function ChatList({
                       height={6}
                     />
                     <AvatarFallback className="flex-1">
-                      {/* {console.log("message-------", message)} */}
                       {message.sender_display_name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

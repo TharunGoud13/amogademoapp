@@ -32,7 +32,6 @@ const  DataTableToolbar:FC<any> = ({
   const handleSearch = (event:any) => {
     if(event.key === "Enter") {
       bomRaw(searchValue)
-      console.log("value---",searchValue)
   }
 }
 
