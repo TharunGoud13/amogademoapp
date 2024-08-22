@@ -101,6 +101,8 @@ const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse,logi
                     http_url: `${GET_GROUPS}`,
                     response_status_code: 500,
                     response_status: 'Failed',
+                    error_message: "Unable to create group",
+                    response_error: "Group creation failed",
     
                 });
                 span.addEvent("groups-creation-page-failed")

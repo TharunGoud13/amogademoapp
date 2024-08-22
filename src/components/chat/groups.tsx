@@ -73,8 +73,8 @@ const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoadi
                     http_url:`${GET_GROUPS}`,
                     response_status_code: 500,
                     response_status: 'Something went wrong",',
-
-    
+                    error_message: "Error displaying chat groups",
+                    response_error:"Something went wrong when fetching chat groups",
                 });
                 span.addEvent("groups-page-error")
                 span.setAttribute("http.status_code", "500");

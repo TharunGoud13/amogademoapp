@@ -93,6 +93,8 @@ const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData, getCha
                     http_url: `${GET_CHAT_GROUP_USERS}`,
                     response_status_code: 500,
                     response_status: 'Failed',
+                    error_message:"Failed to add user to group",
+                    response_error:"Failed to add user to group"
     
                 });
                 span.addEvent("add-user-to-group-failed")

@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 // import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import GoogleSignInButton from "../google-auth-button";
@@ -22,6 +22,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CREATE_USER_API, GET_CONTACTS_API } from "../../constants/envConfig";
 import {toast} from '../ui/use-toast'
+import { context, trace } from "@opentelemetry/api";
+import IpAddress from "@/lib/IpAddress";
+import { loginLog } from "@/lib/store/actions";
+import { connect } from "react-redux";
 
 
 const formSchema = z.object({
@@ -54,11 +58,9 @@ const formSchema = z.object({
 
 type UserFormValue = z.infer<typeof formSchema>;
 
-export default function UserAuthForm() {
+const UserAuthForm:FC<any> = ({loginLog})=> {
   const router = useRouter();
-  // const cookieStore = cookies()
-  // const searchParams = useSearchParams();
-  //const callbackUrl = searchParams.get("callbackUrl");
+  const {data:session} = useSession();
   const [loading, setLoading] = useState(false);
   // const { toast } = useToast();
   const defaultValues = {
@@ -77,6 +79,34 @@ export default function UserAuthForm() {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  const trackPageLoad = async () => {
+    const tracer = trace.getTracer('Join-page-viewed');
+    const span = tracer.startSpan('Join-page-load');
+
+    context.with(trace.setSpan(context.active(), span), async () => {
+      loginLog({
+        description: 'Join Page Viewed',
+        event_type: "Join Page",
+        event_details: "Join Page Viewed",
+        session: session?.user,
+        user_ip_address: await IpAddress(),
+      });
+    });
+    setTimeout(() => {
+      span.end();
+    }, 100);
+
+    return () => {
+      if (span.isRecording()) {
+        span.end();
+      }
+    }
+  };
+
+  useEffect(() => {
+    trackPageLoad()
+  }, [])
 
   const onSubmit = async (data: UserFormValue) => {
     //added create_user_catalog API for user_catalog ID
@@ -334,3 +364,11 @@ export default function UserAuthForm() {
     </>
   );
 }
+
+const mapStateToProps = (state:any) => ({})
+
+const mapDispatchToProps = {
+  loginLog
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(UserAuthForm)

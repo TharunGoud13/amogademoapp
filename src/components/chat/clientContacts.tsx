@@ -70,6 +70,8 @@ const ClientContacts = ({ contacts, currentUser, loginLog,getUsersError }: { con
                 http_url:`${GET_CONTACTS_API}`,
                 response_status_code: 500,
                 response_status: 'Something went wrong",',
+                error_message: "Unable to view contacts",
+                response_error:"Something went wrong. Unable to view contacts",
 
 
             });

@@ -32,6 +32,12 @@ import getCurrentBrowser from "../getCurrentBrowser";
 import getUserLocation from "../geoLocation";
 import getCurrentOS from "../getCurrentOS";
 
+const detectDeviceType = () =>
+  /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
+    ? 'Mobile'
+    : 'Desktop';
+ 
+
 const token = `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`;
 function* getUsersSaga() {
   try {
@@ -128,7 +134,7 @@ function* loginLogSaga(action) {
   } catch (error) {
     throw new Error(error)
   }
-
+  
   const payload = {
     description,
     session_id: session?.id,
@@ -145,7 +151,7 @@ function* loginLogSaga(action) {
     state: locationData?.address?.state,
     country: locationData?.address?.country,
     geo_codes: locationData?.address?.postcode,
-    device: navigator.platform,
+    device: detectDeviceType(),
     operating_system: getCurrentOS(),
     http_method,
     http_url,
@@ -156,6 +162,8 @@ function* loginLogSaga(action) {
     response_status,
     response_error,
     error_message,
+    business_name:session?.business_name,
+    business_number:session?.business_number,
   };
   try {
     const response = yield fetch(LOG_USERS_API, {

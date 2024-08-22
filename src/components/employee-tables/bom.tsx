@@ -77,6 +77,8 @@ const  Bom:FC<any> = ({bomRawResponse,bomRaw,bomRawLoading,loginLog,bomRawError}
                   http_url: `${BOM_RAW_URL}`,
                   response_status_code: 500,
                   response_status: 'Something Went Wrong',
+                  error_message: "Error fetching products",
+                  response_error:"Something went wrong when fetching products",
         });
         span.addEvent("bom-raw-data-page-failed");
       span.setAttribute("http.status_code", "500");

@@ -21,7 +21,7 @@ import LinkedInSignInButton from '../linkedin-auth-button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '../ui/use-toast'
-import { trace } from '@opentelemetry/api';
+import { context, trace } from '@opentelemetry/api';
 import { loginLog } from '@/lib/store/actions';
 import { connect } from 'react-redux';
 import IpAddress from '@/lib/IpAddress';
@@ -43,6 +43,34 @@ const LoginForm: FC<any> = ({ loginLog }) => {
     email: '',
     password: '',
   };
+
+  const trackPageLoad = async () => {
+    const tracer = trace.getTracer('login-page-viewed');
+    const span = tracer.startSpan('login-page-load');
+
+    context.with(trace.setSpan(context.active(), span), async () => {
+      loginLog({
+        description: 'Login Page Viewed',
+        event_type: "Login Page",
+        event_details: "Login Page Viewed",
+        session: session?.user,
+        user_ip_address: await IpAddress(),
+      });
+    });
+    setTimeout(() => {
+      span.end();
+    }, 100);
+
+    return () => {
+      if (span.isRecording()) {
+        span.end();
+      }
+    }
+  };
+
+  useEffect(() => {
+    trackPageLoad()
+  }, [])
 
 
   const form = useForm<UserFormValue>({

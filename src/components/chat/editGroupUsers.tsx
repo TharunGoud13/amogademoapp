@@ -93,6 +93,8 @@ const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoad
                     http_url: `${DELETE_USERS_FROM_GROUP}?group_id=eq.${contact?.group_id}&user_id=eq.${contact?.user_id}`,
                     response_status_code: 500,
                     response_status: 'Failed',
+                    error_message: "User not deleted",
+                    response_error:"Some fields are missing for user"
     
                 });
                 span.addEvent("delete-user-from-group-failed")
