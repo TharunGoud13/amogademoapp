@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
       const { password, retypePassword, ...formData } = body;
 
       const myHeaders = new Headers();
-      myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+      myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
       myHeaders.append("Content-Type", "application/json");
 
       const raw = JSON.stringify(formData);

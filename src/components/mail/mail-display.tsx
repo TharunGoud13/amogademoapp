@@ -47,15 +47,16 @@ import { Mail } from "./data"
 import { auth } from "@/auth"
 
 interface MailDisplayProps {
-  mail: Mail | null
+  mail: any;
+  allMails:any
 }
 
-export function MailDisplay({ mail }: MailDisplayProps) {
+export function MailDisplay({ mail,allMails }: MailDisplayProps) {
   const today = new Date()
-
-
+  const selectedMail = mail ? allMails.find((m: { id: any }) => m.id === mail.selected) : null;
+  console.log("mail=====",mail)
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-[92%] flex-col fixed">
       <div className="flex items-center p-2">
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -197,19 +198,16 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           <div className="flex items-start p-4">
             <div className="flex items-start gap-4 text-sm">
               <Avatar>
-                <AvatarImage alt={mail.name} />
+                <AvatarImage alt={mail.from} />
                 <AvatarFallback>
-                  {mail.name
-                    .split(" ")
-                    .map((chunk) => chunk[0])
-                    .join("")}
+                  {mail?.from?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid gap-1">
-                <div className="font-semibold">{mail.name}</div>
+                <div className="font-semibold">{mail.from}</div>
                 <div className="line-clamp-1 text-xs">{mail.subject}</div>
                 <div className="line-clamp-1 text-xs">
-                  <span className="font-medium">Reply-To:</span> {mail.email}
+                  <span className="font-medium">Reply-To:</span> {mail.from}
                 </div>
               </div>
             </div>
@@ -223,33 +221,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
             {mail.text}
           </div>
-          <Separator className="mt-auto" />
-          <div className="p-4">
-            <form>
-              <div className="grid gap-4">
-                <Textarea
-                  className="p-4"
-                  placeholder={`Reply ${mail.name}...`}
-                />
-                <div className="flex items-center">
-                  <Label
-                    htmlFor="mute"
-                    className="flex items-center gap-2 text-xs font-normal"
-                  >
-                    <Switch id="mute" aria-label="Mute thread" /> Mute this
-                    thread
-                  </Label>
-                  <Button
-                    onClick={(e) => e.preventDefault()}
-                    size="sm"
-                    className="ml-auto"
-                  >
-                    Send
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </div>
+          {/* ... (reply form) */}
         </div>
       ) : (
         <div className="p-8 text-center text-muted-foreground">

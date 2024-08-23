@@ -45,7 +45,7 @@ const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoad
     const handleDelete = async(contact:any) => {
         const myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
-        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8");
+        myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
 
         const requestOptions:any = {
             method: "DELETE",

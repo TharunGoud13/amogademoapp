@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AlertCircle,
   Archive,
@@ -13,35 +13,28 @@ import {
   ShoppingCart,
   Trash2,
   Users2,
-} from "lucide-react"
+} from "lucide-react";
 
-import { cn } from "@/lib/utils"
-// import { Input } from "@/registry/new-york/ui/input"
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-  } from "@/components/ui/resizable"
-import { Separator } from "@/components/ui/separator"
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { Separator } from "@/components/ui/separator";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs"
-import { TooltipProvider } from "@/components/ui/tooltip"
-// import { AccountSwitcher } from "@/app/(app)/examples/mail/components/account-switcher"
+} from "@/components/ui/tabs";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AccountSwitcher } from "./account-switcher";
-// import { MailDisplay } from "@/app/(app)/examples/mail/components/mail-display"
 import { MailDisplay } from "./mail-display";
 import { MailList } from "./mail-list";
-// import { MailList } from "@/app/(app)/examples/mail/components/mail-list"
 import { Nav } from "./nav";
-// import { Nav } from "@/app/(app)/examples/mail/components/nav"
-// import { type Mail } from "@/app/(app)/examples/mail/data"
-import  {type Mail } from "./data";
-// import { useMail } from "@/app/(app)/examples/mail/use-mail"
+import { type Mail } from "./data";
 import { useMail } from "./use-mail";
 import { auth } from "@/auth";
 import { trace, context } from "@opentelemetry/api";
@@ -49,71 +42,103 @@ import { useSession } from "next-auth/react";
 import IpAddress from "@/lib/IpAddress";
 import { loginLog } from "@/lib/store/actions";
 import { connect } from "react-redux";
-
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import NewMail from "./new-mail";
 
 interface MailProps {
   accounts: {
-    label: string
-    email: string
-    icon: React.ReactNode
-  }[]
-  mails: Mail[]
-  defaultLayout: number[] | undefined
-  defaultCollapsed?: boolean
-  navCollapsedSize: number,loginLog:any
+    label: string;
+    email: string;
+    icon: React.ReactNode;
+  }[];
+  mails: Mail[];
+  defaultLayout: number[] | undefined;
+  defaultCollapsed?: boolean;
+  navCollapsedSize: number;
+  loginLog: any;
 }
 
 const Mail = ({
   accounts,
   mails,
-  defaultLayout = [265, 440, 655],
+  defaultLayout = [ 440, 655],
   defaultCollapsed = false,
   navCollapsedSize,
-  loginLog
-}: MailProps) =>  {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
-  const [mail] = useMail()
-  const {data:session}:any = useSession()
+  loginLog,
+}: MailProps) => {
+  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
+  const [mail] = useMail();
+  const { data: session }: any = useSession();
+  const [fetchedMails, setFetchedMails] = React.useState<Mail[]>([]);
+  const [loading,setLoading] = React.useState(false)
 
   React.useEffect(() => {
-        
-    const trackPageLoad = async() => {
-    const tracer = trace.getTracer('mail--tracer');
-    const span = tracer.startSpan('page-load', {
+    fetchMails();
+  }, []);
+
+  const fetchMails = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/get-emails');
+      const result = await response.json();
+      if (response.ok) {
+        setLoading(false)
+        setFetchedMails(result);
+      }
+    } catch (error) {
+      setLoading(false)
+      console.error("Failed to fetch emails:", error);
+    }
+  };
+
+  console.log("fetchedMails---",fetchedMails)
+
+  React.useEffect(() => {
+    const trackPageLoad = async () => {
+      const tracer = trace.getTracer("mail--tracer");
+      const span = tracer.startSpan("page-load", {
         attributes: {
-            description: 'Groups Page Viewed',
-            user_id: session?.user?.id,
-            user_name: session?.user?.name,
-            user_email: session?.user?.email,
-            event_type: "Mail Page",
-            user_ip_address:await IpAddress(),
+          description: "Groups Page Viewed",
+          user_id: session?.user?.id,
+          user_name: session?.user?.name,
+          user_email: session?.user?.email,
+          event_type: "Mail Page",
+          user_ip_address: await IpAddress(),
+        },
+      });
 
-        }
-    });
-    
-    context.with(trace.setSpan(context.active(), span), async() => {  
-        // Call loginLog action with the relevant data
+      context.with(trace.setSpan(context.active(), span), async () => {
         loginLog({
-            description: 'Mail Page Viewed',
-            event_type: "Mail Page",  
-            session:session?.user,
-            user_ip_address: await IpAddress(),
+          description: "Mail Page Viewed",
+          event_type: "Mail Page",
+          session: session?.user,
+          user_ip_address: await IpAddress(),
         });
-    });
-    setTimeout(() => {
+      });
+      setTimeout(() => {
         span.end();
-    }, 100);
+      }, 100);
 
-    return () => {
+      return () => {
         if (span.isRecording()) {
-            span.end();
+          span.end();
         }
-    }};
-    trackPageLoad()
-}, []);
+      };
+    };
+    trackPageLoad();
+  }, []);
 
 
+  const filter = fetchedMails.filter((item:any) => item.uid == mail.selected)
+  console.log("filter......",filter)
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -122,119 +147,29 @@ const Mail = ({
         onLayout={(sizes: number[]) => {
           document.cookie = `react-resizable-panels:layout=${JSON.stringify(
             sizes
-          )}`
+          )}`;
         }}
-        className="h-full max-h-[800px] items-stretch"
+        className="h-full items-stretch"
       >
-        <ResizablePanel
-          defaultSize={defaultLayout[0]}
-          collapsedSize={navCollapsedSize}
-          collapsible={true}
-          minSize={15}
-          maxSize={20}
-        //   onCollapse:any={(collapsed) => {
-        //     setIsCollapsed(collapsed)
-        //     document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-        //       collapsed
-        //     )}`
-        //   }}
-          className={cn(
-            isCollapsed &&
-              "min-w-[50px] transition-all duration-300 ease-in-out"
-          )}
-        >
-          <div
-            className={cn(
-              "flex h-[52px] items-center justify-center",
-              isCollapsed ? "h-[52px]" : "px-2"
-            )}
-          >
-            <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
-          </div>
-          <Separator />
-          <Nav
-            isCollapsed={isCollapsed}
-            links={[
-              {
-                title: "Inbox",
-                label: "128",
-                icon: Inbox,
-                variant: "default",
-              },
-              {
-                title: "Drafts",
-                label: "9",
-                icon: File,
-                variant: "ghost",
-              },
-              {
-                title: "Sent",
-                label: "",
-                icon: Send,
-                variant: "ghost",
-              },
-              {
-                title: "Junk",
-                label: "23",
-                icon: ArchiveX,
-                variant: "ghost",
-              },
-              {
-                title: "Trash",
-                label: "",
-                icon: Trash2,
-                variant: "ghost",
-              },
-              {
-                title: "Archive",
-                label: "",
-                icon: Archive,
-                variant: "ghost",
-              },
-            ]}
-          />
-          <Separator />
-          <Nav
-            isCollapsed={isCollapsed}
-            links={[
-              {
-                title: "Social",
-                label: "972",
-                icon: Users2,
-                variant: "ghost",
-              },
-              {
-                title: "Updates",
-                label: "342",
-                icon: AlertCircle,
-                variant: "ghost",
-              },
-              {
-                title: "Forums",
-                label: "128",
-                icon: MessagesSquare,
-                variant: "ghost",
-              },
-              {
-                title: "Shopping",
-                label: "8",
-                icon: ShoppingCart,
-                variant: "ghost",
-              },
-              {
-                title: "Promotions",
-                label: "21",
-                icon: Archive,
-                variant: "ghost",
-              },
-            ]}
-          />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          <Tabs defaultValue="all">
+          <Tabs defaultValue="all" className="h-full flex flex-col">
             <div className="flex items-center px-4 py-2">
-              <h1 className="text-xl font-bold">Onebox</h1>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Inbox" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="inbox">Inbox</SelectItem>
+                    <SelectItem value="sent">Sent</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="junk">Junk</SelectItem>
+                    <SelectItem value="trash">Trash</SelectItem>
+                    <SelectItem value="archieve">Archieve</SelectItem>
+                    <SelectItem value="settings">Settings</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <TabsList className="ml-auto">
                 <TabsTrigger
                   value="all"
@@ -248,6 +183,12 @@ const Mail = ({
                 >
                   Unread
                 </TabsTrigger>
+                <TabsTrigger
+                  value="new"
+                  className="text-zinc-600 dark:text-zinc-200"
+                >
+                  New
+                </TabsTrigger>
               </TabsList>
             </div>
             <Separator />
@@ -259,29 +200,32 @@ const Mail = ({
                 </div>
               </form>
             </div>
-            <TabsContent value="all" className="m-0">
-              <MailList items={mails} />
+            <TabsContent value="all" className="flex-1 overflow-y-auto">
+              <MailList items={fetchedMails} loading={loading} />
             </TabsContent>
-            <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} />
+            <TabsContent value="unread" className="flex-1 h-full overflow-y-auto">
+              <MailList loading={loading} items={fetchedMails.filter((item:any) => item.isUnread)} />
             </TabsContent>
+          <TabsContent value="new" className="shadow-md h-full">
+            <NewMail />
+          </TabsContent>
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[2]}>
-          <MailDisplay
-            mail={mails.find((item) => item.id === mail.selected) || null}
+        <ResizablePanel defaultSize={defaultLayout[2]} >
+        <MailDisplay
+            mail={filter[0]} allMails={fetchedMails}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
-  )
-}
+  );
+};
 
-const mapStateToProps = (state:any) => ({})
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
-  loginLog
-}
+  loginLog,
+};
 
-export default connect(mapStateToProps,mapDispatchToProps)(Mail);
+export default connect(mapStateToProps, mapDispatchToProps)(Mail);
