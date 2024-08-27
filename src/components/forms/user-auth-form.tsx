@@ -33,10 +33,10 @@ const formSchema = z.object({
   last_name: z.string().nonempty({ message: "Last name is required" }),
   username: z.string().nonempty({ message: "Username is required" }),
   email: z.string().email({ message: "Enter a valid email address" }),
-  user_mobile: z.string().nonempty({ message: "Mobile number is required" }),
+  user_mobile: z.string().min(10).max(10).nonempty({ message: "Mobile number is required" }),
   business_name: z.string().nonempty({ message: "Business name is required" }),
   business_number: z
-    .string()
+    .string().min(10).max(10)
     .nonempty({ message: "Business Number is required" }),
   store_name: z.string().nonempty({ message: "Store name is required" }),
   password: z.string().min(4, {

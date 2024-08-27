@@ -17,13 +17,24 @@ import {
   LOGIN_LOG,
   loginLogSuccess,
   loginLogFailure,
+  CREATE_IMAP_DETAILS,
+  createImapDetailsSuccess,
+  createImapDetailsFailure,
+  GET_ALL_IMAP_DETAILS,
+  getAllImapDetailsSuccess,
+  getAllImapDetailsFailure,
+  SET_UNREAD_EMAIL,
+  setUnreadEmailSuccess,
+  setUnreadEmailFailure
 } from "./actions";
 import { takeLatest, call, put } from "redux-saga/effects";
 import axios from "axios";
 import {
   BOM_RAW_URL,
+  CREATE_IMAP_DETAILS_URL,
   GET_CHAT_GROUP_USERS,
   GET_CONTACTS_API,
+  GET_EMAILS,
   GET_GROUPS,
   GET_USERS_OF_GROUP,
   LOG_USERS_API,
@@ -180,6 +191,84 @@ function* loginLogSaga(action) {
   }
 }
 
+function* createImapDetailsSaga(action) {
+  const {user,password,host,port,tls,sessionDetails,createdDate} = action?.payload
+  const payload = {
+    "user_name":sessionDetails?.name,
+    "user_email":sessionDetails?.email,
+    "business_name":sessionDetails?.business_name,
+    "business_number":sessionDetails?.business_number,
+    "data_response": user + " " +  password + " " + host + " " + port + " " + tls,
+    "user_catalog_id":sessionDetails?.id,
+    "user_mobile":sessionDetails?.mobile,
+    "created_datetime":createdDate
+  }
+  console.log("payload---",payload)
+  try{
+    const response = yield fetch(CREATE_IMAP_DETAILS_URL,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(payload),
+    })
+    yield put(createImapDetailsSuccess(response.data))
+  }
+  catch(error){
+    yield put(createImapDetailsFailure(error))
+  }
+}
+
+function* getAllImapDetailsSaga() {
+  try{
+    const response = yield call(axios.get,CREATE_IMAP_DETAILS_URL,{
+      headers: {
+        Authorization: token,
+      },
+    });
+    console.log("response----",response.data)
+    yield put(getAllImapDetailsSuccess(response.data))
+  }
+  catch(error){
+    yield put(getAllImapDetailsFailure(error))
+  }
+}
+
+function* setUnreadEmailSaga(action){
+  const uniqueEmails = new Map();
+
+  action.payload.forEach(email => {
+    if (!uniqueEmails.has(email.uid)) {
+      uniqueEmails.set(email.uid, {
+        email_uid: email.uid,
+        created_datetime: email.date,
+        is_read: !email.isUnread,
+        sender_email: email.from,
+        subject: email.subject,
+        description: email.text,
+      });
+    }
+  });
+  const payload = Array.from(uniqueEmails.values());
+  console.log("payload......",payload)
+  try{
+    const response = yield fetch(GET_EMAILS,{
+      method:"POST",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(payload),
+    })
+    console.log("response.......",response)
+    yield put(setUnreadEmailSuccess(response.data))
+  }
+  catch(error){
+    yield put(setUnreadEmailFailure(error))
+  }
+}
+
 export default function* rootSaga() {
   yield takeLatest(GET_CHAT_GROUP, getUsersSaga);
   yield takeLatest(GET_USERS, getUsersDataSaga);
@@ -187,4 +276,8 @@ export default function* rootSaga() {
   yield takeLatest(GROUP_USERS, groupUsersSaga);
   yield takeLatest(BOM_RAW, bomRawSaga);
   yield takeLatest(LOGIN_LOG, loginLogSaga);
+  yield takeLatest(CREATE_IMAP_DETAILS, createImapDetailsSaga);
+  yield takeLatest(GET_ALL_IMAP_DETAILS, getAllImapDetailsSaga);
+  yield takeLatest(SET_UNREAD_EMAIL, setUnreadEmailSaga);
+
 }

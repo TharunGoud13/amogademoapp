@@ -45,9 +45,10 @@ import {
 // import { Mail } from "@/app/(app)/examples/mail/data"
 import { Mail } from "./data"
 import { auth } from "@/auth"
+import { FaUser } from "react-icons/fa";
 
 interface MailDisplayProps {
-  mail: Mail | null
+  mail: any
 }
 
 export function MailDisplay({ mail }: MailDisplayProps) {
@@ -55,7 +56,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
 
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-[92%] flex-col fixed">
       <div className="flex items-center p-2">
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -197,19 +198,16 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           <div className="flex items-start p-4">
             <div className="flex items-start gap-4 text-sm">
               <Avatar>
-                <AvatarImage alt={mail.name} />
+                <AvatarImage alt={mail.sender_name} />
                 <AvatarFallback>
-                  {mail.name
-                    .split(" ")
-                    .map((chunk) => chunk[0])
-                    .join("")}
+                <FaUser/>
                 </AvatarFallback>
               </Avatar>
               <div className="grid gap-1">
-                <div className="font-semibold">{mail.name}</div>
+                <div className="font-semibold">{mail.sender_email}</div>
                 <div className="line-clamp-1 text-xs">{mail.subject}</div>
                 <div className="line-clamp-1 text-xs">
-                  <span className="font-medium">Reply-To:</span> {mail.email}
+                  <span className="font-medium">Reply-To:</span> {mail.sender_email}
                 </div>
               </div>
             </div>
@@ -221,7 +219,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           </div>
           <Separator />
           <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
-            {mail.text}
+            {mail.description}
           </div>
           <Separator className="mt-auto" />
           <div className="p-4">

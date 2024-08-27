@@ -19,6 +19,15 @@ import {
   LOGIN_LOG,
   LOGIN_LOG_SUCCESS,
   LOGIN_LOG_FAILURE,
+  CREATE_IMAP_DETAILS,
+  CREATE_IMAP_DETAILS_SUCCESS,
+  CREATE_IMAP_DETAILS_FAILURE,
+  GET_ALL_IMAP_DETAILS,
+  GET_ALL_IMAP_DETAILS_SUCCESS,
+  GET_ALL_IMAP_DETAILS_FAILURE,
+  SET_UNREAD_EMAIL,
+  SET_UNREAD_EMAIL_SUCCESS,
+  SET_UNREAD_EMAIL_FAILURE,
 } from "./actions";
 
 // Initial State
@@ -42,6 +51,15 @@ const initialState = {
   loginLogResponse: [],
   loginLogLoading: false,
   loginLogError: null,
+  createImapDetailsResponse: [],
+  createImapDetailsLoading: false,
+  createImapDetailsError: null,
+  getAllImapDetailsResponse: [],
+  getAllImapDetailsLoading: false,
+  getAllImapDetailsError: null,
+  unreadEmailResponse: [],
+  unreadEmailLoading: false,
+  unreadEmailError: null,
 };
 
 // Reducer
@@ -160,7 +178,61 @@ const reducer = (state = initialState, action) => {
         loginLogLoading: false,
         loginLogError: action.payload,
       };
-    // Handle other cases as needed...
+    case CREATE_IMAP_DETAILS:
+      return {
+        ...state,
+        createImapDetailsLoading: true,
+        createImapDetailsError: null,
+      };
+    case CREATE_IMAP_DETAILS_SUCCESS:
+      return {
+        ...state,
+        createImapDetailsLoading: false,
+        createImapDetailsResponse: action.payload,
+      };
+    case CREATE_IMAP_DETAILS_FAILURE:
+      return {
+        ...state,
+        createImapDetailsLoading: false,
+        createImapDetailsError: action.payload,
+      };
+    case GET_ALL_IMAP_DETAILS:
+      return {
+        ...state,
+        getAllImapDetailsLoading: true,
+        getAllImapDetailsError: null,
+      };
+    case GET_ALL_IMAP_DETAILS_SUCCESS:
+      return {
+        ...state,
+        getAllImapDetailsLoading: false,
+        getAllImapDetailsResponse: action.payload,
+      };
+    case GET_ALL_IMAP_DETAILS_FAILURE:
+      return {
+        ...state,
+        getAllImapDetailsLoading: false,
+        getAllImapDetailsError: action.payload,
+      };
+      case SET_UNREAD_EMAIL:
+        return {
+         ...state,
+          unreadEmailLoading: true,
+          unreadEmailError: null,
+        };
+      case SET_UNREAD_EMAIL_SUCCESS:
+        return {
+         ...state,
+          unreadEmailLoading: false,
+          unreadEmailResponse: action.payload,
+        };
+      case SET_UNREAD_EMAIL_FAILURE:
+        return {
+         ...state,
+          unreadEmailLoading: false,
+          unreadEmailError: action.payload,
+        };
+
     default:
       return state;
   }

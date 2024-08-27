@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { auth } from "@/auth";
 import Image from "next/image";
+import Link from "next/link";
 
 export default  async function UserNav() {
   const session = await auth()
@@ -29,7 +30,9 @@ export default  async function UserNav() {
   <DropdownMenuContent className=" fixed left-[-200px] top-[20px] ">
     <DropdownMenuLabel>{session?.user?.name}</DropdownMenuLabel>
     <DropdownMenuSeparator />
+    <Link href="/profile">
     <DropdownMenuItem>{session?.user?.email}</DropdownMenuItem>
+    </Link>
     {/* <DropdownMenuItem>Billing</DropdownMenuItem>
     <DropdownMenuItem>Team</DropdownMenuItem>
     <DropdownMenuItem>Subscription</DropdownMenuItem> */}

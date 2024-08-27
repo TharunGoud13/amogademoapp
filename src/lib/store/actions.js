@@ -30,6 +30,18 @@ export const LOGIN_LOG = "LOGIN_LOG";
 export const LOGIN_LOG_SUCCESS = "LOGIN_LOG_SUCCESS";
 export const LOGIN_LOG_FAILURE = "LOGIN_LOG_FAILURE";
 
+export const CREATE_IMAP_DETAILS = "CREATE_IMAP_DETAILS";
+export const CREATE_IMAP_DETAILS_SUCCESS = "CREATE_IMAP_DETAILS_SUCCESS";
+export const CREATE_IMAP_DETAILS_FAILURE = "CREATE_IMAP_DETAILS_FAILURE";
+
+export const GET_ALL_IMAP_DETAILS = "GET_ALL_IMAP_DETAILS";
+export const GET_ALL_IMAP_DETAILS_SUCCESS = "GET_ALL_IMAP_DETAILS_SUCCESS";
+export const GET_ALL_IMAP_DETAILS_FAILURE = "GET_ALL_IMAP_DETAILS_FAILURE";
+
+export const SET_UNREAD_EMAIL = "SET_UNREAD_EMAIL";
+export const SET_UNREAD_EMAIL_SUCCESS = "SET_UNREAD_EMAIL_SUCCESS";
+export const SET_UNREAD_EMAIL_FAILURE = "SET_UNREAD_EMAIL_FAILURE";
+
 // Action Creators
 export const getChatGroup = (payload) => {
     return{
@@ -161,6 +173,69 @@ export const loginLogSuccess = (payload) => {
 export const loginLogFailure = (error) => {
     return{
         type: LOGIN_LOG_FAILURE,
+        payload: error
+    }
+}
+
+export const createImapDetails = (payload) => {
+    return{
+        type: CREATE_IMAP_DETAILS,
+        payload
+    }
+}
+
+export const createImapDetailsSuccess = (payload) => {
+    return{
+        type: CREATE_IMAP_DETAILS_SUCCESS,
+        payload
+    }
+}
+
+export const createImapDetailsFailure = (error) => {
+    return{
+        type: CREATE_IMAP_DETAILS_FAILURE,
+        payload: error
+    }
+}
+
+export const getAllImapDetails = (payload) => {
+    return{
+        type: GET_ALL_IMAP_DETAILS,
+        payload
+    }
+}
+
+export const getAllImapDetailsSuccess = (payload) => {
+    return{
+        type: GET_ALL_IMAP_DETAILS_SUCCESS,
+        payload
+    }
+}
+
+export const getAllImapDetailsFailure = (error) => {
+    return{
+        type: GET_ALL_IMAP_DETAILS_FAILURE,
+        payload: error
+    }
+}
+
+export const setUnreadEmail = (payload) => {
+    return{
+        type: SET_UNREAD_EMAIL,
+        payload
+    }
+}
+
+export const setUnreadEmailSuccess = (payload) => {
+    return{
+        type: SET_UNREAD_EMAIL_SUCCESS,
+        payload
+    }
+}
+
+export const setUnreadEmailFailure = (error) => {
+    return{
+        type: SET_UNREAD_EMAIL_FAILURE,
         payload: error
     }
 }

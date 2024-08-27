@@ -16,29 +16,30 @@ interface MailListProps {
 
 export function MailList({ items }: MailListProps) {
   const [mail, setMail] = useMail();
+  const check = (items.map((item) => console.log("item----",item)))
 
   return (
     <ScrollArea className="h-full">
       <div className="flex flex-col gap-2 p-4 pt-0">
-        {items.map((item) => (
+        {items.map((item:any) => (
           <button
-            key={item.id}
+            key={item.email_id}
             className={cn(
               "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
-              mail.selected === item.id && "bg-muted"
+              mail.selected === item.email_id && "bg-muted"
             )}
             onClick={() =>
               setMail({
                 ...mail,
-                selected: item.id,
+                selected: item.email_id,
               })
             }
-          >
+            >
             <div className="flex w-full flex-col gap-1">
               <div className="flex items-center">
                 <div className="flex items-center gap-2">
-                  <div className="font-semibold">{item.name}</div>
-                  {!item.read && (
+                  <div className="font-semibold">{item.sender_name}</div>
+                  {!item.isUnread && (
                     <span className="flex h-2 w-2 rounded-full bg-blue-600" />
                   )}
                 </div>
@@ -46,11 +47,11 @@ export function MailList({ items }: MailListProps) {
                   className={cn(
                     "ml-auto text-xs",
                     mail.selected === item.id
-                      ? "text-foreground"
-                      : "text-muted-foreground"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
                   )}
-                >
-                  {formatDistanceToNow(new Date(item.date), {
+                  >
+                  {formatDistanceToNow(new Date(item.created_datetime), {
                     addSuffix: true,
                   })}
                 </div>
@@ -58,17 +59,17 @@ export function MailList({ items }: MailListProps) {
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
             <div className="line-clamp-2 text-xs text-muted-foreground">
-              {item.text.substring(0, 300)}
+              {item.description}
             </div>
-            {item.labels.length ? (
+            {/* {item.labels.length ? (
               <div className="flex items-center gap-2">
-                {item.labels.map((label) => (
+                {item.labels.map((label:any) => (
                   <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
                     {label}
                   </Badge>
                 ))}
               </div>
-            ) : null}
+            ) : null} */}
           </button>
         ))}
       </div>

@@ -13,3 +13,5 @@ export const DELETE_USERS_FROM_GROUP="https://no0wgko.219.93.129.146.sslip.io/ch
 export const BOM_RAW_URL="https://no0wgko.219.93.129.146.sslip.io/bom_raw"
 export const GET_FILE_MESSAGES = "https://no0wgko.219.93.129.146.sslip.io/document"
 export const LOG_USERS_API = "https://no0wgko.219.93.129.146.sslip.io/user_log"
+export const GET_EMAILS="https://no0wgko.219.93.129.146.sslip.io/email"
+export const CREATE_IMAP_DETAILS_URL = "https://no0wgko.219.93.129.146.sslip.io/user_catalog_data"
