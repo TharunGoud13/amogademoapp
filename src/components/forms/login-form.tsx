@@ -154,6 +154,7 @@ const LoginForm: FC<any> = ({ loginLog }) => {
                     type="email"
                     placeholder="Email"
                     disabled={loading}
+                    className='focus:!ring-offset-0 focus:!ring-0'
                     {...field}
                   />
                 </FormControl>
@@ -172,6 +173,7 @@ const LoginForm: FC<any> = ({ loginLog }) => {
                     type="password"
                     placeholder="Password"
                     disabled={loading}
+                    className='focus:!ring-offset-0 focus:!ring-0'
                     {...field}
                   />
                 </FormControl>

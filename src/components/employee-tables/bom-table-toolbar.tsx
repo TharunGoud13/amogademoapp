@@ -44,7 +44,7 @@ const  DataTableToolbar:FC<any> = ({
             setSearchValue(event.target.value)
           }
           onKeyPress={(e) => handleSearch(e)}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-[150px] lg:w-[250px] focus:!ring-offset-0 focus:!ring-0"
         />
         {/* {table.getColumn("status") && (
           <DataTableFacetedFilter

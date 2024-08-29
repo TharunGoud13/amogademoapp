@@ -185,9 +185,8 @@ const Mail = ({
       <TooltipProvider delayDuration={0}>
         <div className="w-full md:w-[70%]">
           <Tabs defaultValue="inbox">
-            <div className="flex items-center px-4 py-2">
-              
-              <TabsList className="h-[50px] p-2.5">
+            <div className="flex items-center px-4 py-2">     
+              <TabsList className="h-[50px] w-full md:w-[300px] p-2.5">
                 <TabsTrigger
                   value="inbox"
                   className="text-zinc-600 dark:text-zinc-200"
@@ -227,7 +226,7 @@ const Mail = ({
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
                     <FaSyncAlt className="h-5 w-5" onClick={handleSync} />
                   </div>
-                  <Input type="text" placeholder="Search..." />
+                  <Input type="text" className="focus:!ring-offset-0 focus:!ring-0" placeholder="Search..." />
                 </div>
               </form>
             </div>
@@ -250,9 +249,8 @@ const Mail = ({
             </TabsContent>
           </Tabs>
         </div>
-        {/* <ResizableHandle withHandle /> */}
-        <Separator orientation="vertical" className="mx-2 h-screen text-red-500"/>
-        <div className="w-[30%]">
+        <Separator orientation="vertical" className="mx-2 h-screen hidden md:block  text-red-500"/>
+        <div className="w-[30%] hidden md:block">
           <MailDisplay mail={currentEmail[0]} />
         </div>
       </TooltipProvider>

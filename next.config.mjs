@@ -7,7 +7,10 @@ const nextConfig = {
     images:{
         domains:["avatars.githubusercontent.com","lh3.googleusercontent.com","secure.gravatar.com"]
     },
-    reactStrictMode:false
+    reactStrictMode:false,
+    compiler:{
+        removeConsole:true
+    }
 };
 
 export default nextConfig;

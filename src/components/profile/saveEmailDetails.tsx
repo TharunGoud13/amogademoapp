@@ -66,7 +66,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
               value={user}
               onChange={(e) => setUser(e.target.value)}
               placeholder="Enter User"
-              className="col-span-2 h-8"
+              className="col-span-2 h-8 focus:!ring-offset-0 focus:!ring-0"
             />
           </div>
           <div className="grid grid-cols-3 items-center gap-4">
@@ -78,7 +78,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
               value={password}
               placeholder="Enter Password"
               type="password"
-              className="col-span-2 h-8"
+              className="col-span-2 h-8 focus:!ring-offset-0 focus:!ring-0"
             />
           </div>
           <div className="grid grid-cols-3 items-center gap-4">
@@ -89,7 +89,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
               value={host}
               onChange={(e) => setHost(e.target.value)}
               placeholder="Host"
-              className="col-span-2 h-8"
+              className="col-span-2 h-8 focus:!ring-offset-0 focus:!ring-0"
             />
           </div>
           <div className="grid grid-cols-3 items-center gap-4">
@@ -102,7 +102,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
               placeholder="993"
               value={port}
               onChange={(e) => setPort(e.target.value)}
-              className="col-span-2 h-8"
+              className="col-span-2 h-8 focus:!ring-offset-0 focus:!ring-0"
             />
           </div>
           <div className="grid grid-cols-3  items-center gap-4">

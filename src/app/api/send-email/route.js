@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
 export  async function POST(req){
-    const {user,receipient, subject, message,username,password} = await req.json()
+    const {user,to, subject, message,username,password} = await req.json()
 
     let transporter = nodemailer.createTransport({
         host: 'mail.morr.biz',
@@ -16,7 +16,7 @@ export  async function POST(req){
       try{
         let info = await transporter.sendMail({
             from:username,
-            to: receipient,
+            to: to,
             subject: subject,
             text: message,
             

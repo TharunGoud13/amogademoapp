@@ -125,7 +125,7 @@ const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse,logi
                         <FormItem>
                             <FormLabel>Group Name *</FormLabel>
                             <FormControl>
-                                <Input type='text' placeholder='Group Name' {...field} />
+                                <Input type='text' placeholder='Group Name' className='focus:!ring-offset-0 focus:!ring-0' {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>}
@@ -133,7 +133,7 @@ const CreateGroupForm:FC<any> = ({onClose,getChatGroup,getChatGroupResponse,logi
                     <FormField control={form.control} name="description" render={({ field }) => <FormItem>
                         <FormLabel>Description *</FormLabel>
                         <FormControl>
-                            <Input type='text' placeholder='Description' {...field} />
+                            <Input type='text' placeholder='Description' className='focus:!ring-offset-0 focus:!ring-0' {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>} />
