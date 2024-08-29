@@ -188,7 +188,7 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
             />
           </div>
           {suggestions.length > 0 && (
-            <Card className="relative  left-5 w-[50%] z-10">
+            <Card className="relative  md:left-5 w-full md:w-[50%] z-10">
               {suggestions.map((suggestion:any, index) => (
                 <div
                   key={index}
