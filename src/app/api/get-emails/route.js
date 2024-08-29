@@ -10,7 +10,6 @@ export async function GET(req) {
     return NextResponse.json({ error: "IMAP configuration not provided" }, { status: 400 });
   }
 
-  console.log("imapConfig---", imapConfig);
 
   try {
     const emails = await new Promise((resolve, reject) => {

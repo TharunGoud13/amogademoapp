@@ -15,11 +15,7 @@ const Home: FC = () => {
   return (
     <div>
       <Mail
-        accounts={accounts}
-        mails={mails}
-        defaultLayout={defaultLayout}
-        defaultCollapsed={defaultCollapsed}
-        navCollapsedSize={4}
+        
       />
     </div>
   )

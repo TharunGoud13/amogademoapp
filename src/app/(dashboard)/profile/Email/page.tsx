@@ -10,21 +10,22 @@ import React, { useState } from 'react'
 const Email = () => {
     const [isPopoverOpen,setIsPopoverOpen] = useState(false)
     return (
-        <div className='h-full flex gap-2.5 justify-between w-full'>
-            <div className='w-full'>
+        <div className='h-full flex flex-col md:flex-row  gap-2.5 md:justify-between w-full'>
+            <div className='w-full order-2 md:order-1'>
                 <EmailDetails/>
             </div>
-            <div>
+            <div className='order-1 md:order-2'>
             <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <PopoverTrigger asChild>
-                    <Button className='w-[150px]'>Add</Button>
+                    <Button className='w-full md:w-[150px] md:block'>Add</Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 fixed right-[5%]  md:right-[10px] md:top-[10px]">
+                <PopoverContent className=" md:w-80 md:fixed  md:right-[10px] md:top-[10px]">
                     <SaveEmailDetails setIsPopoverOpen={setIsPopoverOpen}/>
                 </PopoverContent>
             </Popover>
             </div>
-        </div>
+            </div>
+       
     );
 }
 

@@ -10,7 +10,6 @@ export function register() {
     url: 'https://amogademoapp.vercel.app/api/telemetry',
   });
 
-  console.log("env----",process.env.NODE_ENV)
 
   const sdk = new NodeSDK({
     resource: new Resource({

@@ -1,44 +1,13 @@
 "use client";
-
 import * as React from "react";
-import {
-  AlertCircle,
-  Archive,
-  ArchiveX,
-  File,
-  Inbox,
-  MessagesSquare,
-  Search,
-  Send,
-  ShoppingCart,
-  Trash2,
-  Users2,
-} from "lucide-react";
-
-import { cn } from "@/lib/utils";
-// import { Input } from "@/registry/new-york/ui/input"
 import { Input } from "@/components/ui/input";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// import { AccountSwitcher } from "@/app/(app)/examples/mail/components/account-switcher"
-import { AccountSwitcher } from "./account-switcher";
-// import { MailDisplay } from "@/app/(app)/examples/mail/components/mail-display"
 import { MailDisplay } from "./mail-display";
 import { MailList } from "./mail-list";
-// import { MailList } from "@/app/(app)/examples/mail/components/mail-list"
-import { Nav } from "./nav";
-// import { Nav } from "@/app/(app)/examples/mail/components/nav"
-// import { type Mail } from "@/app/(app)/examples/mail/data"
 import { type Mail } from "./data";
-// import { useMail } from "@/app/(app)/examples/mail/use-mail"
 import { useMail } from "./use-mail";
-import { auth } from "@/auth";
 import { trace, context } from "@opentelemetry/api";
 import { useSession } from "next-auth/react";
 import IpAddress from "@/lib/IpAddress";
@@ -60,17 +29,9 @@ import { GET_EMAILS } from "@/constants/envConfig";
 import { toast } from "../ui/use-toast";
 import { FaSyncAlt } from "react-icons/fa";
 import { Spin } from "antd";
+import NewMail from "./new-mail";
 
 interface MailProps {
-  accounts: {
-    label: string;
-    email: string;
-    icon: React.ReactNode;
-  }[];
-  mails: Mail[];
-  defaultLayout: number[] | undefined;
-  defaultCollapsed?: boolean;
-  navCollapsedSize: number;
   loginLog: any;
   getAllImapDetailsResponse: any;
   getAllImapDetails: any;
@@ -78,18 +39,13 @@ interface MailProps {
 }
 
 const Mail = ({
-  accounts,
-  defaultLayout = [265, 440, 655],
-  defaultCollapsed = false,
-  navCollapsedSize,
   loginLog,
   getAllImapDetails,
   getAllImapDetailsResponse,
   setUnreadEmail,
 }: MailProps) => {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const [mail] = useMail();
-  const [response, setResponse] = React.useState<any>([]);
+  const [responseEmail, setResponse] = React.useState<any>([]);
   const { data: session }: any = useSession();
   const [loading, setLoading] = React.useState(false);
 
@@ -134,7 +90,7 @@ const Mail = ({
     trackPageLoad();
   }, [session, loginLog]);
 
-  const currentEmail = response.filter(
+  const currentEmail = responseEmail.filter(
     (item: any) => item.email_id == mail.selected
   );
 
@@ -174,11 +130,10 @@ const Mail = ({
 
   const handleSync = async () => {
     try {
+      await fetchEmails()
       setLoading(true);
       await getAllImapDetails();
 
-      console.log("session----", session?.user?.email);
-      console.log("getAllImapDetailsResponse---", getAllImapDetailsResponse);
       const currentUserImapDetails = getAllImapDetailsResponse.filter(
         (item: any) => item.user_email == session?.user?.email
       );
@@ -189,7 +144,6 @@ const Mail = ({
         port: currentUserImapDetails[0].data_response.split(" ")[3],
         tls: currentUserImapDetails[0].data_response.split(" ")[4],
       };
-      console.log("imtp server details", imapServerDetails);
       const response = await fetch("/api/get-emails", {
         method: "GET",
         headers: {
@@ -199,14 +153,25 @@ const Mail = ({
       });
 
       const result = await response.json();
-      console.log("result.......", result);
       const filterUnreadEmail = result.filter(
         (item: any) => item.isUnread === true
       );
-      console.log("filterUnreadEmail", filterUnreadEmail);
-      await setUnreadEmail(filterUnreadEmail);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Filter out emails that have already been processed
+    const newUnreadEmails = filterUnreadEmail.filter((email:any) => {
+      return !responseEmail.some((existingEmail:any) => 
+        existingEmail.email_uid == email.uid 
+      );
+    });
+
+
+    if (newUnreadEmails.length > 0) {
+      await setUnreadEmail(newUnreadEmails);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await fetchEmails();
+    } else {
+      console.log("No new unread emails to sync");
+    }
     } catch (error) {
       toast({ description: "Failed to sync emails", variant: "destructive" });
       console.log("error---", error);
@@ -216,47 +181,42 @@ const Mail = ({
   };
 
   return (
-    <TooltipProvider delayDuration={0}>
-      <ResizablePanelGroup
-        direction="horizontal"
-        onLayout={(sizes: number[]) => {
-          document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-            sizes
-          )}`;
-        }}
-        className="h-full  items-stretch"
-      >
-        <ResizablePanel minSize={65}>
-          <Tabs defaultValue="all">
+    <div className="h-full flex w-full">
+      <TooltipProvider delayDuration={0}>
+        <div className="w-full md:w-[70%]">
+          <Tabs defaultValue="inbox">
             <div className="flex items-center px-4 py-2">
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Inbox" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="inbox">Inbox</SelectItem>
-                    <SelectItem value="sent">Sent</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="junk">Junk</SelectItem>
-                    <SelectItem value="trash">Trash</SelectItem>
-                    <SelectItem value="archive">Archive</SelectItem>
-                    <SelectItem value="settings">Settings</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <TabsList className="ml-auto">
+              
+              <TabsList className="h-[50px] p-2.5">
                 <TabsTrigger
-                  value="all"
+                  value="inbox"
                   className="text-zinc-600 dark:text-zinc-200"
                 >
-                  All mail
+                  Inbox
                 </TabsTrigger>
                 <TabsTrigger
-                  value="unread"
+                  value="sent"
                   className="text-zinc-600 dark:text-zinc-200"
                 >
-                  Unread
+                  Sent
+                </TabsTrigger>
+                <TabsTrigger
+                  value="draft"
+                  className="text-zinc-600 dark:text-zinc-200"
+                >
+                  Draft
+                </TabsTrigger>
+                <TabsTrigger
+                  value="trash"
+                  className="text-zinc-600 dark:text-zinc-200"
+                >
+                  Trash
+                </TabsTrigger>
+                <TabsTrigger
+                  value="new"
+                  className="text-zinc-600 dark:text-zinc-200"
+                >
+                  New
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -273,23 +233,30 @@ const Mail = ({
             </div>
             {loading && (
               <div className="flex justify-center items-center gap-2.5">
-                <Spin /> <span className="font-md text-lg">Syncing emails...</span>
+                <Spin />{" "}
+                <span className="font-md text-lg">Syncing emails...</span>
               </div>
             )}
-            <TabsContent value="all" className="m-0">
-              <MailList items={response} />
+            <TabsContent value="inbox" className="m-0">
+              <MailList items={responseEmail.filter((item:any) => item.status != "sent")} />
             </TabsContent>
-            <TabsContent value="unread" className="m-0">
-              <MailList items={response.filter((item:any) => !item.read)} />
+            <TabsContent value="sent" className="m-0">
+              <MailList items={responseEmail.filter((item: any) => item.status == "sent")} />
+            </TabsContent>
+            <TabsContent value="new" className="m-0">
+              <NewMail getAllImapDetailsResponse={getAllImapDetailsResponse.filter(
+        (item: any) => item.user_email == session?.user?.email
+      )}/>
             </TabsContent>
           </Tabs>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel minSize={30}>
+        </div>
+        {/* <ResizableHandle withHandle /> */}
+        <Separator orientation="vertical" className="mx-2 h-screen text-red-500"/>
+        <div className="w-[30%]">
           <MailDisplay mail={currentEmail[0]} />
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </TooltipProvider>
+        </div>
+      </TooltipProvider>
+    </div>
   );
 };
 

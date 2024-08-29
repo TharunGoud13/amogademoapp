@@ -16,12 +16,12 @@ interface MailListProps {
 
 export function MailList({ items }: MailListProps) {
   const [mail, setMail] = useMail();
-  const check = (items.map((item) => console.log("item----",item)))
 
   return (
     <ScrollArea className="h-full">
       <div className="flex flex-col gap-2 p-4 pt-0">
-        {items.map((item:any) => (
+        {items?.length > 0 ?
+        items.map((item:any) => (
           <button
             key={item.email_id}
             className={cn(
@@ -61,17 +61,17 @@ export function MailList({ items }: MailListProps) {
             <div className="line-clamp-2 text-xs text-muted-foreground">
               {item.description}
             </div>
-            {/* {item.labels.length ? (
-              <div className="flex items-center gap-2">
-                {item.labels.map((label:any) => (
-                  <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
-                    {label}
-                  </Badge>
-                ))}
-              </div>
-            ) : null} */}
           </button>
-        ))}
+        )): 
+        <div className="flex flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-md text-center">
+        <div className="mx-auto h-24 w-24 text-muted" />
+        <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Your inbox is empty</h2>
+        <p className="mt-2 text-muted-foreground">
+          There are no new emails at the moment. Check back later for updates.
+        </p>
+      </div>
+    </div>}
       </div>
     </ScrollArea>
   );

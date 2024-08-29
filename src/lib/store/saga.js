@@ -203,7 +203,6 @@ function* createImapDetailsSaga(action) {
     "user_mobile":sessionDetails?.mobile,
     "created_datetime":createdDate
   }
-  console.log("payload---",payload)
   try{
     const response = yield fetch(CREATE_IMAP_DETAILS_URL,{
       method: "POST",
@@ -227,7 +226,6 @@ function* getAllImapDetailsSaga() {
         Authorization: token,
       },
     });
-    console.log("response----",response.data)
     yield put(getAllImapDetailsSuccess(response.data))
   }
   catch(error){
@@ -251,7 +249,6 @@ function* setUnreadEmailSaga(action){
     }
   });
   const payload = Array.from(uniqueEmails.values());
-  console.log("payload......",payload)
   try{
     const response = yield fetch(GET_EMAILS,{
       method:"POST",
@@ -261,7 +258,6 @@ function* setUnreadEmailSaga(action){
       },
       body: JSON.stringify(payload),
     })
-    console.log("response.......",response)
     yield put(setUnreadEmailSuccess(response.data))
   }
   catch(error){

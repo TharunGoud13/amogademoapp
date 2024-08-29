@@ -56,7 +56,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
 
 
   return (
-    <div className="flex h-[92%] flex-col fixed">
+    <div className="flex h-[92%] w-[30%] flex-col fixed">
       <div className="flex items-center p-2">
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -66,7 +66,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Archive</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Archive</TooltipContent>
+            <TooltipContent side="bottom">Archive</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -75,7 +75,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Move to junk</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Move to junk</TooltipContent>
+            <TooltipContent side="bottom">Move to junk</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -84,7 +84,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Move to trash</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Move to trash</TooltipContent>
+            <TooltipContent side="bottom">Move to trash</TooltipContent>
           </Tooltip>
           <Separator orientation="vertical" className="mx-1 h-6" />
           <Tooltip>
@@ -144,7 +144,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 </div>
               </PopoverContent>
             </Popover>
-            <TooltipContent>Snooze</TooltipContent>
+            <TooltipContent side="bottom">Snooze</TooltipContent>
           </Tooltip>
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -155,7 +155,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Reply</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Reply</TooltipContent>
+            <TooltipContent side="bottom">Reply</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -164,7 +164,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Reply all</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Reply all</TooltipContent>
+            <TooltipContent side="bottom">Reply all</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -173,7 +173,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Forward</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Forward</TooltipContent>
+            <TooltipContent side="bottom">Forward</TooltipContent>
           </Tooltip>
         </div>
         <Separator orientation="vertical" className="mx-2 h-6" />
@@ -227,7 +227,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
               <div className="grid gap-4">
                 <Textarea
                   className="p-4"
-                  placeholder={`Reply ${mail.name}...`}
+                  placeholder={`Reply ${mail.sender_email}...`}
                 />
                 <div className="flex items-center">
                   <Label

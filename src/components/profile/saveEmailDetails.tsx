@@ -99,7 +99,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
               type="number"
               inputMode="numeric"
               id="port"
-              placeholder="995"
+              placeholder="993"
               value={port}
               onChange={(e) => setPort(e.target.value)}
               className="col-span-2 h-8"
@@ -108,7 +108,7 @@ const SaveEmailDetails: FC<SaveEmailDetailsProps> = ({
           <div className="grid grid-cols-3  items-center gap-4">
             <Label htmlFor="tls">TLS</Label>
             <Select onValueChange={(value: any) => setTls(value)} required>
-              <SelectTrigger className="md:w-[188px]">
+              <SelectTrigger className="md:w-[188px] w-[162px]">
                 <SelectValue placeholder="Select TLS" />
               </SelectTrigger>
               <SelectContent>
