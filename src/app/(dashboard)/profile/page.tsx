@@ -7,7 +7,6 @@ import {
 import MyProfile from "./Profile/page"
 import Address from "./Address/page"
 import Email from "./Email/page"
-import { useState } from "react"
 
 const Profile = ()  => {
   return (

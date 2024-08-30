@@ -1,4 +1,3 @@
-import { Message, UserData } from "@/app/data";
 import { cn } from "@/lib/utils";
 import React, { useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -13,7 +12,7 @@ import { FaFile } from "react-icons/fa6";
 
 interface ChatListProps {
   messages?: any;
-  selectedUser: UserData;
+  selectedUser: any;
   isMobile: boolean;
   session: any;
   socket: any;

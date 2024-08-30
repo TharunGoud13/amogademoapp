@@ -4,11 +4,7 @@ import { Metadata } from "next"
 import Image from "next/image"
 import { z } from "zod"
 
-// import { columns } from "./components/columns"
 import { columns } from "@/components/task-tables/task-columns"
-// import { taskColumns } from "@/components/task-tables/task-columns"
-// import { UserNav } from "./components/user-nav"
-// import { taskSchema } from "./data/schema"
 import { taskSchema } from "@/constants/schema"
 import  TaskTable from "@/components/task-tables/task-table"
 
@@ -17,8 +13,6 @@ export const metadata: Metadata = {
   description: "A task and issue tracker build using Tanstack Table.",
 }
 
-// Simulate a database read for tasks.
-// using filesystem we read the data to a variable by giving it a file path
 async function getTasks() {
   const data = await fs.readFile(
     path.join(process.cwd(), "src/constants/tasks.json"),

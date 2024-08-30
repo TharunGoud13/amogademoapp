@@ -1,5 +1,3 @@
-import { auth } from "@/auth";
-import Contacts from "@/components/chat/contacts";
 import Groups from "@/components/chat/groups";
 
 export const metadata = {

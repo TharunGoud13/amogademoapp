@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import Imap from "imap";
 import { simpleParser } from "mailparser";
 
@@ -19,7 +19,7 @@ export async function GET(req) {
         host: imapConfig.host,
         port: imapConfig.port,
         tls: imapConfig.tls,
-        tlsOptions: { rejectUnauthorized: false }, // Remove this in production
+        tlsOptions: { rejectUnauthorized: false }, 
       });
       const emails = [];
 

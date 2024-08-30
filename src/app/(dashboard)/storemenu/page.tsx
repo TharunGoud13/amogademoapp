@@ -1,4 +1,3 @@
-import Product from "@/components/products/product";
 import { Tabs, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
 import { FC } from "react";

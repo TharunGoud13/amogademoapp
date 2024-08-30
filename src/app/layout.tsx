@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import TopBar from "@/components/layout/topNav";
 import Providers from "@/components/layout/providers";
 import { auth } from "@/auth";
-import { headers } from "next/headers";
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from "@/components/ui/toaster";
-
 
 const inter = Inter({ subsets: ["latin"] });
 

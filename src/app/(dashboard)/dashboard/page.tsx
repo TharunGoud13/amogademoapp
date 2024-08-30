@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 import { Overview } from '@/components/overview';
 import { RecentSales } from '@/components/recent-sales';
@@ -54,7 +53,7 @@ export default function page() {
 
   // useEffect(() => {
   //   trackPageLoad()
-  // }, [])
+  // }, []) 
   return (
     <ScrollArea className="h-full pt-[4%]">
       <div className="flex-1 space-y-4 p-4 pt-[20%] md:pt-[1%] md:p-8">
