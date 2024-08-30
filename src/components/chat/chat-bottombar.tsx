@@ -12,7 +12,7 @@ import React, { useEffect,useCallback, useRef, useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { Message, loggedInUserData } from "@/app/data";
+import { Message } from "@/app/data";
 import { Textarea } from "../ui/textarea";
 import { EmojiPicker } from "../emoji-picker";
 import { v4 as uuidv4 } from "uuid";
