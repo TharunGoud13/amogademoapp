@@ -84,8 +84,6 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
     setActiveSuggestionField(field);
   };
 
-  console.log("ccccccccc",{cc,bcc})
-
   const handleSuggestionClick = (suggestion:any) => {
     if (activeSuggestionField === 'to') setTo(suggestion);
     else if (activeSuggestionField === 'cc') setCc(suggestion);

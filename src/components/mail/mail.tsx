@@ -17,19 +17,12 @@ import {
   setUnreadEmail,
 } from "@/lib/store/actions";
 import { connect } from "react-redux";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { GET_EMAILS } from "@/constants/envConfig";
 import { toast } from "../ui/use-toast";
 import { FaSyncAlt } from "react-icons/fa";
 import { Spin } from "antd";
 import NewMail from "./new-mail";
+import { FaArrowLeft } from "react-icons/fa6";
 
 interface MailProps {
   loginLog: any;
@@ -44,15 +37,27 @@ const Mail = ({
   getAllImapDetailsResponse,
   setUnreadEmail,
 }: MailProps) => {
-  const [mail] = useMail();
+  const [mail,setMail] = useMail();
   const [responseEmail, setResponse] = React.useState<any>([]);
   const { data: session }: any = useSession();
   const [loading, setLoading] = React.useState(false);
+  const [currentTab, setCurrentTab] = React.useState("inbox");
+  const [showMailDisplay, setShowMailDisplay] = React.useState(false);
+
 
   let imapServerDetails;
   React.useEffect(() => {
     getAllImapDetails();
   }, [getAllImapDetails]);
+
+  const handleMailClick = (mailId: string) => {
+    setMail({ ...mail, selected: mailId });
+    setShowMailDisplay(true);
+  };
+
+  const handleBackToList = () => {
+    setShowMailDisplay(false);
+  };
 
   React.useEffect(() => {
     const trackPageLoad = async () => {
@@ -181,10 +186,10 @@ const Mail = ({
   };
 
   return (
-    <div className="h-full flex w-full">
+    <div className="h-full flex w-full flex-col md:flex-row">
       <TooltipProvider delayDuration={0}>
-        <div className="w-full md:w-[70%]">
-          <Tabs defaultValue="inbox">
+        <div className={`w-full md:w-[70%] ${showMailDisplay ? "hidden md:block" : ""}`}>
+          <Tabs defaultValue="inbox" onValueChange={setCurrentTab}>
             <div className="flex items-center px-4 py-2">     
               <TabsList className="h-[50px] w-full md:w-[300px] p-2.5">
                 <TabsTrigger
@@ -220,7 +225,7 @@ const Mail = ({
               </TabsList>
             </div>
             <Separator />
-            <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className={`bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${currentTab == "new" && "hidden"}`}>
               <form>
                 <div className="flex  items-center space-x-2 relative">
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
@@ -237,10 +242,10 @@ const Mail = ({
               </div>
             )}
             <TabsContent value="inbox" className="m-0">
-              <MailList items={responseEmail.filter((item:any) => item.status != "sent")} />
+              <MailList items={responseEmail.filter((item:any) => item.status != "sent")} onMailClick={handleMailClick}/>
             </TabsContent>
             <TabsContent value="sent" className="m-0">
-              <MailList items={responseEmail.filter((item: any) => item.status == "sent")} />
+              <MailList items={responseEmail.filter((item: any) => item.status == "sent")} onMailClick={handleMailClick} />
             </TabsContent>
             <TabsContent value="new" className="m-0">
               <NewMail getAllImapDetailsResponse={getAllImapDetailsResponse.filter(
@@ -250,7 +255,12 @@ const Mail = ({
           </Tabs>
         </div>
         <Separator orientation="vertical" className="mx-2 h-screen hidden md:block  text-red-500"/>
-        <div className="w-[30%] hidden md:block">
+        <div className={`w-[98%] md:w-[30%] ${currentTab === "new" ? "hidden" : showMailDisplay ? "block" : "hidden md:block"}`}>
+        {showMailDisplay && (
+            <div className="md:hidden ml-4 bg-gray-200 w-[40px] rounded-full p-2.5 h-[40px] cursor-pointer mt-2.5">
+              <button onClick={handleBackToList}><FaArrowLeft/></button>
+            </div>
+          )}
           <MailDisplay mail={currentEmail[0]} />
         </div>
       </TooltipProvider>

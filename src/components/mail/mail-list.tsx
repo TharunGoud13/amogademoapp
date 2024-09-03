@@ -12,10 +12,13 @@ import { useMail } from "./use-mail";
 
 interface MailListProps {
   items: Mail[];
+  onMailClick: (mailId: string) => void;
 }
 
-export function MailList({ items }: MailListProps) {
+export function MailList({ items,onMailClick  }: MailListProps) {
   const [mail, setMail] = useMail();
+
+  
 
   return (
     <ScrollArea className="h-full">
@@ -28,11 +31,12 @@ export function MailList({ items }: MailListProps) {
               "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
               mail.selected === item.email_id && "bg-muted"
             )}
-            onClick={() =>
+            onClick={() => {
               setMail({
                 ...mail,
                 selected: item.email_id,
-              })
+              }),onMailClick(item.email_id)
+            }
             }
             >
             <div className="flex w-full flex-col gap-1">

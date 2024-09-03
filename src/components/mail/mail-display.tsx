@@ -56,7 +56,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
 
 
   return (
-    <div className="flex h-[92%] w-[30%] flex-col fixed">
+    <div className="flex h-full md:h-[92%] w-[98%] md:w-[30%]  flex-col absolute md:fixed">
       <div className="flex items-center p-2">
         <div className="flex items-center gap-2">
           <Tooltip>
