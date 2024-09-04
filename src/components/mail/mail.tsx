@@ -37,13 +37,12 @@ const Mail = ({
   getAllImapDetailsResponse,
   setUnreadEmail,
 }: MailProps) => {
-  const [mail,setMail] = useMail();
+  const [mail, setMail] = useMail();
   const [responseEmail, setResponse] = React.useState<any>([]);
   const { data: session }: any = useSession();
   const [loading, setLoading] = React.useState(false);
   const [currentTab, setCurrentTab] = React.useState("inbox");
   const [showMailDisplay, setShowMailDisplay] = React.useState(false);
-
 
   let imapServerDetails;
   React.useEffect(() => {
@@ -135,7 +134,7 @@ const Mail = ({
 
   const handleSync = async () => {
     try {
-      await fetchEmails()
+      await fetchEmails();
       setLoading(true);
       await getAllImapDetails();
 
@@ -162,21 +161,20 @@ const Mail = ({
         (item: any) => item.isUnread === true
       );
 
-    // Filter out emails that have already been processed
-    const newUnreadEmails = filterUnreadEmail.filter((email:any) => {
-      return !responseEmail.some((existingEmail:any) => 
-        existingEmail.email_uid == email.uid 
-      );
-    });
+      // Filter out emails that have already been processed
+      const newUnreadEmails = filterUnreadEmail.filter((email: any) => {
+        return !responseEmail.some(
+          (existingEmail: any) => existingEmail.email_uid == email.uid
+        );
+      });
 
-
-    if (newUnreadEmails.length > 0) {
-      await setUnreadEmail(newUnreadEmails);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      await fetchEmails();
-    } else {
-      console.log("No new unread emails to sync");
-    }
+      if (newUnreadEmails.length > 0) {
+        await setUnreadEmail(newUnreadEmails);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await fetchEmails();
+      } else {
+        console.log("No new unread emails to sync");
+      }
     } catch (error) {
       toast({ description: "Failed to sync emails", variant: "destructive" });
       console.log("error---", error);
@@ -188,9 +186,13 @@ const Mail = ({
   return (
     <div className="h-full flex w-full flex-col md:flex-row">
       <TooltipProvider delayDuration={0}>
-        <div className={`w-full md:w-[70%] ${showMailDisplay ? "hidden md:block" : ""}`}>
+        <div
+          className={`w-full ${
+            showMailDisplay ? "hidden md:block" : ""
+          } ${currentTab == "new" ? "w-full": "md:w-[70%]"}`}
+        >
           <Tabs defaultValue="inbox" onValueChange={setCurrentTab}>
-            <div className="flex items-center px-4 py-2">     
+            <div className="flex items-center px-4 py-2">
               <TabsList className="h-[50px] w-full md:w-[300px] p-2.5">
                 <TabsTrigger
                   value="inbox"
@@ -224,14 +226,22 @@ const Mail = ({
                 </TabsTrigger>
               </TabsList>
             </div>
-            <Separator />
-            <div className={`bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${currentTab == "new" && "hidden"}`}>
+            <Separator className={`${currentTab == "new" && "hidden"}`} />
+            <div
+              className={`bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${
+                currentTab == "new" && "hidden"
+              }`}
+            >
               <form>
                 <div className="flex  items-center space-x-2 relative">
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
                     <FaSyncAlt className="h-5 w-5" onClick={handleSync} />
                   </div>
-                  <Input type="text" className="focus:!ring-offset-0 focus:!ring-0" placeholder="Search..." />
+                  <Input
+                    type="text"
+                    className="focus:!ring-offset-0 focus:!ring-0"
+                    placeholder="Search..."
+                  />
                 </div>
               </form>
             </div>
@@ -242,22 +252,34 @@ const Mail = ({
               </div>
             )}
             <TabsContent value="inbox" className="m-0">
-              <MailList items={responseEmail.filter((item:any) => item.status != "sent")} onMailClick={handleMailClick}/>
+              <MailList
+                items={responseEmail.filter(
+                  (item: any) => item.status != "sent"
+                )}
+                onMailClick={handleMailClick}
+              />
             </TabsContent>
             <TabsContent value="sent" className="m-0">
-              <MailList items={responseEmail.filter((item: any) => item.status == "sent")} onMailClick={handleMailClick} />
+              <MailList
+                items={responseEmail.filter(
+                  (item: any) => item.status == "sent"
+                )}
+                onMailClick={handleMailClick}
+              />
             </TabsContent>
             <TabsContent value="new" className="m-0">
-              <NewMail getAllImapDetailsResponse={getAllImapDetailsResponse.filter(
-        (item: any) => item.user_email == session?.user?.email
-      )}/>
+              <NewMail
+                getAllImapDetailsResponse={getAllImapDetailsResponse.filter(
+                  (item: any) => item.user_email == session?.user?.email
+                )}
+              />
             </TabsContent>
           </Tabs>
         </div>
-        <Separator orientation="vertical" className="mx-2 h-screen hidden md:block  text-red-500"/>
+        <Separator orientation="vertical" className="mx-2 h-screen hidden md:block"/>
         <div className={`w-[98%] md:w-[30%] ${currentTab === "new" ? "hidden" : showMailDisplay ? "block" : "hidden md:block"}`}>
-        {showMailDisplay && (
-            <div className="md:hidden ml-4 bg-gray-200 w-[40px] rounded-full p-2.5 h-[40px] cursor-pointer mt-2.5">
+          {showMailDisplay && (
+            <div className="md:hidden ml-2 dark:text-white dark:bg-black bg-gray-100 w-[40px] rounded-full p-2.5 h-[40px] cursor-pointer mt-2.5">
               <button onClick={handleBackToList}><FaArrowLeft/></button>
             </div>
           )}

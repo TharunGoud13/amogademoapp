@@ -1,96 +1,119 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { useSession } from "next-auth/react";
 import { toast } from "../ui/use-toast";
-import { GET_CONTACTS_API, GET_EMAILS } from "@/constants/envConfig";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { CREATE_EMAIL_ATTACHMENT_URL, GET_CONTACTS_API, GET_EMAILS } from "@/constants/envConfig";
+import { Badge } from "../ui/badge";
+import {
+  BoldIcon,
+  RedoIcon,
+  ItalicIcon,
+  Paperclip,
+  UnderlineIcon,
+  X,
+  Undo2,
+} from "lucide-react";
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
 }
 
 const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
-  const [to, setTo] = useState("");
-  const [cc, setCc] = useState("");
-  const [bcc, setBcc] = useState("");
+  const [to, setTo] = useState<string[]>([]);
+  const [cc, setCc] = useState<string[]>([]);
+  const [bcc, setBcc] = useState<string[]>([]);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [toInput, setToInput] = useState("");
+  const [ccInput, setCcInput] = useState("");
+  const [bccInput, setBccInput] = useState("");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [bold, setBold] = useState(false);
+  const [italic, setItalic] = useState(false);
+  const [underline, setUnderline] = useState(false);
   const { data: session } = useSession();
-  const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [activeSuggestionField, setActiveSuggestionField] = useState(null);
-  const [users,setUsers] = useState([])
+  const [activeSuggestionField, setActiveSuggestionField] = useState<
+    string | null
+  >(null);
+  const uploadFileRef = useRef<HTMLInputElement>(null);
+  const [attachment, setAttachment] = useState<File | null>(null);
 
-  const fetchUsers = async(query:string) => {
-    const headers = new Headers()
+  // Fetch users based on input value
+  const fetchUsers = async (query: string) => {
+    const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    headers.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
-    const requestOptions:any =  {
-      method:"GET",
+    headers.append(
+      "Authorization",
+      `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
+    );
+    const requestOptions: any = {
+      method: "GET",
       headers: headers,
       redirect: "follow",
-    }
-    try{
-      const response = await fetch(`${GET_CONTACTS_API}?user_email=ilike.*${query}*`,requestOptions)
+    };
+    try {
+      const response = await fetch(
+        `${GET_CONTACTS_API}?user_email=ilike.*${query}*`,
+        requestOptions
+      );
       const result = await response.json();
-      setUsers(result)
-      return result
+      setSuggestions(result);
+    } catch (error) {
+      toast({ description: "Error fetching users", variant: "destructive" });
     }
-    catch(error){
-      toast({description:"Error fetching users",variant:"destructive"})
-    }
-  }
-
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (searchValue) {
-        fetchUsers(searchValue); 
-      } else {
-        setUsers([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(debounce);
-  }, [searchValue]);
-  
-
-  let user: any = session?.user;
-  const currentDate = new Date().toUTCString();
-  let username = getAllImapDetailsResponse[0]?.data_response?.split(" ")[0];
-  let password = getAllImapDetailsResponse[0]?.data_response?.split(" ")[1];
-
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (activeSuggestionField) {
-        const value = activeSuggestionField === 'to' ? to : activeSuggestionField === 'cc' ? cc : bcc;
-        const filterUsers = users.filter((user:any) => user.user_email?.toLowerCase().includes(value.toLowerCase()));  
-        const filteredSuggestions:any = filterUsers
-        console.log("Filtered users: " + filteredSuggestions)
-        setSuggestions(filteredSuggestions);
-      }
-    }, 300);
-
-    return () => clearTimeout(debounce);
-  }, [to, cc, bcc, activeSuggestionField,users]);
-
-  const handleInputChange = (e:any, setter:any, field:any) => {
-    setter(e.target.value);
-    setSearchValue(e.target.value);
-    setActiveSuggestionField(field);
   };
 
-  const handleSuggestionClick = (suggestion:any) => {
-    if (activeSuggestionField === 'to') setTo(suggestion);
-    else if (activeSuggestionField === 'cc') setCc(suggestion);
-    else if (activeSuggestionField === 'bcc') setBcc(suggestion);
+  // Handle input changes for To, Cc, Bcc fields
+  const handleInputChange = (e: any, field: string) => {
+    const value = e.target.value;
+    if (field === "to") {
+      setToInput(value);
+      setActiveSuggestionField("to");
+    } else if (field === "cc") {
+      setCcInput(value);
+      setActiveSuggestionField("cc");
+    } else if (field === "bcc") {
+      setBccInput(value);
+      setActiveSuggestionField("bcc");
+    }
+    if (value.length >= 1) {
+      fetchUsers(value);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion: any) => {
+    if (activeSuggestionField === "to") {
+      setTo((prev) => [...prev, suggestion.user_email]);
+      setToInput("");
+    } else if (activeSuggestionField === "cc") {
+      setCc((prev) => [...prev, suggestion.user_email]);
+      setCcInput("");
+    } else if (activeSuggestionField === "bcc") {
+      setBcc((prev) => [...prev, suggestion.user_email]);
+      setBccInput("");
+    }
     setSuggestions([]);
     setActiveSuggestionField(null);
   };
+
+  const handleRemoveRecipient = (field: string, index: number) => {
+    if (field === "to") {
+      setTo((prev) => prev.filter((_, i) => i !== index));
+    } else if (field === "cc") {
+      setCc((prev) => prev.filter((_, i) => i !== index));
+    } else if (field === "bcc") {
+      setBcc((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+  let user: any = session?.user;
 
   const handleSendMail = async (e: any) => {
     setLoading(true);
@@ -99,18 +122,23 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
       const requestOptions = {
         method: "POST",
         body: JSON.stringify({
-          user,
-          to,
+          user: session?.user,
+          to: to.join(", "),
+          cc: cc.join(", "),
+          bcc: bcc.join(", "),
           subject,
           message,
-          username,
-          password,
+          username: getAllImapDetailsResponse[0]?.data_response?.split(" ")[0],
+          password: getAllImapDetailsResponse[0]?.data_response?.split(" ")[1],
         }),
         headers: { "Content-Type": "application/json" },
       };
       const response = await fetch("/api/send-email", requestOptions);
       if (!response.ok) {
         toast({ description: "Error sending email", variant: "destructive" });
+      }
+      if (attachment) {
+        await sendEmailAttachment();
       }
       const emailHeaders = new Headers();
       emailHeaders.append("Content-Type", "application/json");
@@ -124,13 +152,14 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
           status: "sent",
           subject: message,
           sender_email: user?.email,
+          recipient_emails: to.join(", "),
           sender_name: user?.name,
           sender_mobile: user?.mobile,
           business_name: user?.business_name,
           business_number: user?.business_number,
-          created_datetime: currentDate,
-          cc_emails:cc,
-          bcc_emails: bcc,
+          created_datetime: new Date().toUTCString(),
+          cc_emails: cc.join(", "),
+          bcc_emails: bcc.join(", "),
         }),
         headers: emailHeaders,
       };
@@ -139,65 +168,147 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
         toast({ description: "Something went wrong", variant: "destructive" });
       }
       toast({ description: "Email sent successfully", variant: "default" });
-      setTo("");
+      setTo([]);
+      setCc([]);
+      setBcc([]);
       setLoading(false);
       setSubject("");
       setMessage("");
+      setAttachment(null);
     } catch (error) {
       toast({ description: "Failed to send email", variant: "destructive" });
       setLoading(false);
-      console.error("Error sending email: ", error);
+
     }
   };
 
+  const handleClick = () => {
+    uploadFileRef.current?.click();
+  };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0];
+    if (file) {
+      setAttachment(file);
+    }
+  };
+
+  const sendEmailAttachment = async () => {
+    if (!attachment) return;
+    const currentData = new Date().toUTCString()
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append(
+      "Authorization",
+      `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
+    );
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const binaryString = event?.target?.result;
+      if (typeof binaryString !== "string") return;
+      const base64String = btoa(binaryString);
+      const requestOptions: any = {
+        method: "POST",
+        body: JSON.stringify({
+          email_id: session?.user?.id,
+          file_name: attachment.name,
+          content_type: attachment.type,
+          file_size: attachment.size,
+          email_file: base64String,
+          created_datetime: currentData
+        }),
+        headers: headers,
+      };
+      try {
+        const response = await fetch(
+          CREATE_EMAIL_ATTACHMENT_URL,
+          requestOptions
+        );
+        if (!response.ok) {
+          throw new Error("Failed to send email attachment");
+        }
+      } catch (error) {
+        toast({
+          description: "Failed to send email attachment",
+          variant: "destructive",
+        });
+      }
+    };
+    reader.readAsBinaryString(attachment);
+  };
+console.log("text----",bold,italic,underline)
 
   return (
     <form onSubmit={handleSendMail}>
-      <Card className="p-2.5 my-2.5 flex flex-col gap-5 m-2.5">
+      <Card className="p-2.5 my-2.5 flex flex-col w-[95%] md:w-full gap-5 m-2.5">
         <div className="flex flex-col border">
-          <div className="flex justify-center items-center">
-            <span className="text-gray-500 pl-2.5 pr-[20px]">To</span>
+          <div className="flex  items-center">
+            <span className="text-gray-500 pl-2.5 pr-4">To</span>
+            {to.map((recipient, index) => (
+              <Badge key={index} className="flex items-center m-1 p-1 rounded">
+                {recipient}
+                <X
+                  className="ml-1 cursor-pointer"
+                  size={12}
+                  onClick={() => handleRemoveRecipient("to", index)}
+                />
+              </Badge>
+            ))}
             <Input
-              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0  focus:!border-0"
-              value={to}
+              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
+              value={toInput}
               type="email"
-              onChange={(e) => handleInputChange(e, setTo, 'to')}
+              onChange={(e) => handleInputChange(e, "to")}
             />
           </div>
-          <div className="flex justify-center items-center">
-            <span className="text-gray-500 pl-2.5 pr-[18px]">Cc</span>
+          <div className="flex items-center">
+            <span className="text-gray-500 pl-2.5 pr-4">Cc</span>
+            {cc.map((recipient, index) => (
+              <Badge key={index} className="flex items-center m-1 p-1 rounded">
+                {recipient}
+                <X
+                  className="ml-1 cursor-pointer"
+                  size={12}
+                  onClick={() => handleRemoveRecipient("cc", index)}
+                />
+              </Badge>
+            ))}
             <Input
-              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0  focus:!border-0"
-              value={cc}
-              autoFocus
+              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
+              value={ccInput}
               type="email"
-              onChange={(e) => handleInputChange(e, setCc, 'cc')}
+              onChange={(e) => handleInputChange(e, "cc")}
             />
           </div>
-          <div className="flex justify-center items-center">
-            <span className="text-gray-500 pl-2.5 pr-[12px]">Bcc</span>
+          <div className="flex  items-center">
+            <span className="text-gray-500 pl-2.5 pr-4">Bcc</span>
+            {bcc.map((recipient, index) => (
+              <Badge key={index} className="flex items-center m-1  p-1 rounded">
+                {recipient}
+                <X
+                  className="ml-1 cursor-pointer"
+                  size={12}
+                  onClick={() => handleRemoveRecipient("bcc", index)}
+                />
+              </Badge>
+            ))}
             <Input
-              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0  focus:!border-0"
-              value={bcc}
-              autoFocus
+              className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
+              value={bccInput}
               type="email"
-              onChange={(e) => handleInputChange(e, setBcc, 'bcc')}
+              onChange={(e) => handleInputChange(e, "bcc")}
             />
           </div>
-          {suggestions.length > 0 && (
-            <Card className="relative  md:left-5 w-full md:w-[50%] z-10">
-              {suggestions.map((suggestion:any, index) => (
+          {suggestions.length > 0 && activeSuggestionField && (
+            <Card className="relative md:left-2 md:bottom-2 md:w-[50%] w-full  border border-gray-300 z-10">
+              {suggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="p-2 flex items-center gap-2.5 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleSuggestionClick(suggestion?.user_email)}
+                  className="py-2 px-4 cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSuggestionClick(suggestion)}
                 >
-                  <Avatar>
-                    <AvatarFallback>
-                      {suggestion?.user_email.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
                   {suggestion.user_email}
                 </div>
               ))}
@@ -206,19 +317,53 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
         </div>
         <Input
           type="text"
-          placeholder="Subject"
           value={subject}
-          className="focus:!ring-0 focus:!ring-offset-0"
           onChange={(e) => setSubject(e.target.value)}
+          placeholder="Subject"
         />
+        <div className="flex items-center space-x-2 gap-2.5 cursor-pointer border-b pb-2 mb-4">
+          <Undo2 onClick={() => setMessage("")}/>
+          <BoldIcon className={`h-7 w-5 ${bold && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setBold(!bold)} />
+          <ItalicIcon className={`h-7 w-5 ${italic && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setItalic(!italic)}/>
+          <UnderlineIcon className={`h-7 w-5 ${underline && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setUnderline(!underline)} />
+        </div>
         <Textarea
-          placeholder="Type your message here"
           value={message}
-          className="resize-none focus:!ring-0 focus:!ring-offset-0"
-          rows={14}
           onChange={(e) => setMessage(e.target.value)}
+          placeholder="Message"
+          className={`resize-none ${bold && "font-bold"} ${italic && "italic"} ${underline && "underline"}`}
+          rows={14}
         />
-        <Button type="submit">{loading ? "Sending..." : "Send"}</Button>
+        <div className="flex justify-between items-center">
+          <Button
+            type="submit"
+            disabled={loading || !(to  && subject && message)}
+          >
+            {loading ? "Sending..." : "Send"}
+          </Button>
+          <div className="flex items-center">
+            {attachment && (
+              <Badge className="mr-2">
+                {attachment.name}
+                <X
+                  className="ml-1 cursor-pointer"
+                  size={12}
+                  onClick={() => setAttachment(null)}
+                />
+              </Badge>
+            )}
+            <Input
+              type="file"
+              onChange={handleFileChange}
+              className="hidden"
+              ref={uploadFileRef}
+            />
+            <Paperclip
+              onClick={handleClick}
+              className="text-3xl cursor-pointer"
+            />
+          </div>
+        </div>
       </Card>
     </form>
   );

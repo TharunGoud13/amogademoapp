@@ -211,7 +211,7 @@ export default function ChatBottombar({
           body: JSON.stringify(payload),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYXBpX3VzZXIifQ.Ks_9ISeorCCS73q1WKEjZHu9kRx107eOx5VcImPh9U8",
+            "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
           },
         });
 
