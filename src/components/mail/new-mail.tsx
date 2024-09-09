@@ -292,7 +292,7 @@ const NewMail: FC<NewMailProps> = ({
 
   return (
     <form onSubmit={handleSendMail}>
-      <Card className="p-2.5 my-2.5 flex flex-col w-[99%]  gap-5 m-2.5">
+      <Card className="p-2.5 my-2.5 flex flex-col w-[95%] md:w-[99%]  gap-5 m-2.5">
         {mailResponse && (
           <h1 className="mt-2 text-gray-500">
             Date: {formattedDate.toLocaleString()}

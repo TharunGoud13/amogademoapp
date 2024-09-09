@@ -84,7 +84,6 @@ export async function GET(req) {
                       if (err) {
                         return;
                       }
-                      console.log("parsed----",parsed)
                       const fromEmail = parsed.from?.text.split("<")[1];
                       const formattedText = parsed.text.match(/<div[^>]*>(.*?)<\/div>/);
                       email.subject = parsed.subject || "No Subject";
