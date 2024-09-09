@@ -16,14 +16,14 @@ interface MailListProps {
 }
 
 export function MailList({ items }: MailListProps) {
-  // const [mail, setMail] = useMail();
   console.log("items----",items)
+  const sortedItems = items && items?.sort((a:any,b:any) => new Date(b.created_datetime).getTime() - new Date(a.created_datetime).getTime())
 
   return (
     <ScrollArea className="h-full">
       <div className="flex flex-col gap-2 p-4 pt-0">
-        {items?.length > 0 ?
-        items.map((item:any) => (
+        {sortedItems?.length > 0 ?
+        sortedItems.map((item:any) => (
           <Link
           href={`/email/${item.email_id}`}
             key={item.email_id}

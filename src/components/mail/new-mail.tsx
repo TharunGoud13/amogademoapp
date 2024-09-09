@@ -14,16 +14,11 @@ import {
 import { Badge } from "../ui/badge";
 import {
   BoldIcon,
-  RedoIcon,
   ItalicIcon,
   Paperclip,
   UnderlineIcon,
   X,
   Undo2,
-  Calendar,
-  ArchiveX,
-  Archive,
-  Trash2,
   Reply,
   ReplyAll,
   Forward,
@@ -34,7 +29,6 @@ import {
 } from "lucide-react";
 import { getAllImapDetails } from "@/lib/store/actions";
 import { connect } from "react-redux";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
@@ -45,7 +39,7 @@ interface NewMailProps {
 const NewMail: FC<NewMailProps> = ({
   getAllImapDetailsResponse,
   getAllImapDetails,
-  response,
+  response
 }) => {
   const [to, setTo] = useState<string[]>([]);
   const [cc, setCc] = useState<string[]>([]);
@@ -67,6 +61,7 @@ const NewMail: FC<NewMailProps> = ({
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const [attachment, setAttachment] = useState<File | null>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isReply, setIsReply] = useState(false);
 
   useEffect(() => {
     getAllImapDetails();
@@ -111,7 +106,6 @@ const NewMail: FC<NewMailProps> = ({
     }
   };
 
-  
   // Handle input changes for To, Cc, Bcc fields
   const handleInputChange = (e: any, field: string) => {
     const value = e.target.value;
@@ -199,8 +193,9 @@ const NewMail: FC<NewMailProps> = ({
       const emailRequestOptions = {
         method: "POST",
         body: JSON.stringify({
-          status: "sent",
-          subject: message,
+          status: isReply ? "reply" : "sent",
+          subject: subject,
+          description:message,
           sender_email: user?.email,
           recipient_emails: to.join(", "),
           sender_name: user?.name,
@@ -218,17 +213,21 @@ const NewMail: FC<NewMailProps> = ({
         toast({ description: "Something went wrong", variant: "destructive" });
       }
       toast({ description: "Email sent successfully", variant: "default" });
-      setTo([]);
-      setCc([]);
-      setBcc([]);
-      setLoading(false);
-      setSubject("");
-      setMessage("");
-      setAttachment(null);
+      resetForm();
     } catch (error) {
       toast({ description: "Failed to send email", variant: "destructive" });
       setLoading(false);
+      setIsReply(false)
     }
+  };
+  const resetForm = () => {
+    setTo([]);
+    setCc([]);
+    setBcc([]);
+    setSubject("");
+    setMessage("");
+    setAttachment(null);
+    setIsReply(false);
   };
 
   const handleClick = () => {
@@ -288,11 +287,17 @@ const NewMail: FC<NewMailProps> = ({
     reader.readAsBinaryString(attachment);
   };
 
+  const handleReplyClick = () => {
+    setIsReply(true);
+    setSubject("")
+    setMessage("")
+  };
+
   const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
 
   return (
     <form onSubmit={handleSendMail}>
-      <Card className="p-2.5 my-2.5 flex flex-col w-[95%] md:w-[99%]  gap-5 m-2.5">
+      <Card className="p-2.5 my-2.5 h-full flex flex-col w-[95%] md:w-[99%]  gap-5 m-2.5">
         {mailResponse && (
           <h1 className="mt-2 text-gray-500">
             Date: {formattedDate.toLocaleString()}
@@ -301,7 +306,7 @@ const NewMail: FC<NewMailProps> = ({
         <div className="flex flex-col border">
           <div className="flex  items-center">
             <span className="text-gray-500 pl-2.5 pr-4">
-              {mailResponse?.sender_email ? "From" : "To"}
+              {mailResponse?.sender_email && !isReply ? "From" :  "To"}
             </span>
 
             {to.map((recipient, index) => (
@@ -334,7 +339,7 @@ const NewMail: FC<NewMailProps> = ({
                     className="flex items-center m-1 p-1 rounded"
                   >
                     {recipient}
-                    {!mailResponse && (
+                    {!mailResponse || isReply && (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -396,12 +401,12 @@ const NewMail: FC<NewMailProps> = ({
         <Input
           type="text"
           value={subject}
-          disabled={mailResponse}
+          disabled={mailResponse && !isReply}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Subject"
         />
         <div className="flex items-center space-x-2 gap-2.5 cursor-pointer border-b pb-2 mb-4">
-          <Undo2 onClick={() => setMessage("")} />
+          {mailResponse && isReply && <Undo2 onClick={() => setMessage("")} />}
           <BoldIcon
             className={`h-7 w-5 ${
               bold && "bg-gray-200 border dark:bg-black border-gray-400"
@@ -429,12 +434,12 @@ const NewMail: FC<NewMailProps> = ({
             italic && "italic"
           } ${underline && "underline"}`}
           rows={14}
-          disabled={mailResponse}
+          disabled={mailResponse && !isReply}
         />
         <div className="flex ml-3 justify-between items-center">
-          {mailResponse ? (
+          {mailResponse && !isReply ? (
             <div className="flex items-center gap-5">
-              <Reply className="h-5 w-5  cursor-pointer" />
+              <Reply className="h-5 w-5  cursor-pointer" onClick={handleReplyClick} />
               <ReplyAll className="h-5 w-5 cursor-pointer" />
               <Forward className="h-5 w-5 cursor-pointer" />
               <Flag className="h-5 w-5 cursor-pointer" />
@@ -444,13 +449,15 @@ const NewMail: FC<NewMailProps> = ({
             </div>
           ) : (
             <>
+            <div className="flex gap-5">
               <Button
                 type="submit"
                 disabled={loading || !(to && subject && message)}
               >
                 {loading ? "Sending..." : "Send"}
               </Button>
-
+              {isReply && <Button variant="secondary" onClick={() => setIsReply(false)}>Cancel</Button>}
+              </div>
               <div className="flex items-center">
                 {attachment && (
                   <Badge className="mr-2">
