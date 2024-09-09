@@ -25,17 +25,16 @@ interface MailProps {
   setUnreadEmail: any;
 }
 
-const Mail = ({
+const Mail:React.FC<MailProps> = ({
   loginLog,
   getAllImapDetails,
   getAllImapDetailsResponse,
   setUnreadEmail,
-}: MailProps) => {
+}) => {
   // const [mail, setMail] = useMail();
   const [responseEmail, setResponse] = React.useState<any>([]); // email list data
   const { data: session }: any = useSession();
   const [loading, setLoading] = React.useState(false);
-  const [currentTab, setCurrentTab] = React.useState("inbox");
 
   let imapServerDetails;
   React.useEffect(() => {
@@ -166,11 +165,9 @@ const Mail = ({
     <div className="h-full flex w-full flex-col md:flex-row">
       <div className="w-full">
         <div>
-          <Separator className={`${currentTab == "new" && "hidden"}`} />
+          <Separator  />
           <div
-            className={`bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${
-              currentTab == "new" && "hidden"
-            }`}
+            className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
           >
             <form>
               <div className="flex  items-center space-x-2 relative">
