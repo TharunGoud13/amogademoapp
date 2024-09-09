@@ -52,6 +52,8 @@ export async function GET(req) {
                 text: "",
                 date: "",
                 isUnread: false,
+                cc_emails:"",
+                bcc_emails:""
               };
 
               msg.once("attributes", (attrs) => {
@@ -62,7 +64,9 @@ export async function GET(req) {
               msg.on("body", (stream, info) => {
                 if (info.which === "TEXT") {
                   stream.on("data", (chunk) => {
-                    email.text += chunk.toString("utf8");
+                    const formattedText = chunk.toString("utf8").match(/<div[^>]*>(.*?)<\/div>/);
+                    console.log("formattedText",formattedText[1])
+                    email.text += formattedText[1];
                   });
                 }
                 if (info.which === "HEADER") {
@@ -80,11 +84,16 @@ export async function GET(req) {
                       if (err) {
                         return;
                       }
+                      console.log("parsed----",parsed)
+                      const fromEmail = parsed.from?.text.split("<")[1];
+                      const formattedText = parsed.text.match(/<div[^>]*>(.*?)<\/div>/);
                       email.subject = parsed.subject || "No Subject";
-                      email.from = parsed.from?.text || "Unknown Sender";
-                      if (!email.text) email.text = parsed.text || "No Content";
+                      email.cc_emails = parsed?.cc?.text || "";
+                      email.bcc_emails = parsed?.bcc?.text || "";
+                      email.from = fromEmail.substring(0, fromEmail.length - 1) || "Unknown Sender";
+                      if (!email.text) email.text = formattedText || "No Content";
                       email.date = parsed.date?.toISOString() || new Date().toISOString();
-
+                      
                       emails.push(email);
                       processedCount++;
                       if (processedCount === results.length) {
@@ -118,7 +127,6 @@ export async function GET(req) {
 
       imap.connect();
     });
-
     // Sort emails by date, most recent first
     emails.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()

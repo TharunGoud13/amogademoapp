@@ -15,7 +15,7 @@ export async function middleware(req) {
     }
 
     if (session?.user && ['/login', '/signIn', '/storejoin'].includes(pathname)) {
-        url.pathname = "/";
+        url.pathname = "/email";
         return NextResponse.redirect(url);
     }
 

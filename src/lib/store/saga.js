@@ -245,6 +245,8 @@ function* setUnreadEmailSaga(action){
         sender_email: email.from,
         subject: email.subject,
         description: email.text,
+        cc_emails:email.cc_emails,
+        bcc_emails:email.bcc_emails
       });
     }
   });

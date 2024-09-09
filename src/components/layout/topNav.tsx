@@ -16,7 +16,7 @@ export default function Header() {
         <div className="hidden lg:block">
           <div className='flex gap-4'>
           <Link
-            href='/'
+            href='/email'
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

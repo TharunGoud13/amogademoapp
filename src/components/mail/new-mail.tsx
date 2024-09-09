@@ -1,12 +1,16 @@
 "use client";
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { useSession } from "next-auth/react";
 import { toast } from "../ui/use-toast";
-import { CREATE_EMAIL_ATTACHMENT_URL, GET_CONTACTS_API, GET_EMAILS } from "@/constants/envConfig";
+import {
+  CREATE_EMAIL_ATTACHMENT_URL,
+  GET_CONTACTS_API,
+  GET_EMAILS,
+} from "@/constants/envConfig";
 import { Badge } from "../ui/badge";
 import {
   BoldIcon,
@@ -16,13 +20,33 @@ import {
   UnderlineIcon,
   X,
   Undo2,
+  Calendar,
+  ArchiveX,
+  Archive,
+  Trash2,
+  Reply,
+  ReplyAll,
+  Forward,
+  Flag,
+  Clipboard,
+  MessageCircle,
+  MoreVertical,
 } from "lucide-react";
+import { getAllImapDetails } from "@/lib/store/actions";
+import { connect } from "react-redux";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
+  getAllImapDetails: any;
+  response: any;
 }
 
-const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
+const NewMail: FC<NewMailProps> = ({
+  getAllImapDetailsResponse,
+  getAllImapDetails,
+  response,
+}) => {
   const [to, setTo] = useState<string[]>([]);
   const [cc, setCc] = useState<string[]>([]);
   const [bcc, setBcc] = useState<string[]>([]);
@@ -42,8 +66,27 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
   >(null);
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const [attachment, setAttachment] = useState<File | null>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch users based on input value
+  useEffect(() => {
+    getAllImapDetails();
+  }, [getAllImapDetails]);
+
+  const mailResponse = response && response.length > 0 && response[0];
+  useEffect(() => {
+    if (mailResponse) {
+      setTo([mailResponse?.sender_email]);
+      setSubject(mailResponse?.subject);
+      setMessage(mailResponse?.description);
+      setCc([mailResponse?.cc_emails]);
+      setBcc([mailResponse?.bcc_emails]);
+    }
+  }, [mailResponse]);
+  console.log("mailResponse", mailResponse);
+
+  const imapDetailsResponse = getAllImapDetailsResponse.filter(
+    (item: any) => item.user_email == session?.user?.email
+  );
   const fetchUsers = async (query: string) => {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -68,6 +111,7 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
     }
   };
 
+  
   // Handle input changes for To, Cc, Bcc fields
   const handleInputChange = (e: any, field: string) => {
     const value = e.target.value;
@@ -81,11 +125,17 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
       setBccInput(value);
       setActiveSuggestionField("bcc");
     }
-    if (value.length >= 1) {
-      fetchUsers(value);
-    } else {
-      setSuggestions([]);
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      if (value.length >= 1) {
+        fetchUsers(value);
+      } else {
+        setSuggestions([]);
+      }
+    }, 300);
   };
 
   // Handle suggestion click
@@ -128,8 +178,8 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
           bcc: bcc.join(", "),
           subject,
           message,
-          username: getAllImapDetailsResponse[0]?.data_response?.split(" ")[0],
-          password: getAllImapDetailsResponse[0]?.data_response?.split(" ")[1],
+          username: imapDetailsResponse[0]?.data_response?.split(" ")[0],
+          password: imapDetailsResponse[0]?.data_response?.split(" ")[1],
         }),
         headers: { "Content-Type": "application/json" },
       };
@@ -178,7 +228,6 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
     } catch (error) {
       toast({ description: "Failed to send email", variant: "destructive" });
       setLoading(false);
-
     }
   };
 
@@ -195,7 +244,7 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
 
   const sendEmailAttachment = async () => {
     if (!attachment) return;
-    const currentData = new Date().toUTCString()
+    const currentData = new Date().toUTCString();
 
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -217,7 +266,7 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
           content_type: attachment.type,
           file_size: attachment.size,
           email_file: base64String,
-          created_datetime: currentData
+          created_datetime: currentData,
         }),
         headers: headers,
       };
@@ -238,44 +287,65 @@ const NewMail: FC<NewMailProps> = ({ getAllImapDetailsResponse }) => {
     };
     reader.readAsBinaryString(attachment);
   };
-console.log("text----",bold,italic,underline)
+
+  const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
 
   return (
     <form onSubmit={handleSendMail}>
-      <Card className="p-2.5 my-2.5 flex flex-col w-[95%] md:w-full gap-5 m-2.5">
+      <Card className="p-2.5 my-2.5 flex flex-col w-[99%]  gap-5 m-2.5">
+        {mailResponse && (
+          <h1 className="mt-2 text-gray-500">
+            Date: {formattedDate.toLocaleString()}
+          </h1>
+        )}
         <div className="flex flex-col border">
           <div className="flex  items-center">
-            <span className="text-gray-500 pl-2.5 pr-4">To</span>
+            <span className="text-gray-500 pl-2.5 pr-4">
+              {mailResponse?.sender_email ? "From" : "To"}
+            </span>
+
             {to.map((recipient, index) => (
               <Badge key={index} className="flex items-center m-1 p-1 rounded">
                 {recipient}
-                <X
-                  className="ml-1 cursor-pointer"
-                  size={12}
-                  onClick={() => handleRemoveRecipient("to", index)}
-                />
+                {!mailResponse && (
+                  <X
+                    className="ml-1 cursor-pointer"
+                    size={12}
+                    onClick={() => handleRemoveRecipient("to", index)}
+                  />
+                )}
               </Badge>
             ))}
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={toInput}
+              disabled={mailResponse}
               type="email"
               onChange={(e) => handleInputChange(e, "to")}
             />
           </div>
           <div className="flex items-center">
             <span className="text-gray-500 pl-2.5 pr-4">Cc</span>
-            {cc.map((recipient, index) => (
-              <Badge key={index} className="flex items-center m-1 p-1 rounded">
-                {recipient}
-                <X
-                  className="ml-1 cursor-pointer"
-                  size={12}
-                  onClick={() => handleRemoveRecipient("cc", index)}
-                />
-              </Badge>
-            ))}
+            {cc.map(
+              (recipient, index) =>
+                mailResponse.cc_emails && (
+                  <Badge
+                    key={index}
+                    className="flex items-center m-1 p-1 rounded"
+                  >
+                    {recipient}
+                    {!mailResponse && (
+                      <X
+                        className="ml-1 cursor-pointer"
+                        size={12}
+                        onClick={() => handleRemoveRecipient("cc", index)}
+                      />
+                    )}
+                  </Badge>
+                )
+            )}
             <Input
+              disabled={mailResponse}
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={ccInput}
               type="email"
@@ -284,16 +354,24 @@ console.log("text----",bold,italic,underline)
           </div>
           <div className="flex  items-center">
             <span className="text-gray-500 pl-2.5 pr-4">Bcc</span>
-            {bcc.map((recipient, index) => (
-              <Badge key={index} className="flex items-center m-1  p-1 rounded">
-                {recipient}
-                <X
-                  className="ml-1 cursor-pointer"
-                  size={12}
-                  onClick={() => handleRemoveRecipient("bcc", index)}
-                />
-              </Badge>
-            ))}
+            {bcc.map(
+              (recipient, index) =>
+                mailResponse?.bcc_emails && (
+                  <Badge
+                    key={index}
+                    className="flex items-center m-1  p-1 rounded"
+                  >
+                    {recipient}
+                    {!mailResponse && (
+                      <X
+                        className="ml-1 cursor-pointer"
+                        size={12}
+                        onClick={() => handleRemoveRecipient("bcc", index)}
+                      />
+                    )}
+                  </Badge>
+                )
+            )}
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={bccInput}
@@ -318,55 +396,97 @@ console.log("text----",bold,italic,underline)
         <Input
           type="text"
           value={subject}
+          disabled={mailResponse}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Subject"
         />
         <div className="flex items-center space-x-2 gap-2.5 cursor-pointer border-b pb-2 mb-4">
-          <Undo2 onClick={() => setMessage("")}/>
-          <BoldIcon className={`h-7 w-5 ${bold && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setBold(!bold)} />
-          <ItalicIcon className={`h-7 w-5 ${italic && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setItalic(!italic)}/>
-          <UnderlineIcon className={`h-7 w-5 ${underline && "bg-gray-200 border dark:bg-black border-gray-400"}   rounded`} onClick={() => setUnderline(!underline)} />
+          <Undo2 onClick={() => setMessage("")} />
+          <BoldIcon
+            className={`h-7 w-5 ${
+              bold && "bg-gray-200 border dark:bg-black border-gray-400"
+            }   rounded`}
+            onClick={() => setBold(!bold)}
+          />
+          <ItalicIcon
+            className={`h-7 w-5 ${
+              italic && "bg-gray-200 border dark:bg-black border-gray-400"
+            }   rounded`}
+            onClick={() => setItalic(!italic)}
+          />
+          <UnderlineIcon
+            className={`h-7 w-5 ${
+              underline && "bg-gray-200 border dark:bg-black border-gray-400"
+            }   rounded`}
+            onClick={() => setUnderline(!underline)}
+          />
         </div>
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Message"
-          className={`resize-none ${bold && "font-bold"} ${italic && "italic"} ${underline && "underline"}`}
+          className={`resize-none ${bold && "font-bold"} ${
+            italic && "italic"
+          } ${underline && "underline"}`}
           rows={14}
+          disabled={mailResponse}
         />
-        <div className="flex justify-between items-center">
-          <Button
-            type="submit"
-            disabled={loading || !(to  && subject && message)}
-          >
-            {loading ? "Sending..." : "Send"}
-          </Button>
-          <div className="flex items-center">
-            {attachment && (
-              <Badge className="mr-2">
-                {attachment.name}
-                <X
-                  className="ml-1 cursor-pointer"
-                  size={12}
-                  onClick={() => setAttachment(null)}
+        <div className="flex ml-3 justify-between items-center">
+          {mailResponse ? (
+            <div className="flex items-center gap-5">
+              <Reply className="h-5 w-5  cursor-pointer" />
+              <ReplyAll className="h-5 w-5 cursor-pointer" />
+              <Forward className="h-5 w-5 cursor-pointer" />
+              <Flag className="h-5 w-5 cursor-pointer" />
+              <Clipboard className="h-5 w-5 cursor-pointer" />
+              <MessageCircle className="h-5 w-5 cursor-pointer" />
+              <MoreVertical className="h-5 w-5 cursor-pointer" />
+            </div>
+          ) : (
+            <>
+              <Button
+                type="submit"
+                disabled={loading || !(to && subject && message)}
+              >
+                {loading ? "Sending..." : "Send"}
+              </Button>
+
+              <div className="flex items-center">
+                {attachment && (
+                  <Badge className="mr-2">
+                    {attachment.name}
+                    <X
+                      className="ml-1 cursor-pointer"
+                      size={12}
+                      onClick={() => setAttachment(null)}
+                    />
+                  </Badge>
+                )}
+                <Input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  ref={uploadFileRef}
                 />
-              </Badge>
-            )}
-            <Input
-              type="file"
-              onChange={handleFileChange}
-              className="hidden"
-              ref={uploadFileRef}
-            />
-            <Paperclip
-              onClick={handleClick}
-              className="text-3xl cursor-pointer"
-            />
-          </div>
+                <Paperclip
+                  onClick={handleClick}
+                  className="text-3xl cursor-pointer"
+                />
+              </div>
+            </>
+          )}
         </div>
       </Card>
     </form>
   );
 };
 
-export default NewMail;
+const mapStateToProps = (state: any) => ({
+  getAllImapDetailsResponse: state.getAllImapDetailsResponse,
+});
+
+const mapDispatchToProps = {
+  getAllImapDetails,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewMail);
