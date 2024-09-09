@@ -43,7 +43,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 // import { Mail } from "@/app/(app)/examples/mail/data"
-import { Mail } from "./data"
+// import { Mail } from "./data"
 import { auth } from "@/auth"
 import { FaUser } from "react-icons/fa";
 
