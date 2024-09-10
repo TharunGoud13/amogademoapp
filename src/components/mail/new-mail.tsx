@@ -39,7 +39,7 @@ interface NewMailProps {
 const NewMail: FC<NewMailProps> = ({
   getAllImapDetailsResponse,
   getAllImapDetails,
-  response
+  response,
 }) => {
   const [to, setTo] = useState<string[]>([]);
   const [cc, setCc] = useState<string[]>([]);
@@ -77,7 +77,6 @@ const NewMail: FC<NewMailProps> = ({
       setBcc([mailResponse?.bcc_emails]);
     }
   }, [mailResponse]);
-  console.log("mailResponse", mailResponse);
 
   const imapDetailsResponse = getAllImapDetailsResponse.filter(
     (item: any) => item.user_email == session?.user?.email
@@ -158,7 +157,6 @@ const NewMail: FC<NewMailProps> = ({
     }
   };
   let user: any = session?.user;
-
   const handleSendMail = async (e: any) => {
     setLoading(true);
     e.preventDefault();
@@ -195,7 +193,7 @@ const NewMail: FC<NewMailProps> = ({
         body: JSON.stringify({
           status: isReply ? "reply" : "sent",
           subject: subject,
-          description:message,
+          body:message,
           sender_email: user?.email,
           recipient_emails: to.join(", "),
           sender_name: user?.name,
@@ -203,7 +201,10 @@ const NewMail: FC<NewMailProps> = ({
           business_name: user?.business_name,
           business_number: user?.business_number,
           created_datetime: new Date().toUTCString(),
-          cc_emails: cc.join(", "),
+          cc_emails: cc,
+          is_read: "No",
+          created_user:user?.name,
+          created_userid: user?.id,
           bcc_emails: bcc.join(", "),
         }),
         headers: emailHeaders,
@@ -333,24 +334,24 @@ const NewMail: FC<NewMailProps> = ({
             <span className="text-gray-500 pl-2.5 pr-4">Cc</span>
             {cc.map(
               (recipient, index) =>
-                mailResponse.cc_emails && (
+                recipient &&
                   <Badge
                     key={index}
                     className="flex items-center m-1 p-1 rounded"
                   >
                     {recipient}
-                    {!mailResponse || isReply && (
+                    {(!mailResponse)  && (
                       <X
-                        className="ml-1 cursor-pointer"
-                        size={12}
-                        onClick={() => handleRemoveRecipient("cc", index)}
+                      className="ml-1 cursor-pointer"
+                      size={12}
+                      onClick={() => handleRemoveRecipient("cc", index)}
                       />
                     )}
                   </Badge>
-                )
+                
             )}
             <Input
-              disabled={mailResponse}
+              disabled={mailResponse && !isReply}
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={ccInput}
               type="email"
@@ -361,13 +362,13 @@ const NewMail: FC<NewMailProps> = ({
             <span className="text-gray-500 pl-2.5 pr-4">Bcc</span>
             {bcc.map(
               (recipient, index) =>
-                mailResponse?.bcc_emails && (
+                recipient &&
                   <Badge
                     key={index}
                     className="flex items-center m-1  p-1 rounded"
                   >
                     {recipient}
-                    {!mailResponse && (
+                    {(!mailResponse)&& (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -375,11 +376,12 @@ const NewMail: FC<NewMailProps> = ({
                       />
                     )}
                   </Badge>
-                )
+                
             )}
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={bccInput}
+              disabled={mailResponse && !isReply}
               type="email"
               onChange={(e) => handleInputChange(e, "bcc")}
             />
