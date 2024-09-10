@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { getAllImapDetails } from "@/lib/store/actions";
 import { connect } from "react-redux";
+import Link from "next/link";
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
@@ -61,6 +62,7 @@ const NewMail: FC<NewMailProps> = ({
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const [attachment, setAttachment] = useState<File | null>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [recipientMobile,setRecipientMobile] = useState<string>("")
   const [isReply, setIsReply] = useState(false);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ const NewMail: FC<NewMailProps> = ({
     if (mailResponse) {
       setTo([mailResponse?.sender_email]);
       setSubject(mailResponse?.subject);
-      setMessage(mailResponse?.description);
+      setMessage(mailResponse?.body);
       setCc([mailResponse?.cc_emails]);
       setBcc([mailResponse?.bcc_emails]);
     }
@@ -135,6 +137,7 @@ const NewMail: FC<NewMailProps> = ({
   const handleSuggestionClick = (suggestion: any) => {
     if (activeSuggestionField === "to") {
       setTo((prev) => [...prev, suggestion.user_email]);
+      setRecipientMobile(suggestion?.user_mobile)
       setToInput("");
     } else if (activeSuggestionField === "cc") {
       setCc((prev) => [...prev, suggestion.user_email]);
@@ -182,37 +185,68 @@ const NewMail: FC<NewMailProps> = ({
       if (attachment) {
         await sendEmailAttachment();
       }
-      const emailHeaders = new Headers();
-      emailHeaders.append("Content-Type", "application/json");
-      emailHeaders.append(
-        "Authorization",
-        `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
-      );
-      const emailRequestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-          status: isReply ? "reply" : "sent",
-          subject: subject,
-          body:message,
-          sender_email: user?.email,
-          recipient_emails: to.join(", "),
-          sender_name: user?.name,
-          sender_mobile: user?.mobile,
-          business_name: user?.business_name,
-          business_number: user?.business_number,
-          created_datetime: new Date().toUTCString(),
-          cc_emails: cc,
-          is_read: "No",
-          created_user:user?.name,
-          created_userid: user?.id,
-          bcc_emails: bcc.join(", "),
-        }),
-        headers: emailHeaders,
+
+      const baseEmailData = {
+        status: "sent",
+        subject: subject,
+        body: message,
+        sender_email: user?.email,
+        recipient_emails: to.join(", "),
+        full_name: user?.name,
+        sender_name: user?.name,
+        sender_mobile: user?.mobile,
+        business_name: user?.business_name,
+        business_number: user?.business_number,
+        created_datetime: new Date().toUTCString(),
+        is_read: "No",
+        from_business_number: user?.business_number,
+        from_business_name: user?.business_name,
+        created_user: user?.name,
+        created_userid: user?.id,
+        recipient_mobiles:recipientMobile,
+        cc_emails:cc.join(", "),
+        bcc_emails: bcc.join(", "),
+        is_starred:false,
+        is_important:false,
+        is_draft:false, 
+        is_deleted: false,
+        for_email_id:isReply && mailResponse?.email_id ? mailResponse.email_id: "null",
+        for_email:isReply && mailResponse?.sender_email ? mailResponse.sender_email : "null"
       };
-      const sendEmail = await fetch(GET_EMAILS, emailRequestOptions);
-      if (!sendEmail.ok) {
-        toast({ description: "Something went wrong", variant: "destructive" });
+      const sendEmailData = async (emailData: any) => {
+        const emailHeaders = new Headers();
+        emailHeaders.append("Content-Type", "application/json");
+        emailHeaders.append(
+          "Authorization",
+          `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
+        );
+        const emailRequestOptions = {
+          method: "POST",
+          body: JSON.stringify(emailData),
+          headers: emailHeaders,
+        };
+        const sendEmail = await fetch(GET_EMAILS, emailRequestOptions);
+        if (!sendEmail.ok) {
+          toast({description: "Error sending email", variant: "destructive"})
+        }
+      };
+      await sendEmailData(baseEmailData);
+      for (const ccEmail of cc) {
+        if (ccEmail) {
+          await sendEmailData({ ...baseEmailData, recipient_emails: ccEmail });
+        }
       }
+      if(isReply && mailResponse?.email_id){
+        baseEmailData.for_email_id = mailResponse.email_id;
+        baseEmailData.for_email = mailResponse.sender_email;
+
+      }
+      for (const bccEmail of bcc) {
+        if (bccEmail) {
+          await sendEmailData({ ...baseEmailData, recipient_emails: bccEmail });
+        }
+      }
+      setLoading(false)
       toast({ description: "Email sent successfully", variant: "default" });
       resetForm();
     } catch (error) {
@@ -290,8 +324,8 @@ const NewMail: FC<NewMailProps> = ({
 
   const handleReplyClick = () => {
     setIsReply(true);
-    setSubject("")
-    setMessage("")
+    // setSubject("")
+    // setMessage("")
   };
 
   const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
@@ -454,11 +488,13 @@ const NewMail: FC<NewMailProps> = ({
             <div className="flex gap-5">
               <Button
                 type="submit"
+                className="md:w-[125px]"
                 disabled={loading || !(to && subject && message)}
               >
                 {loading ? "Sending..." : "Send"}
               </Button>
-              {isReply && <Button variant="secondary" onClick={() => setIsReply(false)}>Cancel</Button>}
+              {isReply ? <Button variant="secondary" onClick={() => setIsReply(false)}>Cancel</Button>
+              : <Link href={"/email"}><Button variant="secondary">Cancel</Button></Link>}
               </div>
               <div className="flex items-center">
                 {attachment && (

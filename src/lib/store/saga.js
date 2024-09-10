@@ -25,7 +25,7 @@ import {
   getAllImapDetailsFailure,
   SET_UNREAD_EMAIL,
   setUnreadEmailSuccess,
-  setUnreadEmailFailure
+  setUnreadEmailFailure,
 } from "./actions";
 import { takeLatest, call, put } from "redux-saga/effects";
 import axios from "axios";
@@ -45,9 +45,8 @@ import getCurrentOS from "../getCurrentOS";
 
 const detectDeviceType = () =>
   /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
-    ? 'Mobile'
-    : 'Desktop';
- 
+    ? "Mobile"
+    : "Desktop";
 
 const token = `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`;
 function* getUsersSaga() {
@@ -121,7 +120,6 @@ function* bomRawSaga({ payload }) {
 }
 
 function* loginLogSaga(action) {
-
   const {
     description,
     event_type,
@@ -143,9 +141,9 @@ function* loginLogSaga(action) {
   try {
     locationData = yield call(getUserLocation);
   } catch (error) {
-    throw new Error(error)
+    throw new Error(error);
   }
-  
+
   const payload = {
     description,
     session_id: session?.id,
@@ -173,8 +171,8 @@ function* loginLogSaga(action) {
     response_status,
     response_error,
     error_message,
-    business_name:session?.business_name,
-    business_number:session?.business_number,
+    business_name: session?.business_name,
+    business_number: session?.business_number,
   };
   try {
     const response = yield fetch(LOG_USERS_API, {
@@ -192,78 +190,92 @@ function* loginLogSaga(action) {
 }
 
 function* createImapDetailsSaga(action) {
-  const {user,password,host,port,tls,sessionDetails,createdDate} = action?.payload
+  const { user, password, host, port, tls, sessionDetails, createdDate } =
+    action?.payload;
   const payload = {
-    "user_name":sessionDetails?.name,
-    "user_email":sessionDetails?.email,
-    "business_name":sessionDetails?.business_name,
-    "business_number":sessionDetails?.business_number,
-    "data_response": user + " " +  password + " " + host + " " + port + " " + tls,
-    "user_catalog_id":sessionDetails?.id,
-    "user_mobile":sessionDetails?.mobile,
-    "created_datetime":createdDate
-  }
-  try{
-    const response = yield fetch(CREATE_IMAP_DETAILS_URL,{
+    user_name: sessionDetails?.name,
+    user_email: sessionDetails?.email,
+    business_name: sessionDetails?.business_name,
+    business_number: sessionDetails?.business_number,
+    data_response: user + " " + password + " " + host + " " + port + " " + tls,
+    user_catalog_id: sessionDetails?.id,
+    user_mobile: sessionDetails?.mobile,
+    created_datetime: createdDate,
+  };
+  try {
+    const response = yield fetch(CREATE_IMAP_DETAILS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
       },
       body: JSON.stringify(payload),
-    })
-    yield put(createImapDetailsSuccess(response.data))
-  }
-  catch(error){
-    yield put(createImapDetailsFailure(error))
+    });
+    yield put(createImapDetailsSuccess(response.data));
+  } catch (error) {
+    yield put(createImapDetailsFailure(error));
   }
 }
 
 function* getAllImapDetailsSaga() {
-  try{
-    const response = yield call(axios.get,CREATE_IMAP_DETAILS_URL,{
+  try {
+    const response = yield call(axios.get, CREATE_IMAP_DETAILS_URL, {
       headers: {
         Authorization: token,
       },
     });
-    yield put(getAllImapDetailsSuccess(response.data))
-  }
-  catch(error){
-    yield put(getAllImapDetailsFailure(error))
+    yield put(getAllImapDetailsSuccess(response.data));
+  } catch (error) {
+    yield put(getAllImapDetailsFailure(error));
   }
 }
 
-function* setUnreadEmailSaga(action){
+function* setUnreadEmailSaga(action) {
   const uniqueEmails = new Map();
 
-  action.payload.forEach(email => {
+  action.payload.forEach((email) => {
     if (!uniqueEmails.has(email.uid)) {
       uniqueEmails.set(email.uid, {
         email_uid: email.uid,
+        status: "Inbox",
         created_datetime: email.date,
         is_read: !email.isUnread,
         sender_email: email.from,
+        sender_name: email.sender_name,
+        full_name: email.sender_name,
         subject: email.subject,
-        description: email.text,
-        cc_emails:email.cc_emails,
-        bcc_emails:email.bcc_emails
+        body: email.text,
+        created_user: email?.created_user,
+        created_userid: email?.created_userid,
+        cc_emails: email.cc_emails,
+        bcc_emails: email.bcc_emails,
+        recipient_mobiles: email.recipient_mobiles,
+        recipient_emails: email.recipient_emails,
+        business_name: email?.business_name,
+        business_number: email?.business_number,
+        created_user: email?.name,
+        created_userid: email?.id,
+        is_read: false,
+        is_starred: false,
+        is_important: false,
+        is_draft: false,
+        is_deleted: false,
       });
     }
   });
   const payload = Array.from(uniqueEmails.values());
-  try{
-    const response = yield fetch(GET_EMAILS,{
-      method:"POST",
-      headers:{
+  try {
+    const response = yield fetch(GET_EMAILS, {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
         Authorization: token,
       },
       body: JSON.stringify(payload),
-    })
-    yield put(setUnreadEmailSuccess(response.data))
-  }
-  catch(error){
-    yield put(setUnreadEmailFailure(error))
+    });
+    yield put(setUnreadEmailSuccess(response.data));
+  } catch (error) {
+    yield put(setUnreadEmailFailure(error));
   }
 }
 
@@ -277,5 +289,4 @@ export default function* rootSaga() {
   yield takeLatest(CREATE_IMAP_DETAILS, createImapDetailsSaga);
   yield takeLatest(GET_ALL_IMAP_DETAILS, getAllImapDetailsSaga);
   yield takeLatest(SET_UNREAD_EMAIL, setUnreadEmailSaga);
-
 }

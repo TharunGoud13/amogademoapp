@@ -2,9 +2,11 @@
 import { MailList } from '@/components/mail/mail-list'
 import { toast } from '@/components/ui/use-toast';
 import { GET_EMAILS } from '@/constants/envConfig';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
 
 const Sent = () => {
+  const {data:session} = useSession()
   const [response,setResponse] = useState([])
 
   useEffect(() => {
@@ -40,10 +42,9 @@ const Sent = () => {
     }
   };
 
-  console.log("response----",response)
   return (
     <div>
-      <MailList items={response && response?.length > 0 && response.filter((item:any) => item?.status == "sent" )}/>
+      <MailList items={response && response?.length > 0 && response.filter((item:any) => item?.sender_email == session?.user?.email && item  )}/>
     </div>
   )
 }

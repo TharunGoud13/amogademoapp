@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 // import { Mail } from "./data";
 // import { useMail } from "./use-mail";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 // import { useMail } from "@/app/(app)/examples/mail/use-mail"
 
 interface MailListProps {
@@ -17,8 +18,10 @@ interface MailListProps {
 
 export function MailList({ items }: MailListProps) {
   console.log("items----",items)
-  const sortedItems = items && items?.sort((a:any,b:any) => new Date(b.created_datetime).getTime() - new Date(a.created_datetime).getTime())
+  const {data:session} = useSession()
 
+  const filteredItems = items && items.filter((item:any) => (item.recipient_emails == session?.user?.email) || (item.sender_email == session?.user?.email));
+  const sortedItems = filteredItems && filteredItems?.sort((a:any,b:any) => new Date(b.created_datetime).getTime() - new Date(a.created_datetime).getTime())
   return (
     <ScrollArea className="h-full">
       <div className="flex flex-col gap-2 p-4 pt-0">
@@ -53,7 +56,7 @@ export function MailList({ items }: MailListProps) {
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
             <div className="line-clamp-2 text-xs text-muted-foreground">
-              {item.description}
+              {item.body}
             </div>
           </Link>
         )): 
