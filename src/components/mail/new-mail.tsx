@@ -64,12 +64,15 @@ const NewMail: FC<NewMailProps> = ({
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [recipientMobile,setRecipientMobile] = useState<string>("")
   const [isReply, setIsReply] = useState(false);
+  const [isDraftLoading,setIsDraftLoading] = useState(false)
 
   useEffect(() => {
     getAllImapDetails();
   }, [getAllImapDetails]);
 
   const mailResponse = response && response.length > 0 && response[0];
+  const draftResponse = response && response.filter((item:any) => item.is_draft == true && item)
+  const draftEmail = draftResponse && draftResponse[0]
   useEffect(() => {
     if (mailResponse) {
       setTo([mailResponse?.sender_email]);
@@ -160,6 +163,35 @@ const NewMail: FC<NewMailProps> = ({
     }
   };
   let user: any = session?.user;
+
+  const baseEmailData = {
+    status: "sent",
+    subject: subject,
+    body: message,
+    sender_email: user?.email,
+    recipient_emails: to.join(", "),
+    full_name: user?.name,
+    sender_name: user?.name,
+    sender_mobile: user?.mobile,
+    business_name: user?.business_name,
+    business_number: user?.business_number,
+    created_datetime: new Date().toUTCString(),
+    is_read: "No",
+    from_business_number: user?.business_number,
+    from_business_name: user?.business_name,
+    created_user: user?.name,
+    created_userid: user?.id,
+    recipient_mobiles:recipientMobile,
+    cc_emails:cc.join(", "),
+    bcc_emails: bcc.join(", "),
+    is_starred:false,
+    is_important:false,
+    is_draft:false, 
+    is_deleted: false,
+    for_email_id:isReply && mailResponse?.email_id ? mailResponse.email_id: "null",
+    for_email:isReply && mailResponse?.sender_email ? mailResponse.sender_email : "null"
+  };
+
   const handleSendMail = async (e: any) => {
     setLoading(true);
     e.preventDefault();
@@ -186,33 +218,7 @@ const NewMail: FC<NewMailProps> = ({
         await sendEmailAttachment();
       }
 
-      const baseEmailData = {
-        status: "sent",
-        subject: subject,
-        body: message,
-        sender_email: user?.email,
-        recipient_emails: to.join(", "),
-        full_name: user?.name,
-        sender_name: user?.name,
-        sender_mobile: user?.mobile,
-        business_name: user?.business_name,
-        business_number: user?.business_number,
-        created_datetime: new Date().toUTCString(),
-        is_read: "No",
-        from_business_number: user?.business_number,
-        from_business_name: user?.business_name,
-        created_user: user?.name,
-        created_userid: user?.id,
-        recipient_mobiles:recipientMobile,
-        cc_emails:cc.join(", "),
-        bcc_emails: bcc.join(", "),
-        is_starred:false,
-        is_important:false,
-        is_draft:false, 
-        is_deleted: false,
-        for_email_id:isReply && mailResponse?.email_id ? mailResponse.email_id: "null",
-        for_email:isReply && mailResponse?.sender_email ? mailResponse.sender_email : "null"
-      };
+      
       const sendEmailData = async (emailData: any) => {
         const emailHeaders = new Headers();
         emailHeaders.append("Content-Type", "application/json");
@@ -328,6 +334,45 @@ const NewMail: FC<NewMailProps> = ({
     // setMessage("")
   };
 
+  const handleDraft = async() => {
+    setIsDraftLoading(true)
+    const draftEmailData = {
+      ...baseEmailData,
+      is_draft:true
+    }
+    try{
+      await sendEmailData(draftEmailData);
+      toast({description:"Draft Saved Successfully",variant:"default"})
+      setIsDraftLoading(false)
+      resetForm()
+    }
+    catch(error){
+      toast({description:"Failed to save draft",variant:"destructive"})
+      resetForm()
+      setIsDraftLoading(false)
+    }
+  }
+
+  const sendEmailData = async(emailData:any) => {
+    const emailHeaders = new Headers();
+    emailHeaders.append("Content-Type", "application/json");
+    emailHeaders.append(
+      "Authorization",
+      `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
+    );
+    const emailRequestOptions = {
+      method: "POST",
+      body: JSON.stringify(emailData),
+      headers: emailHeaders,
+    };
+    const sendEmail = await fetch(GET_EMAILS, emailRequestOptions);
+    if (!sendEmail.ok) {
+      toast({description: "Error Saving Draft", variant: "destructive"})
+    }
+
+  }
+
+
   const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
 
   return (
@@ -341,13 +386,13 @@ const NewMail: FC<NewMailProps> = ({
         <div className="flex flex-col border">
           <div className="flex  items-center">
             <span className="text-gray-500 pl-2.5 pr-4">
-              {mailResponse?.sender_email && !isReply ? "From" :  "To"}
+              {mailResponse?.sender_email && !isReply && !draftEmail ? "From" :  "To"}
             </span>
 
             {to.map((recipient, index) => (
               <Badge key={index} className="flex items-center m-1 p-1 rounded">
                 {recipient}
-                {!mailResponse && (
+                {(!mailResponse || (draftEmail && Object.keys(draftEmail).length>0)) &&(
                   <X
                     className="ml-1 cursor-pointer"
                     size={12}
@@ -359,7 +404,7 @@ const NewMail: FC<NewMailProps> = ({
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={toInput}
-              disabled={mailResponse}
+              disabled={mailResponse && !draftResponse}
               type="email"
               onChange={(e) => handleInputChange(e, "to")}
             />
@@ -374,7 +419,7 @@ const NewMail: FC<NewMailProps> = ({
                     className="flex items-center m-1 p-1 rounded"
                   >
                     {recipient}
-                    {(!mailResponse)  && (
+                    {(!mailResponse || (draftEmail && Object.keys(draftEmail).length>0))  && (
                       <X
                       className="ml-1 cursor-pointer"
                       size={12}
@@ -385,7 +430,7 @@ const NewMail: FC<NewMailProps> = ({
                 
             )}
             <Input
-              disabled={mailResponse && !isReply}
+              disabled={mailResponse && !isReply && !draftEmail}
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={ccInput}
               type="email"
@@ -402,7 +447,7 @@ const NewMail: FC<NewMailProps> = ({
                     className="flex items-center m-1  p-1 rounded"
                   >
                     {recipient}
-                    {(!mailResponse)&& (
+                    {(!mailResponse || (draftEmail && Object.keys(draftEmail).length>0))&& (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -415,7 +460,7 @@ const NewMail: FC<NewMailProps> = ({
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={bccInput}
-              disabled={mailResponse && !isReply}
+              disabled={mailResponse && !isReply && !draftEmail}
               type="email"
               onChange={(e) => handleInputChange(e, "bcc")}
             />
@@ -437,7 +482,7 @@ const NewMail: FC<NewMailProps> = ({
         <Input
           type="text"
           value={subject}
-          disabled={mailResponse && !isReply}
+          disabled={mailResponse && !isReply && !draftEmail}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Subject"
         />
@@ -470,10 +515,10 @@ const NewMail: FC<NewMailProps> = ({
             italic && "italic"
           } ${underline && "underline"}`}
           rows={14}
-          disabled={mailResponse && !isReply}
+          disabled={mailResponse && !isReply && !draftEmail}
         />
         <div className="flex ml-3 justify-between items-center">
-          {mailResponse && !isReply ? (
+          {mailResponse && !isReply && !draftEmail ? (
             <div className="flex items-center gap-5">
               <Reply className="h-5 w-5  cursor-pointer" onClick={handleReplyClick} />
               <ReplyAll className="h-5 w-5 cursor-pointer" />
@@ -493,8 +538,9 @@ const NewMail: FC<NewMailProps> = ({
               >
                 {loading ? "Sending..." : "Send"}
               </Button>
-              {isReply ? <Button variant="secondary" onClick={() => setIsReply(false)}>Cancel</Button>
-              : <Link href={"/email"}><Button variant="secondary">Cancel</Button></Link>}
+              {!isReply && <Button type="button" disabled={loading} onClick={handleDraft}>{isDraftLoading ? "Saving..." : "Save as Draft"}</Button>}
+              {isReply ? <Button disabled={loading} variant="secondary" onClick={() => setIsReply(false)}>Cancel</Button>
+              : <Link href={"/email"}><Button disabled={loading} variant="secondary">Cancel</Button></Link>}
               </div>
               <div className="flex items-center">
                 {attachment && (

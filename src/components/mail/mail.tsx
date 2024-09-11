@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { MailList } from "@/components/mail/mail-list";
+import  {MailList}  from "@/components/mail/mail-list";
 // import { useMail } from "@/components/mail/use-mail";
 import { trace, context } from "@opentelemetry/api";
 import { useSession } from "next-auth/react";
@@ -17,19 +17,22 @@ import { GET_EMAILS } from "@/constants/envConfig";
 import { toast } from "@/components/ui/use-toast";
 import { FaSyncAlt } from "react-icons/fa";
 import { Spin } from "antd";
+import { Skeleton } from "../ui/skeleton";
 
 interface MailProps {
   loginLog: any;
   getAllImapDetailsResponse: any;
   getAllImapDetails: any;
   setUnreadEmail: any;
+  getAllImapDetailsLoading: any;
 }
 
-const Mail:React.FC<MailProps> = ({
+const Mail: React.FC<MailProps> = ({
   loginLog,
   getAllImapDetails,
   getAllImapDetailsResponse,
   setUnreadEmail,
+  getAllImapDetailsLoading,
 }) => {
   // const [mail, setMail] = useMail();
   const [responseEmail, setResponse] = React.useState<any>([]); // email list data
@@ -165,10 +168,8 @@ const Mail:React.FC<MailProps> = ({
     <div className="h-full flex w-full flex-col md:flex-row">
       <div className="w-full">
         <div>
-          <Separator  />
-          <div
-            className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-          >
+          <Separator />
+          <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <form>
               <div className="flex  items-center space-x-2 relative">
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
@@ -188,11 +189,22 @@ const Mail:React.FC<MailProps> = ({
               <span className="font-md text-lg">Syncing emails...</span>
             </div>
           )}
+          {getAllImapDetailsLoading && (
+            <div className="flex flex-col items-center">
+              {Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="border  p-2.5 w-[98%] rounded-lg my-2.5 !mx-4 ">   
+                        <div className="space-y-2 text-muted-foreground pt-2.5">
+                            <Skeleton className="h-4 w-[40%]" />
+                            <Skeleton className="h-4 w-[80%]" />
+                            <Skeleton className="h-4 w-full" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+          )}
           <MailList
-                items={responseEmail.filter(
-                  (item: any) => item.status != "sent"
-                )}
-              />
+            items={responseEmail.filter((item: any) => item.status != "sent" && item.is_draft != true)}
+          />
         </div>
       </div>
     </div>
@@ -201,6 +213,7 @@ const Mail:React.FC<MailProps> = ({
 
 const mapStateToProps = (state: any) => ({
   getAllImapDetailsResponse: state.getAllImapDetailsResponse,
+  getAllImapDetailsLoading: state.getAllImapDetailsLoading,
 });
 
 const mapDispatchToProps = {

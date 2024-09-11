@@ -44,7 +44,7 @@ const Sent = () => {
 
   return (
     <div>
-      <MailList items={response && response?.length > 0 && response.filter((item:any) => item?.sender_email == session?.user?.email && item  )}/>
+      <MailList items={response && response?.length > 0 && response.filter((item:any) => item?.sender_email == session?.user?.email && item && item.is_draft != true  )}/>
     </div>
   )
 }
