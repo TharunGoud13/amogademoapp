@@ -189,7 +189,7 @@ const Mail: React.FC<MailProps> = ({
               <span className="font-md text-lg">Syncing emails...</span>
             </div>
           )}
-          {getAllImapDetailsLoading && (
+          {/* {getAllImapDetailsLoading && (
             <div className="flex flex-col items-center">
               {Array.from({ length: 5 }).map((_, index) => (
                     <div key={index} className="border  p-2.5 w-[98%] rounded-lg my-2.5 !mx-4 ">   
@@ -201,7 +201,7 @@ const Mail: React.FC<MailProps> = ({
                     </div>
                 ))}
             </div>
-          )}
+          )} */}
           <MailList
             items={responseEmail.filter((item: any) => item.status != "sent" && item.is_draft != true)}
           />

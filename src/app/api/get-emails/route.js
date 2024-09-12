@@ -97,7 +97,7 @@ export async function GET(req) {
                       email.cc_emails = parsed?.cc?.text || "";
                       email.bcc_emails = parsed?.bcc?.text || "";
                       email.sender_name = parsed?.from?.text?.split("<")[0] || "";
-                      email.from = fromEmail.substring(0, fromEmail.length - 1) || "";
+                      email.from = fromEmail?.substring(0, fromEmail?.length - 1) || "";
                       email.recipient_emails = parsed?.to?.text || "";
                       if (!email.text) email.text = formattedText || "No Content";
                       email.date = parsed.date?.toISOString() || new Date().toISOString();

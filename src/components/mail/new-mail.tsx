@@ -49,12 +49,12 @@ const NewMail: FC<NewMailProps> = ({
   getAllImapDetails,
   response,
 }) => {
-  const [to, setTo] = useState<string[]>([]);
+  const [to, setTo] = useState<string[]>([]); // capture entered to text
   const [cc, setCc] = useState<string[]>([]);
   const [bcc, setBcc] = useState<string[]>([]);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [toInput, setToInput] = useState("");
+  const [toInput, setToInput] = useState(""); // click on suggestion
   const [ccInput, setCcInput] = useState("");
   const [bccInput, setBccInput] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -75,37 +75,46 @@ const NewMail: FC<NewMailProps> = ({
   const [isImportant, setIsImportant] = useState(false);
   const [originalMailData, setOriginalMailData] = useState<any>(null);
 
+  // used for getting imap details which user created on profile page
   useEffect(() => {
     getAllImapDetails();
   }, [getAllImapDetails]);
 
+  // mailResponse is to get data of a email which is clicked
   const mailResponse = response && response.length > 0 && response[0];
+  // draftResponse is used to filter data which has is_draft as true so we here we only get draft emails
   const draftResponse =
     response && response.filter((item: any) => item.is_draft == true && item);
-  console.log("mailResponse---------", mailResponse);
-  console.log("draftResponse---------", draftResponse);
   const draftEmail = draftResponse && draftResponse[0];
+
+  // on page load if mailResponse has some data then we are setting it to fields so that data will be prefilled
   useEffect(() => {
     if (mailResponse) {
       const initialData = {
         to: [mailResponse?.sender_email],
         subject: mailResponse?.subject,
         message: mailResponse?.body,
-        cc: [mailResponse?.cc_emails],
-        bcc: [mailResponse?.bcc_emails],
+        cc: mailResponse?.cc_emails ? [mailResponse.cc_emails] : [],
+        bcc: mailResponse?.bcc_emails ? [mailResponse.bcc_emails] : [],
       };
-      setTo(initialData.to);
-      setSubject(initialData.subject);
-      setMessage(initialData.message);
-      setCc(initialData.cc);
-      setBcc(initialData.bcc);
       setOriginalMailData(initialData);
+      
+      if (!isReply) {
+        setTo(initialData.to);
+        setSubject(initialData.subject);
+        setMessage(initialData.message);
+        setCc(initialData.cc);
+        setBcc(initialData.bcc);
+      }
     }
-  }, [mailResponse]);
+  }, [mailResponse, isReply]);
 
+  // getting imap details of current logged in user
   const imapDetailsResponse = getAllImapDetailsResponse.filter(
     (item: any) => item.user_email == session?.user?.email
   );
+
+  // get users from user_catalog api to get users based on text we search
   const fetchUsers = async (query: string) => {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -184,6 +193,7 @@ const NewMail: FC<NewMailProps> = ({
   };
   let user: any = session?.user;
 
+  // payload to send email
   const baseEmailData = {
     status: "sent",
     subject: subject,
@@ -216,6 +226,7 @@ const NewMail: FC<NewMailProps> = ({
         : "null",
   };
 
+  // when clicked on Send button we are sending it to webmail using nodemailer and to email API
   const handleSendMail = async (e: any) => {
     setLoading(true);
     e.preventDefault();
@@ -395,9 +406,36 @@ const NewMail: FC<NewMailProps> = ({
 
   const handleReplyClick = () => {
     setIsReply(true);
-    // setSubject("")
-    // setMessage("")
+    if (originalMailData) {
+      setTo([originalMailData.to]);
+      setSubject('');
+      setMessage(''); 
+      setCc([]); 
+      setBcc([]);
+    }
   };
+
+  const handleReplyAllClick = () => {
+    setIsReply(true);
+    if (originalMailData) {
+      setTo(originalMailData.to); 
+      setSubject('');
+      setMessage(''); 
+      setCc(originalMailData?.cc); 
+      setBcc(originalMailData?.bcc); 
+    }
+  }
+
+  const handleForwardClick = () => {
+    setIsReply(true);
+    if (originalMailData) {
+      setTo([]);
+      setSubject(originalMailData.subject);
+      setMessage(originalMailData.message);
+      setCc([]);
+      setBcc([]);
+    }
+  }
 
   const handleCancelReply = () => {
     setIsReply(false);
@@ -458,25 +496,6 @@ const NewMail: FC<NewMailProps> = ({
     }
   };
 
-  // const sendEmailData = async(emailData:any) => {
-  //   const emailHeaders = new Headers();
-  //   emailHeaders.append("Content-Type", "application/json");
-  //   emailHeaders.append(
-  //     "Authorization",
-  //     `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`
-  //   );
-  //   const emailRequestOptions = {
-  //     method: "POST",
-  //     body: JSON.stringify(emailData),
-  //     headers: emailHeaders,
-  //   };
-  //   const sendEmail = await fetch(GET_EMAILS, emailRequestOptions);
-  //   if (!sendEmail.ok) {
-  //     toast({description: "Error Saving Draft", variant: "destructive"})
-  //   }
-
-  // }
-
   const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
 
   return (
@@ -511,7 +530,7 @@ const NewMail: FC<NewMailProps> = ({
             <Input
               className="!border-0 focus:!ring-offset-0 focus:!ring-0 focus:!ring-opacity-0 focus:!border-0"
               value={toInput}
-              disabled={mailResponse && !draftResponse}
+              disabled={mailResponse && !isReply && !draftEmail}
               type="email"
               onChange={(e) => handleInputChange(e, "to")}
             />
@@ -527,7 +546,7 @@ const NewMail: FC<NewMailProps> = ({
                   >
                     {recipient}
                     {(!mailResponse ||
-                      (draftEmail && Object.keys(draftEmail).length > 0)) && (
+                      (draftEmail && Object.keys(draftEmail).length > 0) || isReply) && (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -556,7 +575,7 @@ const NewMail: FC<NewMailProps> = ({
                   >
                     {recipient}
                     {(!mailResponse ||
-                      (draftEmail && Object.keys(draftEmail).length > 0)) && (
+                      (draftEmail && Object.keys(draftEmail).length > 0) || isReply) && (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -633,7 +652,7 @@ const NewMail: FC<NewMailProps> = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Reply
-                      className="h-5 w-5  cursor-pointer"
+                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleReplyClick}
                     />
                   </TooltipTrigger>
@@ -645,7 +664,8 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ReplyAll className="h-5 w-5 cursor-pointer" />
+                    <ReplyAll className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                    onClick={handleReplyAllClick} />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Reply All</p>
@@ -654,7 +674,8 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Forward className="h-5 w-5 cursor-pointer" />
+                    <Forward className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                    onClick={handleForwardClick} />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Forward</p>
@@ -667,7 +688,7 @@ const NewMail: FC<NewMailProps> = ({
                       onClick={handleImportant}
                       className={`${
                         isImportant && "text-orange-400 fill-orange-400"
-                      } transition ease-in-out  h-5 w-5 cursor-pointer`}
+                      } transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500`}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
@@ -677,7 +698,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Flag className="h-5 w-5 cursor-pointer" />
+                    <Flag className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Task</p>
@@ -686,7 +707,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Clipboard className="h-5 w-5 cursor-pointer" />
+                    <Clipboard className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Clipboard</p>
@@ -695,13 +716,13 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <MessageCircle className="h-5 w-5 cursor-pointer" />
+                    <MessageCircle className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Chat</p>
                   </TooltipContent>
                 </Tooltip>
-                <MoreVertical className="h-5 w-5 cursor-pointer" />
+                <MoreVertical className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
               </TooltipProvider>
             </div>
           ) : (
