@@ -8,7 +8,7 @@ const staticTabs = [
   { tab: "Inbox", route: "/email" },
   { tab: "Sent", route: "/email/sent" },
   { tab: "Draft", route: "/email/draft" },
-  { tab: "Trash", route: "/email/trash" },
+  { tab: "Important", route: "/email/important" },
   { tab: "New", route: "/email/new" },
 ];
 
@@ -19,7 +19,7 @@ const MailLayout = ({
   const segments = pathname.split("/");
   let tabs = [...staticTabs];
 
-  if(segments.length === 3 && segments[1] === "email" && segments[2] !== "sent" && segments[2] !== "trash" && segments[2] !== "draft" && segments[2] !== "new") {
+  if(segments.length === 3 && segments[1] === "email" && segments[2] !== "sent" && segments[2] !== "important" && segments[2] !== "draft" && segments[2] !== "new") {
     
     tabs.push({tab: "View", route: pathname})
   }
