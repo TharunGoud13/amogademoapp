@@ -5,7 +5,7 @@ import { FC } from "react";
 const Page:FC = () => {
     return(
         <div>
-            <NewMail  response={null}/>
+            <NewMail  response={null} repliedEmails={null}/>
         </div>
     )
 }

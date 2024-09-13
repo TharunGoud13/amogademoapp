@@ -43,7 +43,7 @@ const Draft = () => {
 
   return (
     <div>
-      <MailList items={response && response?.length > 0 && response.filter((item:any) => item && item.is_draft === true  )}/>
+      <MailList items={response && response?.length > 0 && response.filter((item:any) => item && item.is_draft === true && item.is_deleted !== true  )}/>
     </div>
   )
 }

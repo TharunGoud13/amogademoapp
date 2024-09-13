@@ -27,6 +27,9 @@ import {
   MessageCircle,
   MoreVertical,
   Star,
+  ChevronLeft,
+  ChevronRight,
+  Trash,
 } from "lucide-react";
 import { getAllImapDetails } from "@/lib/store/actions";
 import { connect } from "react-redux";
@@ -37,17 +40,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { useRouter } from "next/navigation";
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
   getAllImapDetails: any;
   response: any;
+  repliedEmails:any
 }
 
 const NewMail: FC<NewMailProps> = ({
   getAllImapDetailsResponse,
   getAllImapDetails,
   response,
+  repliedEmails
 }) => {
   const [to, setTo] = useState<string[]>([]); // capture entered to text
   const [cc, setCc] = useState<string[]>([]);
@@ -74,6 +80,9 @@ const NewMail: FC<NewMailProps> = ({
   const [isDraftLoading, setIsDraftLoading] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const [originalMailData, setOriginalMailData] = useState<any>(null);
+  const [currentReplyIndex, setCurrentReplyIndex] = useState(-1);
+  const [viewingReply, setViewingReply] = useState(false);
+  const router = useRouter()
 
   // used for getting imap details which user created on profile page
   useEffect(() => {
@@ -98,7 +107,7 @@ const NewMail: FC<NewMailProps> = ({
         bcc: mailResponse?.bcc_emails ? [mailResponse.bcc_emails] : [],
       };
       setOriginalMailData(initialData);
-      
+
       if (!isReply) {
         setTo(initialData.to);
         setSubject(initialData.subject);
@@ -406,27 +415,30 @@ const NewMail: FC<NewMailProps> = ({
 
   const handleReplyClick = () => {
     setIsReply(true);
+    setViewingReply(false);
     if (originalMailData) {
       setTo([originalMailData.to]);
-      setSubject('');
-      setMessage(''); 
-      setCc([]); 
+      setSubject("");
+      setMessage("");
+      setCc([]);
       setBcc([]);
     }
   };
 
   const handleReplyAllClick = () => {
+    setViewingReply(false);
     setIsReply(true);
     if (originalMailData) {
-      setTo(originalMailData.to); 
-      setSubject('');
-      setMessage(''); 
-      setCc(originalMailData?.cc); 
-      setBcc(originalMailData?.bcc); 
+      setTo(originalMailData.to);
+      setSubject("");
+      setMessage("");
+      setCc(originalMailData?.cc);
+      setBcc(originalMailData?.bcc);
     }
-  }
+  };
 
   const handleForwardClick = () => {
+    setViewingReply(false);
     setIsReply(true);
     if (originalMailData) {
       setTo([]);
@@ -435,7 +447,7 @@ const NewMail: FC<NewMailProps> = ({
       setCc([]);
       setBcc([]);
     }
-  }
+  };
 
   const handleCancelReply = () => {
     setIsReply(false);
@@ -496,16 +508,79 @@ const NewMail: FC<NewMailProps> = ({
     }
   };
 
+  const handleTrash = async() => {
+    const trashData = {
+      ...mailResponse,
+      is_deleted: true,
+    }
+    try{
+      await updateEmailData(trashData);
+      toast({ description: "Email moved to trash", variant: "default" });
+      router.push("/email")
+    }catch(error){
+      toast({ description: "Failed to move email to trash", variant: "destructive" });
+    }
+
+  }
+
+  const handleLeftChevronClick = () => {
+    if (currentReplyIndex > -1) {
+      setCurrentReplyIndex(prevIndex => prevIndex - 1);
+      if (currentReplyIndex - 1 === -1) {
+        // If we're going back to the original email
+        fillFieldsWithEmailContent(response[0]);
+        setViewingReply(false);
+      } else {
+        fillFieldsWithEmailContent(repliedEmails[currentReplyIndex - 1]);
+        setViewingReply(true);
+      }
+    }
+  };
+
+  const handleRightChevronClick = () => {
+    if (currentReplyIndex < repliedEmails.length - 1) {
+      setCurrentReplyIndex(prevIndex => prevIndex + 1);
+      fillFieldsWithEmailContent(repliedEmails[currentReplyIndex + 1]);
+      setViewingReply(true);
+    }
+  };
+
+  const fillFieldsWithEmailContent = (email: any) => {
+    setTo([email.sender_email]);
+    setSubject(email.subject);
+    setMessage(email.body);
+    setCc(email.cc_emails ? email.cc_emails.split(", ") : []);
+    setBcc(email.bcc_emails ? email.bcc_emails.split(", ") : []);
+  };
+
   const formattedDate = new Date(mailResponse && mailResponse.created_datetime);
 
   return (
     <form onSubmit={handleSendMail}>
       <Card className="p-2.5 my-2.5 h-full flex flex-col w-[95%] md:w-[99%]  gap-5 m-2.5">
-        {mailResponse && (
-          <h1 className="mt-2 text-gray-500">
-            Date: {formattedDate.toLocaleString()}
-          </h1>
-        )}
+        <div className="flex flex-wrap justify-between items-center">
+          {mailResponse && (
+            <h1 className="mt-2 text-gray-500">
+              Date: {formattedDate.toLocaleString()}
+            </h1>
+          )}
+          {(mailResponse || viewingReply) && !isReply && !draftEmail && (
+          <div className="flex  gap-2.5 items-center pt-2 pr-4">
+            <div 
+              className="h-10 flex flex-col justify-center items-center w-10 hover:bg-gray-100 rounded-full cursor-pointer"
+              onClick={handleLeftChevronClick}
+            >
+              <ChevronLeft/>
+            </div>
+             {currentReplyIndex + 1} / {repliedEmails.length} 
+             <div 
+              className="h-10 flex flex-col justify-center items-center w-10 hover:bg-gray-100 rounded-full cursor-pointer"
+              onClick={handleRightChevronClick}
+             >
+              <ChevronRight/>
+             </div>
+          </div>)}
+        </div>
         <div className="flex flex-col border">
           <div className="flex  items-center">
             <span className="text-gray-500 pl-2.5 pr-4">
@@ -546,7 +621,8 @@ const NewMail: FC<NewMailProps> = ({
                   >
                     {recipient}
                     {(!mailResponse ||
-                      (draftEmail && Object.keys(draftEmail).length > 0) || isReply) && (
+                      (draftEmail && Object.keys(draftEmail).length > 0) ||
+                      isReply) && (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -575,7 +651,8 @@ const NewMail: FC<NewMailProps> = ({
                   >
                     {recipient}
                     {(!mailResponse ||
-                      (draftEmail && Object.keys(draftEmail).length > 0) || isReply) && (
+                      (draftEmail && Object.keys(draftEmail).length > 0) ||
+                      isReply) && (
                       <X
                         className="ml-1 cursor-pointer"
                         size={12}
@@ -664,8 +741,10 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ReplyAll className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
-                    onClick={handleReplyAllClick} />
+                    <ReplyAll
+                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                      onClick={handleReplyAllClick}
+                    />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Reply All</p>
@@ -674,8 +753,10 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Forward className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
-                    onClick={handleForwardClick} />
+                    <Forward
+                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                      onClick={handleForwardClick}
+                    />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Forward</p>
@@ -693,6 +774,17 @@ const NewMail: FC<NewMailProps> = ({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Important</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Trash
+                    onClick={handleTrash}
+                     className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Trash</p>
                   </TooltipContent>
                 </Tooltip>
 

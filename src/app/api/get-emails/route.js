@@ -73,7 +73,7 @@ export async function GET(req) {
                 if (info.which === "TEXT") {
                   stream.on("data", (chunk) => {
                     const formattedText = chunk.toString("utf8").match(/<div[^>]*>(.*?)<\/div>/);
-                    email.text += formattedText[1];
+                    email.text += formattedText;
                   });
                 }
                 if (info.which === "HEADER") {

@@ -203,7 +203,7 @@ const Mail: React.FC<MailProps> = ({
             </div>
           )} */}
           <MailList
-            items={responseEmail.filter((item: any) => item.status != "sent" && item.is_draft != true)}
+            items={responseEmail.filter((item: any) => item.status != "sent" && item.is_draft != true && item.is_deleted != true)}
           />
         </div>
       </div>
