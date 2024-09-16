@@ -17,6 +17,8 @@ import { CREATE_IMAP_DETAILS_URL } from "@/constants/envConfig";
 import { toast } from "../ui/use-toast";
 import { IoMdEye } from "react-icons/io";
 import { IoEyeOffOutline } from "react-icons/io5";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const EmailDetails: FC<any> = ({
   getAllImapDetailsResponse,
@@ -97,12 +99,12 @@ const EmailDetails: FC<any> = ({
               </TableCell>
               <TableCell>
                 {showPassword ? (
-                  <IoEyeOffOutline
+                  <FontAwesomeIcon icon={faEyeSlash}
                     onClick={togglePassword}
                     className="text-[20px] cursor-pointer"
                   />
                 ) : (
-                  <IoMdEye
+                  <FontAwesomeIcon icon={faEye}
                     onClick={togglePassword}
                     className="text-[20px] cursor-pointer"
                   />

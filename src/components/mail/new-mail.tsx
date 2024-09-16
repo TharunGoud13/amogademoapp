@@ -41,6 +41,9 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsis, faEllipsisVertical, faReply, faReplyAll, faShare, faTrash  } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faTrashCan, faClipboard, faComment, faFlag} from "@fortawesome/free-regular-svg-icons"
 
 interface NewMailProps {
   getAllImapDetailsResponse: any;
@@ -728,7 +731,7 @@ const NewMail: FC<NewMailProps> = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Reply
+                    <FontAwesomeIcon icon={faReply}
                       className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleReplyClick}
                     />
@@ -741,7 +744,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ReplyAll
+                    <FontAwesomeIcon icon={faReplyAll}
                       className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleReplyAllClick}
                     />
@@ -753,7 +756,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Forward
+                  <FontAwesomeIcon icon={faShare}
                       className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleForwardClick}
                     />
@@ -765,11 +768,11 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Star
+                  <FontAwesomeIcon icon={faStar} 
                       onClick={handleImportant}
                       className={`${
                         isImportant && "text-orange-400 fill-orange-400"
-                      } transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500`}
+                      } transition ease-in-out  h-6 w-6 cursor-pointer hover:scale-150 duration-500`}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
@@ -779,7 +782,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Trash
+                    <FontAwesomeIcon icon={faTrash}
                     onClick={handleTrash}
                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
@@ -790,7 +793,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Flag className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faFlag} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Task</p>
@@ -799,7 +802,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Clipboard className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faClipboard} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Clipboard</p>
@@ -808,13 +811,13 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <MessageCircle className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faComment} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Chat</p>
                   </TooltipContent>
                 </Tooltip>
-                <MoreVertical className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                <FontAwesomeIcon icon={faEllipsisVertical} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
               </TooltipProvider>
             </div>
           ) : (

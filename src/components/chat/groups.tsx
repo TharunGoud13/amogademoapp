@@ -14,6 +14,8 @@ import { trace, context } from "@opentelemetry/api";
 import { useSession } from "next-auth/react";
 import IpAddress from "@/lib/IpAddress";
 import getCurrentBrowser from '@/lib/getCurrentBrowser'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoading, loginLog,getChatGroupError }) => {
 
@@ -153,7 +155,7 @@ const Groups: FC<any> = ({ getChatGroupResponse, getChatGroup, getChatGroupLoadi
                         <div className="flex flex-col justify-center items-center">
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <p className="text-lg cursor-pointer"><FiEdit /></p>
+                                    <p className="text-lg cursor-pointer"><FontAwesomeIcon icon={faPenToSquare}/></p>
                                 </PopoverTrigger>
                                 <PopoverContent className=' w-[25vw] h-[50vh] overflow-x-hidden overflow-y-auto'>
                                     <EditGroupUsers id={group?.chat_group_id} />

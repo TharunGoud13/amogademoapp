@@ -15,9 +15,9 @@ import {
 import { connect } from "react-redux";
 import { GET_EMAILS } from "@/constants/envConfig";
 import { toast } from "@/components/ui/use-toast";
-import { FaSyncAlt } from "react-icons/fa";
 import { Spin } from "antd";
-import { Skeleton } from "../ui/skeleton";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRotate } from "@fortawesome/free-solid-svg-icons";
 
 interface MailProps {
   loginLog: any;
@@ -43,6 +43,8 @@ const Mail: React.FC<MailProps> = ({
   React.useEffect(() => {
     getAllImapDetails();
   }, [getAllImapDetails]);
+
+
 
   React.useEffect(() => {
     const trackPageLoad = async () => {
@@ -173,7 +175,8 @@ const Mail: React.FC<MailProps> = ({
             <form>
               <div className="flex  items-center space-x-2 relative">
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                  <FaSyncAlt className="h-5 w-5" onClick={handleSync} />
+                  {/* <FaSyncAlt className="h-5 w-5" onClick={handleSync} /> */}
+                  <FontAwesomeIcon icon={faRotate} className="h-5 w-5" onClick={handleSync}/>
                 </div>
                 <Input
                   type="text"

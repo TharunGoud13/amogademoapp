@@ -10,6 +10,8 @@ import { toast } from '../ui/use-toast'
 import { context, trace } from '@opentelemetry/api'
 import IpAddress from '@/lib/IpAddress'
 import { useSession } from 'next-auth/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoading,loginLog}) => {
     const {data:session} = useSession()
@@ -134,7 +136,7 @@ const EditGroupUsers:FC<any> = ({id,groupUsers,groupUsersResponse,groupUsersLoad
                     <div className='flex flex-col justify-center items-center'>
                         <span className='text-2xl text-gray-500 hover:text-gray-800 cursor-pointer font-[200] hover:scale-105 hover:font-[500]'
                         onClick={() => handleDelete(contact)}
-                            ><MdDeleteOutline /></span>
+                            ><FontAwesomeIcon icon={faTrash} /></span>
                     </div>
                 </div>
             )): <div>
