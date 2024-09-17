@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(dashboard)/dashboard/page.tsx", "src/middleware.js", "src/auth.jsx", "instrumentation.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(dashboard)/dashboard/page.tsx", "src/middleware.js", "src/auth.jsx", "instrumentation.ts", "src/components/dashboard/ChartTheme.tsx", "src/components/overview.tsx"],
   "exclude": ["node_modules"]
 }

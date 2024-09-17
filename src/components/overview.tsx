@@ -18,44 +18,55 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
 
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+interface OverviewProps {
+  colors: string[];
+}
 
-export function Overview() {
+interface ChartDataItem {
+  browser: string;
+  visitors: number;
+  fill: string;
+}
+
+export const Overview: React.FC<OverviewProps> = ({ colors }) => {
+  const chartData: ChartDataItem[] = React.useMemo(() => [
+    { browser: "chrome", visitors: 275, fill: colors[0] },
+    { browser: "safari", visitors: 200, fill: colors[1] },
+    { browser: "firefox", visitors: 287, fill: colors[2] },
+    { browser: "edge", visitors: 173, fill: colors[3] },
+    { browser: "other", visitors: 190, fill: colors[4] },
+  ], [colors]);
+
+  const chartConfig: ChartConfig = React.useMemo(() => ({
+    visitors: {
+      label: "Visitors",
+    },
+    chrome: {
+      label: "Chrome",
+      color: colors[0],
+    },
+    safari: {
+      label: "Safari",
+      color: colors[1],
+    },
+    firefox: {
+      label: "Firefox",
+      color: colors[2],
+    },
+    edge: {
+      label: "Edge",
+      color: colors[3],
+    },
+    other: {
+      label: "Other",
+      color: colors[4],
+    },
+  }), [colors]);
+
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
+  }, [chartData])
 
   return (
     <Card className="flex flex-col">
@@ -107,6 +118,7 @@ export function Overview() {
                       </text>
                     )
                   }
+                  return null;
                 }}
               />
             </Pie>

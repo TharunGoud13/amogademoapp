@@ -1,29 +1,39 @@
-"use client"
-import { Overview } from '@/components/overview';
-import { RecentSales } from '@/components/recent-sales';
+"use client";
+import ChartTheme from "@/components/dashboard/ChartTheme";
+import { Overview } from "@/components/overview";
+import { RecentSales } from "@/components/recent-sales";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
-export default function page() {
-  
+const defaultColors = ["#FF6B6B", "#16a34a", "#14532d", "#fde047", "#60a5fa"];
+
+export default function Dashboard() {
+  const [activeColors, setActiveColors] = useState<string[]>(defaultColors);
+
+  const handleThemeChange = (newColors:string[]) => {
+    setActiveColors(newColors);
+  };
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full w-full">
       <div className="flex-1 space-y-4 p-4 pt-[10%] md:pt-[1%] md:p-8">
-        
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className='bg-secondary text-primary'>
+          <div className="flex items-center md:justify-between flex-wrap w-full">
+          <TabsList className="bg-secondary text-primary">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics" disabled>
               Analytics
             </TabsTrigger>
           </TabsList>
+          <ChartTheme onThemeChange={handleThemeChange}/>
+        </div>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
@@ -134,7 +144,7 @@ export default function page() {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <Overview />
+                  <Overview colors={activeColors} />
                 </CardContent>
               </Card>
               <Card className="col-span-4 md:col-span-3">
