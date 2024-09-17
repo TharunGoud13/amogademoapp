@@ -42,7 +42,7 @@ import {
 } from "../ui/tooltip";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faEllipsisVertical, faReply, faReplyAll, faShare, faTrash  } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faEllipsis, faEllipsisVertical, faPaperclip, faReply, faReplyAll, faShare, faTrash  } from "@fortawesome/free-solid-svg-icons";
 import { faStar, faTrashCan, faClipboard, faComment, faFlag} from "@fortawesome/free-regular-svg-icons"
 
 interface NewMailProps {
@@ -570,23 +570,23 @@ const NewMail: FC<NewMailProps> = ({
           {(mailResponse || viewingReply) && !isReply && !draftEmail && (
           <div className="flex  gap-2.5 items-center pt-2 pr-4">
             <div 
-              className="h-10 flex flex-col justify-center items-center w-10 hover:bg-gray-100 rounded-full cursor-pointer"
+              className="h-10 flex flex-col justify-center items-center text-primary w-10 hover:bg-secondary rounded-full cursor-pointer"
               onClick={handleLeftChevronClick}
             >
-              <ChevronLeft/>
+              <FontAwesomeIcon icon={faChevronLeft}/>
             </div>
              {currentReplyIndex + 1} / {repliedEmails.length} 
              <div 
-              className="h-10 flex flex-col justify-center items-center w-10 hover:bg-gray-100 rounded-full cursor-pointer"
+              className="h-10 flex flex-col justify-center items-center w-10 text-primary hover:bg-secondary rounded-full cursor-pointer"
               onClick={handleRightChevronClick}
              >
-              <ChevronRight/>
+              <FontAwesomeIcon icon={faChevronRight}/>
              </div>
           </div>)}
         </div>
         <div className="flex flex-col border">
           <div className="flex  items-center">
-            <span className="text-gray-500 pl-2.5 pr-4">
+            <span className="text-primary  pl-2.5 pr-4">
               {mailResponse?.sender_email && !isReply && !draftEmail
                 ? "From"
                 : "To"}
@@ -614,7 +614,7 @@ const NewMail: FC<NewMailProps> = ({
             />
           </div>
           <div className="flex items-center">
-            <span className="text-gray-500 pl-2.5 pr-4">Cc</span>
+            <span className="text-primary pl-2.5 pr-4">Cc</span>
             {cc.map(
               (recipient, index) =>
                 recipient && (
@@ -644,7 +644,7 @@ const NewMail: FC<NewMailProps> = ({
             />
           </div>
           <div className="flex  items-center">
-            <span className="text-gray-500 pl-2.5 pr-4">Bcc</span>
+            <span className="text-primary pl-2.5 pr-4">Bcc</span>
             {bcc.map(
               (recipient, index) =>
                 recipient && (
@@ -732,7 +732,7 @@ const NewMail: FC<NewMailProps> = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <FontAwesomeIcon icon={faReply}
-                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                      className="transition  text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleReplyClick}
                     />
                   </TooltipTrigger>
@@ -745,7 +745,7 @@ const NewMail: FC<NewMailProps> = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <FontAwesomeIcon icon={faReplyAll}
-                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                      className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleReplyAllClick}
                     />
                   </TooltipTrigger>
@@ -757,7 +757,7 @@ const NewMail: FC<NewMailProps> = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                   <FontAwesomeIcon icon={faShare}
-                      className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
+                      className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500"
                       onClick={handleForwardClick}
                     />
                   </TooltipTrigger>
@@ -768,11 +768,11 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                  <FontAwesomeIcon icon={faStar} 
+                  <Star
                       onClick={handleImportant}
                       className={`${
                         isImportant && "text-orange-400 fill-orange-400"
-                      } transition ease-in-out  h-6 w-6 cursor-pointer hover:scale-150 duration-500`}
+                      } transition ease-in-out  text-primary  h-6 w-6 cursor-pointer hover:scale-150 duration-500`}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
@@ -784,7 +784,7 @@ const NewMail: FC<NewMailProps> = ({
                   <TooltipTrigger asChild>
                     <FontAwesomeIcon icon={faTrash}
                     onClick={handleTrash}
-                     className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                     className="transition ease-in-out  text-primary h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Trash</p>
@@ -793,7 +793,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <FontAwesomeIcon icon={faFlag} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faFlag} className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Task</p>
@@ -802,7 +802,7 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <FontAwesomeIcon icon={faClipboard} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faClipboard} className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Clipboard</p>
@@ -811,18 +811,18 @@ const NewMail: FC<NewMailProps> = ({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <FontAwesomeIcon icon={faComment} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                    <FontAwesomeIcon icon={faComment} className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Chat</p>
                   </TooltipContent>
                 </Tooltip>
-                <FontAwesomeIcon icon={faEllipsisVertical} className="transition ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
+                <FontAwesomeIcon icon={faEllipsisVertical} className="transition text-primary ease-in-out  h-5 w-5 cursor-pointer hover:scale-150 duration-500" />
               </TooltipProvider>
             </div>
           ) : (
             <>
-              <div className="flex gap-5">
+              <div className="flex gap-2 md:gap-5">
                 <Button
                   type="submit"
                   className="md:w-[125px]"
@@ -872,9 +872,9 @@ const NewMail: FC<NewMailProps> = ({
                   className="hidden"
                   ref={uploadFileRef}
                 />
-                <Paperclip
+                <FontAwesomeIcon icon={faPaperclip}
                   onClick={handleClick}
-                  className="text-3xl cursor-pointer"
+                  className="text-3xl text-primary md:mr-2 cursor-pointer"
                 />
               </div>
             </>

@@ -31,7 +31,7 @@ export function MailList({ items }: MailListProps) {
           href={`/email/${item.email_id}`}
             key={item.email_id}
             className={cn(
-              "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+              "flex flex-col hover:bg-secondary items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all",
               
             )}
             >

@@ -19,6 +19,11 @@ export async function middleware(req) {
         return NextResponse.redirect(url);
     }
 
+    if(session?.user && !['/email','/dashboard','/storemenu','taskbox','/storechat','/products','/profile'].includes(pathname)){
+        url.pathname = "/email"
+        return NextResponse.redirect(url);
+    }
+
     return res;
 }
 

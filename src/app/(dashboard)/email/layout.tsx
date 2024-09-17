@@ -28,7 +28,7 @@ const MailLayout = ({
       <div className="w-full">
       <div className="flex w-full md:gap-2 p-3">
           {tabs.map((tab, index) => (
-            <div key={index} className={`${pathname === tab.route && " font-semibold bg-gray-100 dark:text-black"} h-[45px]  p-2.5 rounded`}>
+            <div key={index} className={`${pathname === tab.route && " font-semibold text-primary bg-secondary dark:text-black"} h-[45px] text-primary  p-2.5 rounded`}>
               <Link href={tab.route}>{tab.tab}</Link>
             </div>
           ))}

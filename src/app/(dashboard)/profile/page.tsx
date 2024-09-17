@@ -12,7 +12,7 @@ const Profile = ()  => {
   return (
     <div className="mt-[1%] h-full">
             <Tabs defaultValue="email">
-                <TabsList className="grid ml-[2%] bg-gray-100 h-[50px] p-2.5 md:w-[400px] rounded grid-cols-3">
+                <TabsList className="grid ml-[2%] bg-secondary text-primary h-[50px] p-2.5 md:w-[400px] rounded grid-cols-3">
                     <TabsTrigger value="my-profile">Profile</TabsTrigger>
                     <TabsTrigger value="address">Address</TabsTrigger>
                     <TabsTrigger value="email">Email</TabsTrigger>

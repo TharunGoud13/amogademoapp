@@ -18,7 +18,7 @@ export default function page() {
       <div className="flex-1 space-y-4 p-4 pt-[10%] md:pt-[1%] md:p-8">
         
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
+          <TabsList className='bg-secondary text-primary'>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics" disabled>
               Analytics

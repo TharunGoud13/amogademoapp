@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Skeleton } from '../ui/skeleton'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import Image from 'next/image'
-import { MdDeleteOutline } from "react-icons/md";
+// import { MdDeleteOutline } from "react-icons/md";
 import { DELETE_USERS_FROM_GROUP } from '@/constants/envConfig'
 import { toast } from '../ui/use-toast'
 import { context, trace } from '@opentelemetry/api'

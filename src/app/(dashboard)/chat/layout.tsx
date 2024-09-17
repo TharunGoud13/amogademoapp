@@ -32,7 +32,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
       <div className="flex justify-between w-full items-center">
         <div className="flex gap-5">
           {tabs.map((tab, index) => (
-            <div key={index} className={`${pathname === tab.route && " font-semibold bg-gray-100 dark:text-black"} h-[45px]  p-2.5 rounded`}>
+            <div key={index} className={`${pathname === tab.route && " font-semibold bg-secondary text-primary dark:text-black"} h-[45px] text-primary  p-2.5 rounded`}>
               <Link href={tab.route}>{tab.tab}</Link>
             </div>
           ))}

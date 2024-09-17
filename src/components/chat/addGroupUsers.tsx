@@ -142,7 +142,7 @@ const AddGroupUsers: FC<any> = ({ getUsers, getUsersResponse, groupsData, getCha
                                     <Image src={contact?.avatar_url} alt="user" width={80} height={80} />
                                 </Avatar>
                                 : <Avatar>
-                                    <AvatarFallback>{contact?.user_name?.charAt(0).toUpperCase()}</AvatarFallback>
+                                    <AvatarFallback className='bg-secondary'>{contact?.user_name?.charAt(0).toUpperCase()}</AvatarFallback>
                                 </Avatar>}
                             <div className="space-y-1 w-[90%]">
                                 <h1 className="font-bold line-clamp-1">{contact?.user_name}</h1>

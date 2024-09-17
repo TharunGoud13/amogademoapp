@@ -1,17 +1,19 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { UserData } from '@/app/data';
-import { Info, Phone, Video } from 'lucide-react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '../ui/button';
+// import { UserData } from '@/app/data';
+// import { Info, Phone, Video } from 'lucide-react';
+// import Link from 'next/link';
+// import { cn } from '@/lib/utils';
+// import { buttonVariants } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import AddGroupUsers from './addGroupUsers';
 import { connect } from 'react-redux';
 import { getChatGroupUsers } from '@/lib/store/actions';
-import { IoMdAdd } from "react-icons/io";
+// import { IoMdAdd } from "react-icons/io";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface ChatTopbarProps {
   selectedUser: any;
@@ -61,7 +63,7 @@ const userTypingData = typingUsers[displayData?.user_catalog_id];
               height={6}
               className="w-10 h-10 "
             /> :
-            <AvatarFallback>
+            <AvatarFallback className='bg-secondary'>
               {(displayData?.user_name?.charAt(0) || displayData?.group_name?.charAt(0))?.toUpperCase()}
             </AvatarFallback>}
         </Avatar>
@@ -83,7 +85,7 @@ const userTypingData = typingUsers[displayData?.user_catalog_id];
               <Avatar>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <AvatarFallback className='text-xl font-[200] flex flex-col justify-center items-center'><IoMdAdd /></AvatarFallback>
+                    <AvatarFallback className='text-xl bg-secondary font-[200] flex flex-col justify-center items-center'><FontAwesomeIcon icon={faPlus} /></AvatarFallback>
                   </PopoverTrigger>
                   <PopoverContent className='absolute h-[60vh] w-[25vw] overflow-x-hidden overflow-y-auto'>
                     <AddGroupUsers groupsData={groupsData} />
@@ -97,7 +99,7 @@ const userTypingData = typingUsers[displayData?.user_catalog_id];
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Avatar>
-                        <AvatarFallback>{user?.user_name?.charAt(0).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className='bg-secondary'>{user?.user_name?.charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
                     </TooltipTrigger>
                     <TooltipContent>{user?.user_name}</TooltipContent>

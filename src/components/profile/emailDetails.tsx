@@ -15,10 +15,10 @@ import { connect } from "react-redux";
 import { FaTrash } from "react-icons/fa6";
 import { CREATE_IMAP_DETAILS_URL } from "@/constants/envConfig";
 import { toast } from "../ui/use-toast";
-import { IoMdEye } from "react-icons/io";
-import { IoEyeOffOutline } from "react-icons/io5";
+// import { IoMdEye } from "react-icons/io";
+// import { IoEyeOffOutline } from "react-icons/io5";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const EmailDetails: FC<any> = ({
   getAllImapDetailsResponse,
@@ -92,8 +92,8 @@ const EmailDetails: FC<any> = ({
                 {item.data_response.split(" ")[4]}
               </TableCell>
               <TableCell>
-                <FaTrash
-                  className="cursor-pointer text-gray-500"
+                <FontAwesomeIcon icon={faTrash}
+                  className="cursor-pointer text-gray-500 transition hover:scale-150 duration-150 ease-in-out"
                   onClick={() => handleDelete(item.user_catalog_data_id)}
                 />
               </TableCell>

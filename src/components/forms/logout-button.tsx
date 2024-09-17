@@ -3,11 +3,13 @@
 
 import { logout } from '@/app/actions'
 import { useSession } from 'next-auth/react'
-import { MdOutlineLogout } from "react-icons/md"
+// import { MdOutlineLogout } from "react-icons/md"
 import { loginLog } from '@/lib/store/actions'
 import IpAddress from '@/lib/IpAddress'
 import { connect } from 'react-redux'
 import { FC } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 
 const LogoutButton: FC<any> = ({ loginLog }) => {
     const { data: session } = useSession()
@@ -48,7 +50,7 @@ const LogoutButton: FC<any> = ({ loginLog }) => {
         <>
             <button
                 onClick={handleLogout}
-                className="p-2.5 hidden lg:block dark:border-white dark:bg-black dark:text-white font-semibold rounded-lg bg-gray-100"
+                className="p-2.5 hidden lg:block dark:border-white dark:bg-black dark:text-white font-semibold rounded-lg bg-secondary"
             >
                 Logout
             </button>
@@ -56,7 +58,7 @@ const LogoutButton: FC<any> = ({ loginLog }) => {
                 onClick={handleLogout}
                 className="p-2.5 lg:hidden font-semibold dark:text-white dark:bg-black rounded-lg bg-gray-100"
             >
-                <MdOutlineLogout />
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </button>
         </>
     )

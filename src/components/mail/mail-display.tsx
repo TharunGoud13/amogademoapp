@@ -45,7 +45,9 @@ import {
 // import { Mail } from "@/app/(app)/examples/mail/data"
 // import { Mail } from "./data"
 import { auth } from "@/auth"
-import { FaUser } from "react-icons/fa";
+// import { FaUser } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faUser } from "@fortawesome/free-solid-svg-icons"
 
 interface MailDisplayProps {
   mail: any
@@ -200,7 +202,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
               <Avatar>
                 <AvatarImage alt={mail.sender_name} />
                 <AvatarFallback>
-                <FaUser/>
+                <FontAwesomeIcon icon={faUser}/>
                 </AvatarFallback>
               </Avatar>
               <div className="grid gap-1">

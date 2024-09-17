@@ -10,7 +10,7 @@ const Page:FC = () => {
     return(
         <div className="mt-[1%] h-full">
             <Tabs defaultValue="products">
-                <TabsList className="grid ml-[2%] bg-gray-100 p-2.5 rounded grid-cols-3 w-[400px]">
+                <TabsList className="grid ml-[2%] text-primary bg-secondary p-2.5 rounded grid-cols-3 w-[400px]">
                     <TabsTrigger value="products">Cards</TabsTrigger>
                     <TabsTrigger value="analytics">Table</TabsTrigger>
                     <TabsTrigger value="ask">New</TabsTrigger>

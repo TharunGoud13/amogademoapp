@@ -7,7 +7,8 @@ import Cookies from 'js-cookie'
 import { Reply, X, Smile, Paperclip } from "lucide-react";
 import ReactionPopover from "../reactionpopover";
 import { CREATE_CHAT_MESSAGE } from "@/constants/envConfig";
-import { FaFile } from "react-icons/fa6";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFile } from "@fortawesome/free-solid-svg-icons";
 
 
 interface ChatListProps {
@@ -124,7 +125,7 @@ export function ChatList({
 
                 {message.sender_id != currentUserId && (
                   <Avatar className="flex justify-center items-center">
-                    <AvatarFallback className="flex-1">
+                    <AvatarFallback className="flex-1 bg-secondary">
                       {contactData && contactData[0]?.user_name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                     <AvatarImage
@@ -155,7 +156,7 @@ export function ChatList({
                   
                   {message?.document_file ?
                     <div className="flex">
-                      <FaFile className="text-lg"/>
+                      <FontAwesomeIcon icon={faFile} className="text-lg"/>
                       
                       {message.document_type.startsWith('image/') ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -188,7 +189,7 @@ export function ChatList({
                       width={6}
                       height={6}
                     />
-                    <AvatarFallback className="flex-1">
+                    <AvatarFallback className="flex-1 bg-secondary">
                       {message.sender_display_name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
