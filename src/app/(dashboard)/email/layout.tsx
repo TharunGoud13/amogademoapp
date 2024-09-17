@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 const staticTabs = [
@@ -27,11 +28,23 @@ const MailLayout = ({
     <div className="h-full flex w-full flex-col md:flex-row">
       <div className="w-full">
       <div className="flex w-full md:gap-2 p-3">
-          {tabs.map((tab, index) => (
-            <div key={index} className={`${pathname === tab.route && " font-semibold text-primary bg-secondary dark:text-black"} h-[45px] text-primary  p-2.5 rounded`}>
-              <Link href={tab.route}>{tab.tab}</Link>
-            </div>
-          ))}
+      <Tabs value={pathname}>
+            <TabsList className="w-full bg-secondary text-primary">
+              {tabs.map((tab, index) => (
+                <TabsTrigger
+                  key={index}
+                  value={tab.route}
+                  className={`${
+                    pathname === tab.route
+                      ? "font-semibold text-primary bg-secondary dark:text-black"
+                      : "text-primary"
+                  }  rounded`}
+                >
+                  <Link href={tab.route}>{tab.tab}</Link>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
         <div>{children}</div>

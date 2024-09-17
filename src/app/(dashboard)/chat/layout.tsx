@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import CreateGroupForm from "@/components/chat/createGroupForm";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const staticTabs = [
   { tab: "Contacts", route: "/chat" },
@@ -31,11 +32,24 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
     <main className="flex flex-col  p-4 md:px-8 pb-20 gap-4">
       <div className="flex justify-between w-full items-center">
         <div className="flex gap-5">
-          {tabs.map((tab, index) => (
-            <div key={index} className={`${pathname === tab.route && " font-semibold bg-secondary text-primary dark:text-black"} h-[45px] text-primary  p-2.5 rounded`}>
-              <Link href={tab.route}>{tab.tab}</Link>
-            </div>
-          ))}
+          <Tabs value={pathname}>
+            <TabsList className="bg-secondary text-primary">
+            {tabs.map((tab, index) => (
+                <TabsTrigger
+                  key={index}
+                  value={tab.route}
+                  className={`${
+                    pathname === tab.route
+                      ? "font-semibold text-primary bg-secondary dark:text-black"
+                      : "text-primary"
+                  }  rounded`}
+                >
+                  <Link href={tab.route}>{tab.tab}</Link>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          
         </div>
         <Popover>
           <PopoverTrigger asChild>

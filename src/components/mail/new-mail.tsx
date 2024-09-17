@@ -725,7 +725,7 @@ const NewMail: FC<NewMailProps> = ({
           rows={14}
           disabled={mailResponse && !isReply && !draftEmail}
         />
-        <div className="flex ml-3 justify-between items-center">
+        <div className="flex justify-between items-center">
           {mailResponse && !isReply && !draftEmail ? (
             <div className="flex items-center gap-5">
               <TooltipProvider>
