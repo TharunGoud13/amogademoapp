@@ -9,6 +9,7 @@ import { BsChat } from "react-icons/bs";
 import LogoutButton from '../forms/logout-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage } from '@fortawesome/free-regular-svg-icons';
+import SelectLanguage from './selectLanguage';
 
 export default function Header() {
 
@@ -45,7 +46,8 @@ export default function Header() {
             <MobileSidebar />
           </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+        <SelectLanguage/>
         <LogoutButton/>
         <Link href="/chat" className='hidden lg:block'>
         {/* <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" /> */}

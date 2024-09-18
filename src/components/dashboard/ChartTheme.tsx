@@ -24,7 +24,7 @@ const ChartTheme: React.FC<ChartThemeProps> = ({ onThemeChange }) => {
       {themes.map((theme) => (
         <div
           key={theme.name}
-          className="grid grid-cols-2 hover:rotate-90 duration-700 ease-in-out transform cursor-pointer grid-rows-2 rounded overflow-hidden"
+          className="grid grid-cols-2 hover:scale-110 md:hover:rotate-90 duration-700 ease-in-out transform cursor-pointer grid-rows-2 rounded overflow-hidden"
           onClick={() => onThemeChange(theme.colors)}
         >
           {theme.colors.slice(0, 4).map((color, index) => (
