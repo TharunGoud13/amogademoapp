@@ -72,6 +72,7 @@
     "mailparser": "^3.7.1",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.19",
+    "next-intl": "^3.19.3",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^1.6.12",
     "react": "^18",

@@ -10,9 +10,12 @@ import LogoutButton from '../forms/logout-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage } from '@fortawesome/free-regular-svg-icons';
 import SelectLanguage from './selectLanguage';
+import { useTranslations } from 'next-intl';
+import LocaleSwitcherSelect from '../language-switcher/LocaleSwitcherSelector';
+import LocaleSwitcher from '../language-switcher/LocaleSwitcher';
 
 export default function Header() {
-
+  const t = useTranslations("TopNav")
   return (
     <div className="supports-backdrop-blur:bg-background/60 fixed  left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
       <nav className="flex h-14 items-center justify-between px-4">
@@ -35,10 +38,10 @@ export default function Header() {
             </svg>
             
           </Link>
-          <Link href="/dashboard" className='text-primary'>Dashboard</Link>
-          <Link href="/storemenu" className='text-primary'>Menu</Link>
-          <Link href="/taskbox" className='text-primary'>Task</Link>
-          <Link href="/products" className='text-primary'>Products</Link>
+          <Link href="/dashboard" className='text-primary'>{t('dashboard')}</Link>
+          <Link href="/storemenu" className='text-primary'>{t('menu')}</Link>
+          <Link href="/taskbox" className='text-primary'>{t('task')}</Link>
+          <Link href="/products" className='text-primary'>{t('products')}</Link>
 
           </div>
         </div>
@@ -47,8 +50,7 @@ export default function Header() {
           </div>
 
         <div className="flex items-center gap-2.5">
-        <SelectLanguage/>
-        <LogoutButton/>
+        <LocaleSwitcher/>
         <Link href="/chat" className='hidden lg:block'>
         {/* <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" /> */}
         <FontAwesomeIcon icon={faMessage} className='h-[24px] w-[24px] text-primary mt-2 mr-2 cursor-pointer'/>
