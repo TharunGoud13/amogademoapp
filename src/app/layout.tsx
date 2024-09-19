@@ -5,6 +5,8 @@ import Providers from "@/components/layout/providers";
 import { auth } from "@/auth";
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from "@/components/ui/toaster";
+import { getLocale, getMessages } from "next-intl/server";
+import {NextIntlClientProvider} from "next-intl"
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,15 +26,19 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const locale = await getLocale()
+  const messages = await getMessages()
 
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={poppins.className}>
+        <NextIntlClientProvider messages={messages}>
         <NextTopLoader/>
         <Providers session={session}>          
             {children}
             <Toaster />
         </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
