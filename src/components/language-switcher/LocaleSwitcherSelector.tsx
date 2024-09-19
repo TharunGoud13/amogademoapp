@@ -5,6 +5,8 @@ import { useTransition } from 'react';
 import { Locale } from '@/i18n/config';
 import { setUserLocale } from '@/services/locale';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   defaultValue: string;
@@ -29,8 +31,9 @@ export default function LocaleSwitcherSelect({
   return (
     <div className="relative">
       <Select defaultValue={defaultValue} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px] bg-secondary">
-          <SelectValue placeholder="Select Country" />
+      <SelectTrigger className="bg-secondary flex gap-2.5">
+          <FontAwesomeIcon className='text-primary' icon={faGlobe}/>
+          <h1>{defaultValue.toUpperCase()}</h1>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
