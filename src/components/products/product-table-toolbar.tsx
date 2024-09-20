@@ -11,6 +11,7 @@ import { DataTableViewOptions } from "./product-table-view-options"
 import { DataTableFacetedFilter } from "./product-table-faceted-filter"
 
 // import { priorities, statuses } from "../data/data"
+// import { priorities,statuses } from "@/constants/taskdata"
 import { priorities,statuses } from "@/constants/taskdata"
 // import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 
