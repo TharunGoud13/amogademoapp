@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,8 +13,8 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+  useReactTable
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -22,78 +22,28 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "../ui/table"
+  TableRow
+} from "@/components/ui/table";
 
-
-import { DataTablePagination } from "./data-table-pagination"
-// import { DataTableToolbar } from "./data-table-toolbar"
-import { DataTableToolbar } from "./data-table-toolbar"
-import { loginLog } from "@/lib/store/actions"
-import { connect } from "react-redux"
-import { context, trace } from "@opentelemetry/api"
-import IpAddress from "@/lib/IpAddress"
-import { useSession } from "next-auth/react"
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-const TaskTable: React.FC<any> = ({
+export function DataTable<TData, TValue>({
   columns,
-  data,
-  loginLog
-}) => {
-  const [rowSelection, setRowSelection] = React.useState({})
+  data
+}: DataTableProps<TData, TValue>) {
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
-
-  const { data: session }: any = useSession()
-  const trackPageLoad = async () => {
-    const tracer = trace.getTracer('mail--tracer');
-    const currentTime = new Date().toUTCString();
-
-    const span = tracer.startSpan('products-page-load', {
-      attributes: {
-        description: 'Products Page Viewed',
-        user_id: session?.user?.id,
-        user_name: session?.user?.name,
-        user_email: session?.user?.email,
-        event_type: "Mail Page",
-        user_ip_address: await IpAddress(),
-
-      }
-    });
-
-    context.with(trace.setSpan(context.active(), span), async () => {
-      // Call loginLog action with the relevant data
-      loginLog({
-        description: 'Tasks Page Viewed',
-        event_type: "Tasks Page",
-        session: session?.user,
-        user_ip_address: await IpAddress(),
-      });
-    });
-    setTimeout(() => {
-      span.end();
-    }, 100);
-
-    return () => {
-      if (span.isRecording()) {
-        span.end();
-      }
-    }
-  };
-
-
-  React.useEffect(() => {
-    trackPageLoad()
-  }, [])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -102,7 +52,7 @@ const TaskTable: React.FC<any> = ({
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
+      columnFilters
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -114,14 +64,15 @@ const TaskTable: React.FC<any> = ({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+    getFacetedUniqueValues: getFacetedUniqueValues()
+  });
 
   return (
-    <div className="space-y-4 pt-5">
+    <div className="space-y-4">
       <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
+          {/* // for rows */}
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -131,15 +82,16 @@ const TaskTable: React.FC<any> = ({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
+          {/* // for columns data */}
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -172,14 +124,5 @@ const TaskTable: React.FC<any> = ({
       </div>
       <DataTablePagination table={table} />
     </div>
-  )
+  );
 }
-
-const mapStateToProps = (state: any) => ({})
-
-const mapDispatchToProps = {
-  loginLog
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(TaskTable)

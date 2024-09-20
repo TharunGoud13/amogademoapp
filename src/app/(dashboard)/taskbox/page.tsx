@@ -1,63 +1,30 @@
-import { promises as fs } from "fs"
-import path from "path"
-import { Metadata } from "next"
-import Image from "next/image"
-import { z } from "zod"
 
-import { columns } from "@/components/task-tables/task-columns"
-import { taskSchema } from "@/constants/schema"
-import  TaskTable from "@/components/task-tables/task-table"
-
+import { Metadata } from "next";
+import fs from "fs";
+import path from "path";
+import { DataTable } from "@/components/data-table-components/data-table";
+import { columns } from "@/components/data-table-components/columns";
 export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
+  title: "Expenses",
+  description: "A Expense tracker build using Tanstack Table."
+};
+
+async function getData() {
+  const filePath = path.join(
+    process.cwd(),
+    "src/components/data-table-components",
+    "data.json"
+  );
+  const data = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(data);
 }
 
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/constants/tasks.json"),
-  )
-
-  const tasks = JSON.parse(data.toString())
-
-  return z.array(taskSchema).parse(tasks)
-}
-
-export default async function TaskPage() {
-  const tasks = await getTasks()
+export default async function Page() {
+  const data = await getData();
 
   return (
-    <>
-      <div className="md:hidden">
-        <Image
-          src="/examples/tasks-light.png"
-          width={1280}
-          height={998}
-          alt="Playground"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/tasks-dark.png"
-          width={1280}
-          height={998}
-          alt="Playground"
-          className="hidden dark:block"
-        />
-      </div>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 pt-[1%] md:flex">
-        <div className="flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
-            <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            {/* <UserNav /> */}
-          </div>
-        </div>
-        <TaskTable data={tasks} columns={columns} />
-      </div>
-    </>
-  )
+    <div className="h-full flex-1 flex-col space-y-2 p-8 md:flex">
+      <DataTable data={data} columns={columns} />
+    </div>
+  );
 }
