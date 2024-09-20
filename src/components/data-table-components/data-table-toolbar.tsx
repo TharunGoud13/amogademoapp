@@ -141,6 +141,7 @@ export function DataTableToolbar<TData>({
         onChange={(event) => {
           table.getColumn("note")?.setFilterValue(event.target.value);
         }}
+        className="border-secondary"
       />
 
       <div className="flex my-2.5 gap-2">
