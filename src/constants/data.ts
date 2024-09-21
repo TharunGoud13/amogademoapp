@@ -50,6 +50,18 @@ export const navItems: NavItem[] = [
     label: 'Menu'
   },
   {
+    title: 'Tasks',
+    href: '/taskbox',
+    icon: 'post',
+    label: 'Store_Chat'
+  },
+  {
+    title: 'Orders',
+    href: '/order_tracking',
+    icon: 'post',
+    label: 'Store_Chat'
+  },
+  {
     title: 'Store Chat',
     href: '/chat',
     icon: 'post',

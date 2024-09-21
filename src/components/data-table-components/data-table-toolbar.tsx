@@ -126,25 +126,25 @@ export function DataTableToolbar<TData>({
     table.getColumn("date")?.setFilterValue([from, to]);
   };
 
-  // const clearFilters = () => {
-  //   setFilters([{ field: "status", operator: "equals", value: "" }]);
-  //   setSearch("");
-  //   setDate(undefined);
-  //   setSortConfig({ key: "id", direction: null });
-  // };
+  const clearFilters = () => {
+    setFilters([{ field: "status", operator: "equals", value: "" }]);
+    setSearch("");
+    setDate(undefined);
+    setSortConfig({ key: "id", direction: null });
+  };
 
   return (
     <div className="flex flex-col">
       <Input
         placeholder="Search"
-        value={(table.getColumn("note")?.getFilterValue() as string) ?? ""}
+        value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
         onChange={(event) => {
-          table.getColumn("note")?.setFilterValue(event.target.value);
+          table.getColumn("id")?.setFilterValue(event.target.value);
         }}
         className="border-secondary"
       />
 
-      <div className="flex my-2.5 gap-2">
+      <div className="flex my-2.5 gap-2 flex-wrap">
         {["Recent", "Today", "This Week", "This Month", "This Year"].map(
           (period) => (
             <Button
@@ -159,9 +159,9 @@ export function DataTableToolbar<TData>({
           )
         )}
       </div>
-      <div className="flex flex-col gap-2.5 w-full ">
+      <div className="flex flex-col flex-wrap gap-2.5 w-full ">
         {filters.map((filter, index) => (
-          <div key={index} className="flex w-full gap-2.5">
+          <div key={index} className="flex flex-wrap w-full gap-2.5">
             <Select
               value={filter.field}
               onValueChange={(value) => updateFilter(index, "field", value)}
@@ -208,12 +208,15 @@ export function DataTableToolbar<TData>({
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-center gap-2.5">
+      <div className="mt-3 flex flex-wrap items-center gap-2.5">
         <Button onClick={addFilter}>
           <PlusIcon className="h-4 w-4 mr-2" />
           Add filter
         </Button>
-        <Button variant="outline" onClick={() => table.resetColumnFilters()}>
+        {/* <Button variant="outline" onClick={() => table.resetColumnFilters()}>
+          Clear
+        </Button> */}
+        <Button variant="outline" onClick={clearFilters}>
           Clear
         </Button>
         <CalendarDatePicker

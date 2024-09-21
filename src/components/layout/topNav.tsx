@@ -41,6 +41,7 @@ export default function Header() {
           <Link href="/dashboard" className='text-primary'>{t('dashboard')}</Link>
           <Link href="/storemenu" className='text-primary'>{t('menu')}</Link>
           <Link href="/taskbox" className='text-primary'>{t('task')}</Link>
+          <Link href="/order_tracking" className='text-primary'>Orders</Link>
           <Link href="/products" className='text-primary'>{t('products')}</Link>
 
           </div>
