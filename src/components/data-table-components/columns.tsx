@@ -95,25 +95,25 @@ export const columns: ColumnDef<Expense>[] = [
       return value.includes(row.getValue(id));
     }
   },
-  {
-    accessorKey: "total",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Total" />
-    ),
-    cell: ({ row }) => {
+  // {
+  //   accessorKey: "total",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Total" />
+  //   ),
+  //   cell: ({ row }) => {
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{row.getValue("total")}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{row.getValue("total")}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
   {
     accessorKey: "total_tax",
     header: ({ column }) => (
