@@ -11,8 +11,8 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ColumnMetaType = {
-    className?: string;
-  };
+  className?: string;
+};
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -155,12 +155,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "company",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Company" />
     ),
     cell: ({ row }) => {
-      const billingData:any = row.getValue("currency");
+      const billingData:any = row.getValue("billing");
       const companyName = billingData?.company || null;
       return (
         <div className="flex w-[100px] items-center">
@@ -175,12 +175,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "address",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => {
-      const address:any = row.getValue("currency")
+      const address:any = row.getValue("billing")
       const billingAddress = address?.address_1 || null
       return (
         <div className="flex w-[100px] items-center">
@@ -195,12 +195,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "city",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="City" />
     ),
     cell: ({ row }) => {
-      const city:any = row.getValue("currency")
+      const city:any = row.getValue("billing")
       const billingCity = city?.city || null
       return (
         <div className="flex w-[100px] items-center">
@@ -215,12 +215,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "state",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="State" />
     ),
     cell: ({ row }) => {
-      const state:any = row.getValue("currency")
+      const state:any = row.getValue("billing")
       const billingState = state?.state || null
       return (
         <div className="flex w-[100px] items-center">
@@ -235,12 +235,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "post code",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Post Code" />
     ),
     cell: ({ row }) => {
-      const postcode:any = row.getValue("currency")
+      const postcode:any = row.getValue("billing")
       const billingPostcode = postcode?.postcode || null
       
       return (
@@ -256,12 +256,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "country",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Country" />
     ),
     cell: ({ row }) => {
-      const country:any = row.getValue("currency")
+      const country:any = row.getValue("billing")
       const billingCountry = country?.country || null
       
       return (
@@ -277,12 +277,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "email",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
-      const email:any = row.getValue("currency")
+      const email:any = row.getValue("billing")
       const billingEmail = email?.email || null
       const subEmail = billingEmail && billingEmail.substring(0,10) + "..."
       
@@ -299,12 +299,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "phone",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone" />
     ),
     cell: ({ row }) => {
-      const phone:any = row.getValue("currency")
+      const phone:any = row.getValue("billing")
       const billingPhone = phone?.phone || null
       
       return (
@@ -320,12 +320,12 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "name",
+    accessorKey: "billing",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => {
-      const name:any = row.getValue("currency")
+      const name:any = row.getValue("billing")
       const billingName = name?.first_name || null
       const subName = billingName && billingName.substring(0,10)+"..."
       return (
