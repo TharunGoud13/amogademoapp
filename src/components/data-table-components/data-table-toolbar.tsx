@@ -18,7 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { DownloadIcon, PlusIcon, XIcon } from "lucide-react";
+import { Download, DownloadIcon, FileIcon, FileSpreadsheet, FileText, Filter, PlusIcon, XIcon } from "lucide-react";
+import { TableView } from "./table-view";
+import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -98,6 +101,7 @@ export function DataTableToolbar<TData>({
     // setTasks((prevTasks) => [...prevTasks, newTask])
   }
 
+  const buttonClass = "h-8 border border-secondary shadow-sm hover:bg-gray-50 transition-colors"
   const handleExport = () => {
     // Implement export functionality
     console.log("Exporting tasks...")
@@ -152,7 +156,7 @@ export function DataTableToolbar<TData>({
               variant="outline"
               size="sm"
               onClick={() => handleQuickSearch(period)}
-              className="rounded-full"
+              className="rounded-full border-secondary"
             >
               {period}
             </Button>
@@ -166,7 +170,7 @@ export function DataTableToolbar<TData>({
               value={filter.field}
               onValueChange={(value) => updateFilter(index, "field", value)}
             >
-              <SelectTrigger className="w-[140px] flex-grow">
+              <SelectTrigger className="w-[140px] border-secondary flex-grow">
                 <SelectValue placeholder="Select field" />
               </SelectTrigger>
               <SelectContent>
@@ -178,7 +182,7 @@ export function DataTableToolbar<TData>({
               value={filter.operator}
               onValueChange={(value) => updateFilter(index, "operator", value)}
             >
-              <SelectTrigger className="w-[140px] flex-grow">
+              <SelectTrigger className="w-[140px] border-secondary flex-grow">
                 <SelectValue placeholder="Select operator" />
               </SelectTrigger>
               <SelectContent>
@@ -196,7 +200,7 @@ export function DataTableToolbar<TData>({
               placeholder="Enter value"
               value={filter.value}
               onChange={(e) => updateFilter(index, "value", e.target.value)}
-              className="flex-grow min-w-[100px] max-w-[200px]"
+              className="flex-grow min-w-[100px] border-secondary max-w-[200px]"
             />
             <Button
               variant="outline"
@@ -208,7 +212,11 @@ export function DataTableToolbar<TData>({
           </div>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap mt-3 items-center justify-between">
+      <div className=" flex flex-wrap items-center gap-2.5">
+        <TableView/>
+      <DataTableViewOptions table={table} />
+
         <Button onClick={addFilter}>
           <PlusIcon className="h-4 w-4 mr-2" />
           Add filter
@@ -216,25 +224,54 @@ export function DataTableToolbar<TData>({
         {/* <Button variant="outline" onClick={() => table.resetColumnFilters()}>
           Clear
         </Button> */}
-        <Button variant="outline" onClick={clearFilters}>
+        {/* <Button variant="outline" className="border-secondary" onClick={clearFilters}>
           Clear
-        </Button>
+        </Button> */}
         <CalendarDatePicker
           date={dateRange}
           onDateSelect={handleDateSelect}
-          className="w-[250px] h-8"
+          className="w-[250px] border-secondary h-8"
           variant="outline"
         />
-        <Button onClick={handleNew}>
+        {/* <Button onClick={handleNew}>
+          <PlusIcon className="h-4 w-4 mr-2" />
+          New
+        </Button> */}
+        <Button variant="outline" className={cn(buttonClass, "w-8 p-0")}>
+        <Filter className="h-4 w-4" />
+      </Button>
+      <Button variant="outline" onClick={clearFilters} className={cn(buttonClass, "w-8 p-0 relative")}>
+        <Filter className="h-4 w-4" />
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">+</span>
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className={cn(buttonClass, "w-8 p-0")}>
+            <Download className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Download CSV
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <FileText className="mr-2 h-4 w-4" />
+            Download Excel
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <FileIcon className="mr-2 h-4 w-4" />
+            Download PDF
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+        </div>
+        <div>
+      <Button className="mt-2 md:mt-0" onClick={handleNew}>
           <PlusIcon className="h-4 w-4 mr-2" />
           New
         </Button>
-        <Button onClick={handleExport}>
-          <DownloadIcon className="h-4 w-4 mr-2" />
-          Export
-        </Button>
-      <DataTableViewOptions table={table} />
-
+      </div>
       </div>
       {/* {isFiltered && (
         <Button

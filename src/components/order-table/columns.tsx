@@ -1,15 +1,18 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Expense } from "./schema"; // ts types
-import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
+// import { Expense } from "./schema"; // ts types
+import { Expense } from "../data-table-components/schema";
+// import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableColumnHeader } from "../data-table-components/data-table-column-header";
+// import { DataTableRowActions } from "./data-table-row-actions";
+import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ColumnMetaType = {
-  className?: string;
-}
+    className?: string;
+  };
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -152,7 +155,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "company",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Company" />
     ),
@@ -172,7 +175,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "address",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Address" />
     ),
@@ -192,7 +195,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "city",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="City" />
     ),
@@ -212,7 +215,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "state",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="State" />
     ),
@@ -232,7 +235,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "post code",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Post Code" />
     ),
@@ -253,7 +256,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "country",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Country" />
     ),
@@ -274,7 +277,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
@@ -296,7 +299,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "phone",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone" />
     ),
@@ -317,7 +320,7 @@ export const columns: ColumnDef<Expense>[] = [
     }
   },
   {
-    accessorKey: "billing",
+    accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
@@ -359,8 +362,8 @@ export const columns: ColumnDef<Expense>[] = [
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,
-    meta:{
-      className: "sticky right-0 bg-background"
+    meta: {
+        className: "sticky right-0 bg-background"
     } as ColumnMetaType
   }
 ];

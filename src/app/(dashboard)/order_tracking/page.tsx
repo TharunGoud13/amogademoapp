@@ -3,10 +3,11 @@ import { Metadata } from "next";
 import fs from "fs";
 import path from "path";
 import { DataTable } from "@/components/data-table-components/data-table";
-import { columns } from "@/components/data-table-components/columns";
+// import { columns } from "@/components/data-table-components/columns";
+import { columns } from "@/components/order-table/columns";
 export const metadata: Metadata = {
-  title: "Expenses",
-  description: "A Expense tracker build using Tanstack Table."
+  title: "Order Tracking",
+  description: "Order tracker build using Tanstack Table."
 };
 
 async function getOrdersDetails(){

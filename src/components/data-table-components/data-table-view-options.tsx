@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import { Columns } from "lucide-react";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -26,13 +28,14 @@ export function DataTableViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className="h-8"
         >
-          <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          View
+          <Columns className="mr-2 h-4 w-4" />
+          Columns
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent  className="w-[150px]">
+      <ScrollArea className="h-80 w-fit rounded-md">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -53,6 +56,7 @@ export function DataTableViewOptions<TData>({
               </DropdownMenuCheckboxItem>
             );
           })}
+      </ScrollArea>
       </DropdownMenuContent>
     </DropdownMenu>
   );
