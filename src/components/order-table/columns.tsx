@@ -160,7 +160,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Company" />
     ),
     cell: ({ row }) => {
-      const billingData:any = row.getValue("billing");
+      const billingData:any = row.getValue("currency");
       const companyName = billingData?.company || null;
       return (
         <div className="flex w-[100px] items-center">
@@ -180,7 +180,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => {
-      const address:any = row.getValue("billing")
+      const address:any = row.getValue("currency")
       const billingAddress = address?.address_1 || null
       return (
         <div className="flex w-[100px] items-center">
@@ -200,7 +200,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="City" />
     ),
     cell: ({ row }) => {
-      const city:any = row.getValue("billing")
+      const city:any = row.getValue("currency")
       const billingCity = city?.city || null
       return (
         <div className="flex w-[100px] items-center">
@@ -220,7 +220,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="State" />
     ),
     cell: ({ row }) => {
-      const state:any = row.getValue("billing")
+      const state:any = row.getValue("currency")
       const billingState = state?.state || null
       return (
         <div className="flex w-[100px] items-center">
@@ -240,7 +240,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Post Code" />
     ),
     cell: ({ row }) => {
-      const postcode:any = row.getValue("billing")
+      const postcode:any = row.getValue("currency")
       const billingPostcode = postcode?.postcode || null
       
       return (
@@ -261,7 +261,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Country" />
     ),
     cell: ({ row }) => {
-      const country:any = row.getValue("billing")
+      const country:any = row.getValue("currency")
       const billingCountry = country?.country || null
       
       return (
@@ -282,7 +282,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
-      const email:any = row.getValue("billing")
+      const email:any = row.getValue("currency")
       const billingEmail = email?.email || null
       const subEmail = billingEmail && billingEmail.substring(0,10) + "..."
       
@@ -304,7 +304,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Phone" />
     ),
     cell: ({ row }) => {
-      const phone:any = row.getValue("billing")
+      const phone:any = row.getValue("currency")
       const billingPhone = phone?.phone || null
       
       return (
@@ -325,7 +325,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => {
-      const name:any = row.getValue("billing")
+      const name:any = row.getValue("currency")
       const billingName = name?.first_name || null
       const subName = billingName && billingName.substring(0,10)+"..."
       return (
