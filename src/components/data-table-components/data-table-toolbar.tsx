@@ -101,7 +101,7 @@ export function DataTableToolbar<TData>({
     // setTasks((prevTasks) => [...prevTasks, newTask])
   }
 
-  const buttonClass = "h-8 border border-secondary shadow-sm hover:bg-gray-50 transition-colors"
+  const buttonClass = "h-8 border shadow-sm  transition-colors"
   const handleExport = () => {
     // Implement export functionality
     console.log("Exporting tasks...")
@@ -217,10 +217,10 @@ export function DataTableToolbar<TData>({
         <TableView/>
       <DataTableViewOptions table={table} />
 
-        <Button onClick={addFilter}>
+        {/* <Button onClick={addFilter}>
           <PlusIcon className="h-4 w-4 mr-2" />
           Add filter
-        </Button>
+        </Button> */}
         {/* <Button variant="outline" onClick={() => table.resetColumnFilters()}>
           Clear
         </Button> */}
@@ -228,16 +228,15 @@ export function DataTableToolbar<TData>({
           Clear
         </Button> */}
         <CalendarDatePicker
-          date={dateRange}
-          onDateSelect={handleDateSelect}
-          className="w-[250px] border-secondary h-8"
-          variant="outline"
+          // date={dateRange}
+          // onDateSelect={handleDateSelect}
+          
         />
         {/* <Button onClick={handleNew}>
           <PlusIcon className="h-4 w-4 mr-2" />
           New
         </Button> */}
-        <Button variant="outline" className={cn(buttonClass, "w-8 p-0")}>
+        <Button variant="outline"  onClick={addFilter} className={cn(buttonClass, "w-8 p-0")}>
         <Filter className="h-4 w-4" />
       </Button>
       <Button variant="outline" onClick={clearFilters} className={cn(buttonClass, "w-8 p-0 relative")}>

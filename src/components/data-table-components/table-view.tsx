@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import { Columns, Grid, List, SlidersHorizontal, Table } from "lucide-react";
+import { BarChartIcon, Calendar, Columns, Grid, List, SlidersHorizontal, Table, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
-const buttonClass = "h-8 border border-secondary shadow-sm hover:bg-gray-50 transition-colors"
+const buttonClass = "h-8 border  shadow-sm  transition-colors"
 export function TableView() {
   return (
     <DropdownMenu>
@@ -39,6 +39,18 @@ export function TableView() {
           <DropdownMenuItem>
             <List className="mr-2 h-4 w-4" />
             List View
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <BarChartIcon className="mr-2 h-4 w-4" />
+            Charts
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Calendar className="mr-2 h-4 w-4" />
+            Calendar
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Workflow className="mr-2 h-4 w-4" />
+            Flow
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
