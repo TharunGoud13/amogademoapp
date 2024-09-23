@@ -11,9 +11,9 @@ const nextConfig = {
         domains:["avatars.githubusercontent.com","lh3.googleusercontent.com","secure.gravatar.com"]
     },
     reactStrictMode:false,
-    compiler:{
-        removeConsole: process.env.NODE_ENV === "production"
-    }
+    // compiler:{
+    //     removeConsole: process.env.NODE_ENV === "production"
+    // }
 };
 
 export default withNextIntl(nextConfig);

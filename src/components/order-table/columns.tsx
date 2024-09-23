@@ -11,8 +11,8 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ColumnMetaType = {
-  className?: string;
-};
+    className?: string;
+  };
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -154,211 +154,211 @@ export const columns: ColumnDef<Expense>[] = [
       return rowDate >= startDate && rowDate <= endDate;
     }
   },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Company" />
-    ),
-    cell: ({ row }) => {
-      const billingData:any = row.getValue("billing");
-      const companyName = billingData?.company || null;
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{companyName}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Address" />
-    ),
-    cell: ({ row }) => {
-      const address:any = row.getValue("billing")
-      const billingAddress = address?.address_1 || null
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingAddress}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="City" />
-    ),
-    cell: ({ row }) => {
-      const city:any = row.getValue("billing")
-      const billingCity = city?.city || null
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingCity}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="State" />
-    ),
-    cell: ({ row }) => {
-      const state:any = row.getValue("billing")
-      const billingState = state?.state || null
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingState}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Post Code" />
-    ),
-    cell: ({ row }) => {
-      const postcode:any = row.getValue("billing")
-      const billingPostcode = postcode?.postcode || null
+  // {
+  //   accessorKey: "company",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Company" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const billingData:any = row.getValue("billing");
+  //     const companyName = billingData?.company || null;
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{companyName}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "address",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Address" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const address:any = row.getValue("billing")
+  //     const billingAddress = address?.address_1 || null
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingAddress}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "city",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="City" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const city:any = row.getValue("billing")
+  //     const billingCity = city?.city || null
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingCity}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "state",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="State" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const state:any = row.getValue("billing")
+  //     const billingState = state?.state || null
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingState}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "post code",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Post Code" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const postcode:any = row.getValue("billing")
+  //     const billingPostcode = postcode?.postcode || null
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingPostcode}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Country" />
-    ),
-    cell: ({ row }) => {
-      const country:any = row.getValue("billing")
-      const billingCountry = country?.country || null
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingPostcode}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "country",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Country" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const country:any = row.getValue("billing")
+  //     const billingCountry = country?.country || null
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingCountry}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
-    cell: ({ row }) => {
-      const email:any = row.getValue("billing")
-      const billingEmail = email?.email || null
-      const subEmail = billingEmail && billingEmail.substring(0,10) + "..."
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingCountry}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "email",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Email" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const email:any = row.getValue("billing")
+  //     const billingEmail = email?.email || null
+  //     const subEmail = billingEmail && billingEmail.substring(0,10) + "..."
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{subEmail}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone" />
-    ),
-    cell: ({ row }) => {
-      const phone:any = row.getValue("billing")
-      const billingPhone = phone?.phone || null
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{subEmail}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "phone",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Phone" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const phone:any = row.getValue("billing")
+  //     const billingPhone = phone?.phone || null
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{billingPhone}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "billing",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => {
-      const name:any = row.getValue("billing")
-      const billingName = name?.first_name || null
-      const subName = billingName && billingName.substring(0,10)+"..."
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{subName}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
-  {
-    accessorKey: "payment_method_title",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Payment Method Title" />
-    ),
-    cell: ({ row }) => {
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{billingPhone}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "name",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Name" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const name:any = row.getValue("billing")
+  //     const billingName = name?.first_name || null
+  //     const subName = billingName && billingName.substring(0,10)+"..."
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{subName}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
+  // {
+  //   accessorKey: "payment_method_title",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Payment Method Title" />
+  //   ),
+  //   cell: ({ row }) => {
       
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize">{row.getValue("payment_method_title")}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
-  },
+  //     return (
+  //       <div className="flex w-[100px] items-center">
+  //         <span className="capitalize">{row.getValue("payment_method_title")}</span>
+  //       </div>
+  //     );
+  //   },
+  //   filterFn: (row, id, value) => {
+  //     const rowDate = new Date(row.getValue(id));
+  //     const [startDate, endDate] = value;
+  //     return rowDate >= startDate && rowDate <= endDate;
+  //   }
+  // },
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

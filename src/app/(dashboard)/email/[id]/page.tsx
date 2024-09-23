@@ -42,7 +42,6 @@ const Page = (props: EmailProps) => {
   }, [])
   
   const repliedEmails = mails.filter((mail:any) => mail.for_email_id == params?.id);
-  console.log("repliedEmails-----",repliedEmails)
   useEffect(() => {
     fetchEmail(params.id);
   }, [params.id]);

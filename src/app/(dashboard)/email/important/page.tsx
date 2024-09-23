@@ -40,7 +40,6 @@ const Draft = () => {
       toast({ description: "Something went wrong", variant: "destructive" });
     }
   };
-  console.log("response----",response)
 
   return (
     <div>

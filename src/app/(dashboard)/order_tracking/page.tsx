@@ -27,6 +27,8 @@ async function getOrdersDetails(){
 
 export default async function Page() {
   const data = await getOrdersDetails();
+  console.log("data======",data)
+  console.log("columns=====",columns)
 
   return (
     <div className="h-full flex-1 flex-col space-y-2 p-8 md:flex">
