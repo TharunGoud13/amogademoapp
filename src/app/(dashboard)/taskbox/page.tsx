@@ -24,7 +24,7 @@ export default async function Page() {
 
   return (
     <div className="h-full flex-1 flex-col space-y-2 p-8 md:flex">
-      <DataTable data={data} loading={false} columns={columns} />
+      <DataTable data={data} columns={columns} />
     </div>
   );
 }
