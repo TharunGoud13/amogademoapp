@@ -51,6 +51,7 @@ export default function Header() {
           </div>
 
         <div className="flex items-center gap-2.5">
+          <LogoutButton/>
         <LocaleSwitcher/>
         <Link href="/chat" className='hidden lg:block'>
         {/* <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" /> */}
