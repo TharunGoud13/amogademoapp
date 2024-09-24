@@ -10,11 +10,8 @@ import { Calendar } from "./ui/calendar"
 const buttonClass = "h-8 border border shadow-sm  transition-colors"
 
 
-export const CalendarDatePicker = () => {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2024, 0, 1),
-    to: addDays(new Date(2024, 8, 23), 0),
-  })
+export const CalendarDatePicker = ({date,onDateSelect}:any) => {
+  
   return(
     <div>
       <Popover>
@@ -49,7 +46,7 @@ export const CalendarDatePicker = () => {
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={onDateSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

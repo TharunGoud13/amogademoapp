@@ -63,11 +63,14 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
-      const type = row.getValue("date_created");
+      const dateCreated: any = row.getValue("date_created");
+      const formattedDate = new Date(dateCreated).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
       return (
-        
-          <span className="capitalize"> {row.getValue("date_created")}</span>
-        
+        <span className="capitalize">{formattedDate}</span>
       );
     },
     filterFn: (row, id, value) => {
@@ -169,10 +172,10 @@ export const columns: ColumnDef<Expense>[] = [
       );
     },
     filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+      const billingData: any = row.getValue(id);
+      const companyName = billingData?.company || "";
+      return companyName.toLowerCase().includes(value.toLowerCase());
+    },
   },
   {
     accessorKey: "address",

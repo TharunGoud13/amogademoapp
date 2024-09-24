@@ -50,7 +50,7 @@ const LogoutButton: FC<any> = ({ loginLog }) => {
         <>
             <button
                 onClick={handleLogout}
-                className="p-2.5  font-semibold dark:text-white dark:bg-black rounded-lg bg-secondary"
+                className="p-2.5 text-primary  font-semibold dark:text-white dark:bg-black rounded-lg"
             >
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </button>

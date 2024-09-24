@@ -51,15 +51,14 @@ export default function Header() {
           </div>
 
         <div className="flex items-center gap-2.5">
-          <LogoutButton/>
-        <LocaleSwitcher/>
         <Link href="/chat" className='hidden lg:block'>
         {/* <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" /> */}
         <FontAwesomeIcon icon={faMessage} className='h-[24px] w-[24px] text-primary mt-2 mr-2 cursor-pointer'/>
-
         </Link>
-          <UserNav />
           <ThemeToggle />
+        <LocaleSwitcher/>
+          <LogoutButton/>  
+          <UserNav />
         </div>
       </nav>
     </div>
