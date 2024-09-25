@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { auth } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
 
 export default  async function UserNav() {
   const session = await auth()
@@ -22,10 +24,13 @@ export default  async function UserNav() {
   return (
     <DropdownMenu>
   <DropdownMenuTrigger>
-    {session?.user?.image ?
+    <Avatar className="flex items-center justify-center">
+      <FontAwesomeIcon icon={faUser} className="text-2xl text-primary"/>
+    </Avatar>
+    {/* {session?.user?.image ?
     <Avatar>
       <Image src={session?.user?.image as string} alt="user-profile" height={100} width={100} />
-    </Avatar> : <Avatar><AvatarFallback className="bg-secondary">{session?.user?.name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>}
+    </Avatar> : <Avatar><AvatarFallback className="bg-secondary">{session?.user?.name?.charAt(0).toUpperCase()}</AvatarFallback></Avatar>} */}
   </DropdownMenuTrigger>
   <DropdownMenuContent className=" fixed left-[-200px] top-[20px] ">
     <DropdownMenuLabel>{session?.user?.name}</DropdownMenuLabel>

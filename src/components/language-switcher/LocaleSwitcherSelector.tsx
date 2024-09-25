@@ -31,7 +31,7 @@ export default function LocaleSwitcherSelect({
   return (
     <div className="relative">
       <Select defaultValue={defaultValue} onValueChange={onChange}>
-      <SelectTrigger className=" flex gap-2.5">
+      <SelectTrigger className="border-secondary flex gap-2.5">
           <FontAwesomeIcon className='text-primary' icon={faGlobe}/>
           <h1>{defaultValue.toUpperCase()}</h1>
         </SelectTrigger>

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { BsChat } from "react-icons/bs";
 import LogoutButton from '../forms/logout-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage } from '@fortawesome/free-regular-svg-icons';
+import { faComment, faMessage } from '@fortawesome/free-regular-svg-icons';
 import SelectLanguage from './selectLanguage';
 import { useTranslations } from 'next-intl';
 import LocaleSwitcherSelect from '../language-switcher/LocaleSwitcherSelector';
@@ -53,7 +53,7 @@ export default function Header() {
         <div className="flex items-center gap-2.5">
         <Link href="/chat" className='hidden lg:block'>
         {/* <BsChat className="h-[24px] w-[24px] mr-2 cursor-pointer" /> */}
-        <FontAwesomeIcon icon={faMessage} className='h-[24px] w-[24px] text-primary mt-2 mr-2 cursor-pointer'/>
+        <FontAwesomeIcon icon={faComment} className='h-[24px] text-sm w-[24px] text-primary mt-2 border-red-500 !font-[100] cursor-pointer'/>
         </Link>
           <ThemeToggle />
         <LocaleSwitcher/>
