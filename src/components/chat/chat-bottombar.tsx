@@ -206,7 +206,7 @@ export default function ChatBottombar({
       }
 
       try {
-        const response = await fetch("https://no0wgko.219.93.129.146.sslip.io/document", {
+        const response = await fetch("https://amogademo-postgrest.morr.biz/document", {
           method: 'POST',
           body: JSON.stringify(payload),
           headers: {

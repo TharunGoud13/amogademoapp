@@ -31,7 +31,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } =  NextAuth(
           const myHeaders = new Headers();
           myHeaders.append("Authorization", `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`);
           myHeaders.append("Content-Type", "application/json");
-          const response = await fetch('https://no0wgko.219.93.129.146.sslip.io/user_catalog', {
+          const response = await fetch('https://amogademo-postgrest.morr.biz/user_catalog', {
             method: 'GET',
             headers: myHeaders
           });
