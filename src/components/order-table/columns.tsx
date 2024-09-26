@@ -9,6 +9,7 @@ import { DataTableColumnHeader } from "../data-table-components/data-table-colum
 import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DataTableDateHeader } from "../data-table-components/data-table-date-header";
 
 type ColumnMetaType = {
   className?: string;
@@ -106,7 +107,7 @@ export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "date_created",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" />
+      <DataTableDateHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
       const dateCreated: any = row.getValue("date_created");

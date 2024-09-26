@@ -88,6 +88,8 @@ export function DataTableToolbar<TData>({
     from: new Date(new Date().getFullYear(), 0, 1),
     to: new Date(),
   });
+  const [fromDate, setFromDate] = useState<any>(undefined);
+  const [toDate, setToDate] = useState<any>(undefined);
 
   const [selectedColumn, setSelectedColumn] = useState<string | undefined>(
     undefined
@@ -100,54 +102,80 @@ export function DataTableToolbar<TData>({
   ]);
   const [filterApplied, setFilterApplied] = useState(false);
 
-  const handleQuickSearch = useCallback(
-    (period: DatePeriod) => {
-      const now = new Date();
-      let from = new Date();
+  const handleQuickSearch = useCallback((period: DatePeriod) => {
+    const now = new Date();
+    let from = new Date();
 
-      switch (period) {
-        case "Recent":
-          break;
-        case "Today":
-          from = new Date(now.setHours(0, 0, 0, 0));
-          break;
-        case "This Week":
-          from.setDate(now.getDate() - now.getDay());
-          break;
-        case "This Month":
-          from = new Date(now.getFullYear(), now.getMonth(), 1);
-          break;
-        case "This Year":
-          from = new Date(now.getFullYear(), 0, 1);
-          break;
-      }
+    switch (period) {
+      case "Recent":
+        from.setDate(now.getDate() - 10);
+        break;
+      case "Today":
+        from.setDate(now.getDate() - 1);
+        break;
+      case "This Week":
+        from.setDate(now.getDate() - now.getDay());
+        break;
+      case "This Month":
+        from = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case "This Year":
+        from = new Date(now.getFullYear(), 0, 1);
+        break;
+    }
 
-      const column = table.getColumn("date_created");
-      if (column) {
-        if (period === "Recent") {
-          column.setFilterValue("recent");
-        } else {
-          column.setFilterValue([from, now]);
-        }
-      }
-      setActivePeriod(period);
-    },
-    [table]
-  );
+    // setFromDate(from);
+    // setToDate(now);
+    applyDateFilter(from, now);
+    setActivePeriod(period);
+  }, []);
+
+  const applyDateFilter = (from: Date, to: Date) => {
+    const column = table.getColumn("date_created");
+    if (column) {
+      // Create a new Date object for the end of the 'to' date
+      const endOfDay = new Date(to);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      column.setFilterValue([from, endOfDay]);
+    }
+  };
+
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setFromDate(today);
+    setToDate(today);
+    applyDateFilter(today, today);
+    setActivePeriod("Today");
+  }, []);
+
+  useEffect(() => {
+    handleQuickSearch("Recent");
+  }, [handleQuickSearch]);
+
+  const handleFromDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setFromDate(date);
+      applyDateFilter(date, toDate);
+    }
+  };
+
+  const handleToDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setToDate(date);
+      applyDateFilter(fromDate, date);
+    }
+  };
 
   const dateFilterFn = useCallback(
-    (row: any, columnId: string, filterValue: [Date, Date] | "recent") => {
+    (row: any, columnId: string, filterValue: [Date, Date]) => {
       const cellValue: string = row.getValue(columnId);
       if (!cellValue) return false;
 
       const dateValue = new Date(cellValue);
-
-      if (filterValue === "recent") {
-        return true;
-      } else {
-        const [start, end] = filterValue;
-        return dateValue >= start && dateValue <= end;
-      }
+      const [start, end] = filterValue;
+      return dateValue >= start && dateValue <= end;
     },
     []
   );
@@ -156,12 +184,9 @@ export function DataTableToolbar<TData>({
     const column = table.getColumn("date_created");
     if (column) {
       column.columnDef.filterFn = dateFilterFn;
-
-      // Set initial sorting
       table.setSorting([{ id: "date_created", desc: true }]);
     }
-    handleQuickSearch("Recent");
-  }, [table, dateFilterFn, handleQuickSearch]);
+  }, [table, dateFilterFn]);
 
   useEffect(() => {
     if (activePeriod === "Recent") {
@@ -275,7 +300,10 @@ export function DataTableToolbar<TData>({
         ))}
       </div>
       {filters.map((filter: any, index: any) => (
-        <div key={filter.id} className="flex my-2.5 gap-2 items-center">
+        <div
+          key={filter.id}
+          className="flex flex-wrap md:flex-nowrap  my-2.5 gap-2 items-center"
+        >
           <Select
             onValueChange={(value) => updateFilter(filter.id, "column", value)}
             value={filter.column}
@@ -333,10 +361,20 @@ export function DataTableToolbar<TData>({
         <div className=" flex flex-wrap items-center gap-2.5">
           <TableView />
           <DataTableViewOptions table={table} />
-          <CalendarDatePicker
-            date={dateRange}
-            onDateSelect={handleDateSelect}
-          />
+          <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
+            <span>From</span>
+            <CalendarDatePicker
+              date={fromDate}
+              onDateSelect={handleFromDateSelect}
+              placeholder="From Date"
+            />
+            <span>To</span>
+            <CalendarDatePicker
+              date={toDate}
+              onDateSelect={handleToDateSelect}
+              placeholder="To Date"
+            />
+          </div>
           <Button
             variant="outline"
             onClick={addFilterRow}

@@ -75,8 +75,6 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
-      <div className="flex justify-center gap-2.5 items-center">
-            </div>
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto relative">
           <Table>
