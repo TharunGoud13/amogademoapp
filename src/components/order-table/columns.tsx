@@ -14,6 +14,44 @@ type ColumnMetaType = {
   className?: string;
 };
 
+const filterData = (value: any, filterValue: { operator: string; value: any }) => {
+  if (!filterValue || typeof filterValue !== 'object' || !filterValue.value) {
+    return true; // No filtering
+  }
+
+  
+  const filterValueString = filterValue.value.toString().toLowerCase();
+  const valueString = value.toString().toLowerCase();
+  console.log("value----",valueString,filterValueString)
+
+  switch (filterValue.operator) {
+    case 'Equals':
+      return valueString === filterValueString;
+
+    case 'Does Not Equal':
+      return valueString !== filterValueString;
+
+    case 'Begins With':
+      return valueString.startsWith(filterValueString);
+
+    case 'Contains':
+      return valueString.includes(filterValueString);
+
+      case 'Empty':
+        return valueString.trim() === '';
+  
+      case 'Non Empty':
+        return valueString.trim() !== '';
+  case 'More Than':
+    return parseInt(filterValueString) < parseInt(value)
+    case 'Less Than':
+      return parseInt(filterValueString) > parseInt(value)
+
+    default:
+      return true; 
+  }
+};
+
 export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: "id",
@@ -39,8 +77,14 @@ export const columns: ColumnDef<Expense>[] = [
           </span>
         </div>
       );
-    }
-  },
+    },
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
+},
+
   {
     accessorKey: "currency",
     header: ({ column }) => (
@@ -53,9 +97,11 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "date_created",
@@ -73,9 +119,11 @@ export const columns: ColumnDef<Expense>[] = [
         <span className="capitalize">{formattedDate}</span>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "line_items",
@@ -89,16 +137,17 @@ export const columns: ColumnDef<Expense>[] = [
       return (
         <div className="flex w-[100px] items-center">
           <span
-            
           >
             {items}
           </span>
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "total",
@@ -113,11 +162,11 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "total_tax",
@@ -132,11 +181,11 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "customer_id",
@@ -151,11 +200,11 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     accessorKey: "billing",
@@ -163,7 +212,7 @@ export const columns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title="Company" />
     ),
     cell: ({ row }) => {
-      const billingData:any = row.getValue("billing");
+      const billingData: any = row.getValue("billing");
       const companyName = billingData?.company || null;
       return (
         <div className="flex w-[100px] items-center">
@@ -174,7 +223,15 @@ export const columns: ColumnDef<Expense>[] = [
     filterFn: (row, id, value) => {
       const billingData: any = row.getValue(id);
       const companyName = billingData?.company || "";
-      return companyName.toLowerCase().includes(value.toLowerCase());
+
+      if (typeof value === 'string') {
+        // Global search
+        return companyName.toLowerCase().includes(value.toLowerCase());
+      } else if (typeof value === 'object' && value !== null) {
+        // Specific filtering
+        return filterData(companyName, value);
+      }
+      return true; // No filter applied
     },
   },
   {
@@ -191,11 +248,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.address_1 || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "city",
@@ -211,11 +271,13 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.city || ""; // Get the nested address value or default to an empty string
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "state",
@@ -231,11 +293,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.state || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "post code",
@@ -252,11 +317,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.postcode || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "country",
@@ -273,11 +341,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.country || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "email",
@@ -295,11 +366,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.email || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "Phone",
@@ -316,11 +390,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.phone || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "Name",
@@ -337,11 +414,14 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const billing:any = row.getValue("billing"); // Access the billing object
+      const billingAddress = billing?.first_name || ""; // Get the nested address value or default to an empty string
+      console.log('Billing Address:', { billingAddress, filterValue });
+  
+      // Use the generic filterData function to handle the filter logic
+      return filterData(billingAddress, filterValue);
+    },
   },
   {
     accessorKey: "payment_method_title",
@@ -356,11 +436,11 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      const rowDate = new Date(row.getValue(id));
-      const [startDate, endDate] = value;
-      return rowDate >= startDate && rowDate <= endDate;
-    }
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId);
+      console.log('Email:', { value, filterValue });
+      return filterData(value, filterValue); 
+    },
   },
   {
     id: "actions",

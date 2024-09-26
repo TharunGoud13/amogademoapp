@@ -1,13 +1,8 @@
 "use client";
-
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { incomeType, categories } from "./data";
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-// import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
 import React, { useCallback, useEffect, useState } from "react";
 import { DataTableViewOptions } from "./data-table-view-options";
@@ -20,7 +15,6 @@ import {
 } from "../ui/select";
 import {
   Download,
-  DownloadIcon,
   FileIcon,
   FileSpreadsheet,
   FileText,
@@ -41,17 +35,33 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
+type Operator =
+  | "Equals"
+  | "Does Not Equal"
+  | "Begins With"
+  | "Contains"
+  | "Empty"
+  | "Not Empty"
+  | "More Than"
+  | "Less Than";
+
+const OPERATORS = [
+  "Equals",
+  "Does Not Equal",
+  "Begins With",
+  "Contains",
+  "Empty",
+  "Not Empty",
+  "More Than",
+  "Less Than",
+] as const;
+
 type Task = {
   id: string;
   title: string;
   status: "Todo" | "In-Progress" | "Done";
   priority: "Low" | "Medium" | "High";
   createdAt: Date;
-};
-
-type SortConfig = {
-  key: keyof Task;
-  direction: "asc" | "desc" | null;
 };
 
 type Filter = {
@@ -72,22 +82,23 @@ type DatePeriod = (typeof DATE_PERIODS)[number];
 export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [search, setSearch] = useState("");
   const [activePeriod, setActivePeriod] = useState<DatePeriod>("Recent");
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: "id",
-    direction: null,
-  });
-  const [filters, setFilters] = useState<Filter[]>([
-    { field: "status", operator: "equals", value: "" },
-  ]);
-
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: new Date(new Date().getFullYear(), 0, 1),
     to: new Date(),
   });
+
+  const [selectedColumn, setSelectedColumn] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedOperator, setSelectedOperator] = useState<string | undefined>(
+    undefined
+  );
+  const [filters, setFilters] = useState<any>([
+    { id: "1", column: "", operator: "", value: "" },
+  ]);
+  const [filterApplied, setFilterApplied] = useState(false);
 
   const handleQuickSearch = useCallback(
     (period: DatePeriod) => {
@@ -96,7 +107,6 @@ export function DataTableToolbar<TData>({
 
       switch (period) {
         case "Recent":
-          // For "Recent", we'll use a custom filter function instead of a date range
           break;
         case "Today":
           from = new Date(now.setHours(0, 0, 0, 0));
@@ -112,7 +122,6 @@ export function DataTableToolbar<TData>({
           break;
       }
 
-      // Apply the date filter to the table
       const column = table.getColumn("date_created");
       if (column) {
         if (period === "Recent") {
@@ -126,7 +135,6 @@ export function DataTableToolbar<TData>({
     [table]
   );
 
-  // Custom filter function for date range and recent records
   const dateFilterFn = useCallback(
     (row: any, columnId: string, filterValue: [Date, Date] | "recent") => {
       const cellValue: string = row.getValue(columnId);
@@ -135,7 +143,6 @@ export function DataTableToolbar<TData>({
       const dateValue = new Date(cellValue);
 
       if (filterValue === "recent") {
-        // For "Recent", we don't filter here. We'll handle it in sorting and pagination.
         return true;
       } else {
         const [start, end] = filterValue;
@@ -145,7 +152,6 @@ export function DataTableToolbar<TData>({
     []
   );
 
-  // Set the custom filter function for the date_created column and initial sorting
   useEffect(() => {
     const column = table.getColumn("date_created");
     if (column) {
@@ -154,18 +160,14 @@ export function DataTableToolbar<TData>({
       // Set initial sorting
       table.setSorting([{ id: "date_created", desc: true }]);
     }
-
-    // Apply "Recent" filter by default
     handleQuickSearch("Recent");
   }, [table, dateFilterFn, handleQuickSearch]);
 
-  // Custom pagination for "Recent" filter
   useEffect(() => {
     if (activePeriod === "Recent") {
       table.setPageSize(10);
       table.setPageIndex(0);
     } else {
-      // Reset to default pagination if needed
       table.resetPageSize();
       table.resetPageIndex();
     }
@@ -178,35 +180,14 @@ export function DataTableToolbar<TData>({
       status: "Todo",
       priority: "Medium",
       createdAt: new Date(),
-    }
+    };
     // setTasks((prevTasks) => [...prevTasks, newTask])
-  }
-
-  const buttonClass = "h-8 border shadow-sm  transition-colors"
-  const handleExport = () => {
-    // Implement export functionality
-  }
-
-  const addFilter = () => {
-    setFilters([
-      ...filters,
-      { field: "status", operator: "equals", value: "" },
-    ]);
   };
 
-  const updateFilter = (index: number, field: string, value: string) => {
-    const newFilters = [...filters];
-    newFilters[index] = { ...newFilters[index], [field]: value };
-    setFilters(newFilters);
-  };
-
-  const removeFilter = (index: number) => {
-    setFilters(filters.filter((_, i) => i !== index));
-  };
+  const buttonClass = "h-8 border shadow-sm  transition-colors";
 
   const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
     setDateRange({ from, to });
-    // Filter table data based on selected date range
     table.getColumn("date_created")?.setFilterValue([from, to]);
   };
 
@@ -214,11 +195,57 @@ export function DataTableToolbar<TData>({
     table.resetColumnFilters();
     setActivePeriod("Recent");
     handleQuickSearch("Recent");
-    setFilters([{ field: "status", operator: "equals", value: "" }]);
-    setSearch("");
     setDate(undefined);
-    setDateRange({ from: new Date(new Date().getFullYear(), 0, 1), to: new Date() });
-    setSortConfig({ key: "id", direction: null });
+    // setIsFilterActive(false)
+    setFilterApplied(false);
+    setSelectedColumn("");
+    setSelectedOperator("");
+    setFilters([{ column: "", operator: "", value: "" }]);
+    // setFilterValue("")
+    setDateRange({
+      from: new Date(new Date().getFullYear(), 0, 1),
+      to: new Date(),
+    });
+  };
+
+  const tableColumns = table.getAllColumns().map((column) => column.id);
+
+  // Define your custom filter function outside of your component
+
+  const addFilterRow = () => {
+    const newFilter: any = {
+      id: Date.now().toString(),
+      column: "",
+      operator: "",
+      value: "",
+    };
+    setFilters([...filters, newFilter]);
+  };
+
+  const removeFilterRow = (id: string) => {
+    setFilters(filters.filter((filter: any) => filter.id !== id));
+  };
+
+  const updateFilter = (id: string, field: keyof any, value: string) => {
+    setFilters(
+      filters.map((filter: any) =>
+        filter.id === id ? { ...filter, [field]: value } : filter
+      )
+    );
+  };
+
+  // In your DataTableToolbar component, handle applying the filter
+  const applyFilter = () => {
+    filters.forEach((filter: any) => {
+      if (filter.column && filter.operator) {
+        const filterValueObj = {
+          operator: filter.operator,
+          value: filter.value,
+        };
+        table.getColumn(filter.column)?.setFilterValue(filterValueObj);
+        setFilterApplied(true);
+      }
+    });
   };
 
   return (
@@ -231,7 +258,6 @@ export function DataTableToolbar<TData>({
         }}
         className="border-secondary"
       />
-
       <div className="flex my-2.5 gap-2 flex-wrap">
         {DATE_PERIODS.map((period) => (
           <Button
@@ -248,84 +274,88 @@ export function DataTableToolbar<TData>({
           </Button>
         ))}
       </div>
-      <div className="flex flex-col flex-wrap gap-2.5 w-full ">
-        {filters.map((filter, index) => (
-          <div key={index} className="flex flex-wrap w-full gap-2.5">
-            <Select
-              value={filter.field}
-              onValueChange={(value) => updateFilter(index, "field", value)}
-            >
-              <SelectTrigger className="w-[140px] border-secondary flex-grow">
-                <SelectValue placeholder="Select field" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="status">Status</SelectItem>
-                <SelectItem value="priority">Priority</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={filter.operator}
-              onValueChange={(value) => updateFilter(index, "operator", value)}
-            >
-              <SelectTrigger className="w-[140px] border-secondary flex-grow">
-                <SelectValue placeholder="Select operator" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="equals">Equals</SelectItem>
-                <SelectItem value="does not equal">Does Not Equal</SelectItem>
-                <SelectItem value="begins with">Begins With</SelectItem>
-                <SelectItem value="contains">Contains</SelectItem>
-                <SelectItem value="empty">Empty</SelectItem>
-                <SelectItem value="not empty">Not Empty</SelectItem>
-                <SelectItem value="more than">More Than</SelectItem>
-                <SelectItem value="less than">Less Than</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="Enter value"
-              value={filter.value}
-              onChange={(e) => updateFilter(index, "value", e.target.value)}
-              className="flex-grow min-w-[100px] border-secondary max-w-[200px]"
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => removeFilter(index)}
-            >
-              <XIcon className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-wrap mt-3 items-center justify-between">
-        <div className=" flex flex-wrap items-center gap-2.5">
-          <TableView/>
-          <DataTableViewOptions table={table} />
+      {filters.map((filter: any, index: any) => (
+        <div key={filter.id} className="flex my-2.5 gap-2 items-center">
+          <Select
+            onValueChange={(value) => updateFilter(filter.id, "column", value)}
+            value={filter.column}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Column" />
+            </SelectTrigger>
+            <SelectContent>
+              {tableColumns.map((columnName) => (
+                <SelectItem key={columnName} value={columnName}>
+                  {columnName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          {/* <Button onClick={addFilter}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add filter
-        </Button> */}
-          {/* <Button variant="outline" onClick={() => table.resetColumnFilters()}>
-          Clear
-        </Button> */}
-          {/* <Button variant="outline" className="border-secondary" onClick={clearFilters}>
-          Clear
-        </Button> */}
-          <CalendarDatePicker
-          date={dateRange}
-          onDateSelect={handleDateSelect}
+          <Select
+            onValueChange={(value) =>
+              updateFilter(filter.id, "operator", value)
+            }
+            value={filter.operator}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Operator" />
+            </SelectTrigger>
+            <SelectContent>
+              {OPERATORS.map((operator) => (
+                <SelectItem key={operator} value={operator}>
+                  {operator}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Input
+            placeholder="Enter value"
+            value={filter.value}
+            onChange={(event) =>
+              updateFilter(filter.id, "value", event.target.value)
+            }
+            className="border-secondary"
           />
-          {/* <Button onClick={handleNew}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          New
-        </Button> */}
+
           <Button
             variant="outline"
-            onClick={addFilter}
+            onClick={() => removeFilterRow(filter.id)}
+            className={cn(buttonClass)}
+          >
+            <XIcon className="h-4 w-4" />
+          </Button>
+        </div>
+      ))}
+
+      <div className="flex flex-wrap mt-3 items-center justify-between">
+        <div className=" flex flex-wrap items-center gap-2.5">
+          <TableView />
+          <DataTableViewOptions table={table} />
+          <CalendarDatePicker
+            date={dateRange}
+            onDateSelect={handleDateSelect}
+          />
+          <Button
+            variant="outline"
+            onClick={addFilterRow}
             className={cn(buttonClass, "w-8 p-0")}
           >
             <Filter className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={applyFilter}
+            className={cn(buttonClass, "w-8 p-0")}
+          >
+            <Filter
+              className={`${
+                filterApplied
+                  ? "fill-blue-500 text-blue-500   hover:fill-blue-500"
+                  : ""
+              } h-4  w-4`}
+            />
           </Button>
           <Button
             variant="outline"
@@ -366,16 +396,6 @@ export function DataTableToolbar<TData>({
           </Button>
         </div>
       </div>
-      {/* {isFiltered && (
-        <Button
-          variant="ghost"
-          onClick={() => table.resetColumnFilters()}
-          className="h-8 px-2 lg:px-3"
-        >
-          Reset
-          <Cross2Icon className="ml-2 h-4 w-4" />
-        </Button>
-      )} */}
     </div>
   );
 }
