@@ -1,6 +1,5 @@
 "use client";
 import { Table } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
@@ -30,20 +29,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
-
-type Operator =
-  | "Equals"
-  | "Does Not Equal"
-  | "Begins With"
-  | "Contains"
-  | "Empty"
-  | "Not Empty"
-  | "More Than"
-  | "Less Than";
 
 const OPERATORS = [
   "Equals",
@@ -82,21 +73,9 @@ type DatePeriod = (typeof DATE_PERIODS)[number];
 export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
   const [activePeriod, setActivePeriod] = useState<DatePeriod>("Recent");
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-    from: new Date(new Date().getFullYear(), 0, 1),
-    to: new Date(),
-  });
   const [fromDate, setFromDate] = useState<any>(undefined);
   const [toDate, setToDate] = useState<any>(undefined);
-
-  const [selectedColumn, setSelectedColumn] = useState<string | undefined>(
-    undefined
-  );
-  const [selectedOperator, setSelectedOperator] = useState<string | undefined>(
-    undefined
-  );
   const [filters, setFilters] = useState<any>([
     { id: "1", column: "", operator: "", value: "" },
   ]);
@@ -124,8 +103,8 @@ export function DataTableToolbar<TData>({
         break;
     }
 
-    // setFromDate(from);
-    // setToDate(now);
+    setFromDate(from);
+    setToDate(now);
     applyDateFilter(from, now);
     setActivePeriod(period);
   }, []);
@@ -133,7 +112,6 @@ export function DataTableToolbar<TData>({
   const applyDateFilter = (from: Date, to: Date) => {
     const column = table.getColumn("date_created");
     if (column) {
-      // Create a new Date object for the end of the 'to' date
       const endOfDay = new Date(to);
       endOfDay.setHours(23, 59, 59, 999);
       
@@ -198,44 +176,16 @@ export function DataTableToolbar<TData>({
     }
   }, [activePeriod, table]);
 
-  const handleNew = () => {
-    const newTask: Task = {
-      id: `TASK-${Math.floor(Math.random() * 10000)}`,
-      title: "New Task",
-      status: "Todo",
-      priority: "Medium",
-      createdAt: new Date(),
-    };
-    // setTasks((prevTasks) => [...prevTasks, newTask])
-  };
-
   const buttonClass = "h-8 border shadow-sm  transition-colors";
-
-  const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
-    setDateRange({ from, to });
-    table.getColumn("date_created")?.setFilterValue([from, to]);
-  };
-
   const clearFilters = () => {
     table.resetColumnFilters();
     setActivePeriod("Recent");
     handleQuickSearch("Recent");
-    setDate(undefined);
-    // setIsFilterActive(false)
     setFilterApplied(false);
-    setSelectedColumn("");
-    setSelectedOperator("");
     setFilters([{ column: "", operator: "", value: "" }]);
-    // setFilterValue("")
-    setDateRange({
-      from: new Date(new Date().getFullYear(), 0, 1),
-      to: new Date(),
-    });
   };
 
   const tableColumns = table.getAllColumns().map((column) => column.id);
-
-  // Define your custom filter function outside of your component
 
   const addFilterRow = () => {
     const newFilter: any = {
@@ -259,7 +209,6 @@ export function DataTableToolbar<TData>({
     );
   };
 
-  // In your DataTableToolbar component, handle applying the filter
   const applyFilter = () => {
     filters.forEach((filter: any) => {
       if (filter.column && filter.operator) {
@@ -272,6 +221,99 @@ export function DataTableToolbar<TData>({
       }
     });
   };
+
+// Utility function to flatten an object (handle nested fields dynamically)
+const flattenObject = (obj: any, parent = '', res: any = {}) => {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const propName = parent ? `${parent}.${key}` : key;
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        flattenObject(obj[key], propName, res); // Recursively flatten nested objects
+      } else {
+        res[propName] = obj[key]; // Assign the value
+      }
+    }
+  }
+  return res;
+};
+
+// Export table data as Excel (handling nested objects dynamically)
+const exportAsExcel = () => {
+  const visibleColumns = table.getVisibleLeafColumns().map((col) => col.id);
+  const tableData = table.getRowModel().rows.map((row:any) => {
+    const filteredData: { [key: string]: any } = {};
+    visibleColumns.forEach((colId) => {
+      const value = row.getValue(colId);
+      if (typeof value === 'object' && value !== null) {
+        const flattenedValues = flattenObject(value); // Flatten the object
+        for (const key in flattenedValues) {
+          if (visibleColumns.includes(key)) {
+            filteredData[key] = flattenedValues[key]; // Include only if key is visible
+          }
+        }
+      } else {
+        if (visibleColumns.includes(colId)) {
+          filteredData[colId] = value; // Only add if it's a visible column
+        }
+      }
+    });
+
+    // Include top-level keys that are not nested
+    Object.keys(row.original).forEach((key) => {
+      if (visibleColumns.includes(key) && !filteredData[key]) {
+        filteredData[key] = row.original[key]; // Include only if it's a visible column and not already added
+      }
+    });
+
+    return filteredData;
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(tableData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  XLSX.writeFile(workbook, "table_data.xlsx");
+};
+
+// Export table data as CSV (handling nested objects dynamically)
+const exportAsCSV = () => {
+  const visibleColumns = table.getVisibleLeafColumns().map((col) => col.id);
+  const tableData = table.getRowModel().rows.map((row:any) => {
+    const filteredData: { [key: string]: any } = {};
+    visibleColumns.forEach((colId) => {
+      const value = row.getValue(colId);
+      if (typeof value === 'object' && value !== null) {
+        const flattenedValues = flattenObject(value); // Flatten the object
+        for (const key in flattenedValues) {
+          if (visibleColumns.includes(key)) {
+            filteredData[key] = flattenedValues[key]; // Include only if key is visible
+          }
+        }
+      } else {
+        if (visibleColumns.includes(colId)) {
+          filteredData[colId] = value; // Only add if it's a visible column
+        }
+      }
+    });
+
+    // Include top-level keys that are not nested
+    Object.keys(row.original).forEach((key) => {
+      if (visibleColumns.includes(key) && !filteredData[key]) {
+        filteredData[key] = row.original[key]; // Include only if it's a visible column and not already added
+      }
+    });
+
+    return filteredData;
+  });
+
+  const csv = Papa.unparse(tableData);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "table_data.csv");
+  link.click();
+};
+
 
   return (
     <div className="flex flex-col">
@@ -362,18 +404,22 @@ export function DataTableToolbar<TData>({
           <TableView />
           <DataTableViewOptions table={table} />
           <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
+            <div className="w-full flex items-center gap-2.5 md:w-fit">
             <span>From</span>
             <CalendarDatePicker
               date={fromDate}
               onDateSelect={handleFromDateSelect}
               placeholder="From Date"
             />
+            </div>
+            <div className="flex w-full items-center gap-2.5 md:w-fit">
             <span>To</span>
             <CalendarDatePicker
               date={toDate}
               onDateSelect={handleToDateSelect}
               placeholder="To Date"
             />
+            </div>
           </div>
           <Button
             variant="outline"
@@ -412,11 +458,11 @@ export function DataTableToolbar<TData>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={exportAsCSV}>
                 <FileSpreadsheet className="mr-2 h-4 w-4" />
                 Download CSV
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem  onClick={exportAsExcel}>
                 <FileText className="mr-2 h-4 w-4" />
                 Download Excel
               </DropdownMenuItem>
@@ -428,7 +474,7 @@ export function DataTableToolbar<TData>({
           </DropdownMenu>
         </div>
         <div>
-          <Button className="mt-2 md:mt-0" onClick={handleNew}>
+          <Button className="mt-2 md:mt-0">
             <PlusIcon className="h-4 w-4 mr-2" />
             New
           </Button>

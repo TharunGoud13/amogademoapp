@@ -76,6 +76,7 @@
     "next-intl": "^3.19.3",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^1.6.12",
+    "papaparse": "^5.4.1",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
@@ -94,12 +95,14 @@
     "use-debounce": "^10.0.2",
     "uuid": "^10.0.0",
     "vaul": "^0.9.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
+    "@types/papaparse": "^5.3.14",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
