@@ -14,10 +14,10 @@ export const CalendarDatePicker = ({ date, onDateSelect, placeholder }: {
   placeholder: string
 }) => {
   const [open, setOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(date || new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(date)
 
   useEffect(() => {
-    setSelectedDate(date || new Date())
+    setSelectedDate(date)
   }, [date])
 
   const handleSelect = (newDate: Date | undefined) => {
