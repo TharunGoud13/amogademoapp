@@ -416,11 +416,11 @@ export function DataTableToolbar<TData>({
           </div>
         ))}
 
-        <div className="flex flex-wrap mt-3 items-center justify-between">
+        <div className="flex flex-wrap mt-3 items-center md:justify-between">
           <div className=" flex flex-wrap items-center gap-2.5">
-            <div className="hidden lg:inline">
+            {/* <div className="hidden lg:inline">
             <DataTableViewOptions table={table} />
-            </div>
+            </div> */}
             <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
               <div className="w-full flex items-center gap-2.5 md:w-fit">
                 <span>From</span>
@@ -512,10 +512,8 @@ export function DataTableToolbar<TData>({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="flex items-center gap-2.5">
-          <div className="inline lg:hidden">
+          <div className="flex items-center gap-2.5">         
             <DataTableViewOptions table={table} />
-            </div>
             <TableView setViewType={setViewType} />
             <Button className="mt-2 md:mt-0">
               <PlusIcon className="h-4 w-4 mr-2" />
