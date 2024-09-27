@@ -202,7 +202,7 @@ export function DataTable<TData, TValue>({
         return renderCardView();
       case "list":
         // return renderListView();
-        console.log("list view")
+        console.log("list view data")
       default:
         return renderTableView();
     }
