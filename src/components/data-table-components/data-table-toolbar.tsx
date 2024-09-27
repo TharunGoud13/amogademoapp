@@ -42,6 +42,7 @@ import {
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  setViewType: (viewType: "table" | "card" | "list") => void;
 }
 
 const OPERATORS = [
@@ -80,6 +81,7 @@ type DatePeriod = (typeof DATE_PERIODS)[number];
 
 export function DataTableToolbar<TData>({
   table,
+  setViewType
 }: DataTableToolbarProps<TData>) {
   const [activePeriod, setActivePeriod] = useState<DatePeriod>("Recent");
   const [fromDate, setFromDate] = useState<any>(undefined);
@@ -514,7 +516,7 @@ export function DataTableToolbar<TData>({
           <div className="inline lg:hidden">
             <DataTableViewOptions table={table} />
             </div>
-            <TableView />
+            <TableView setViewType={setViewType} />
             <Button className="mt-2 md:mt-0">
               <PlusIcon className="h-4 w-4 mr-2" />
               New

@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 
 const buttonClass = "h-8 border  shadow-sm  transition-colors"
-export function TableView() {
+export function TableView({setViewType}: {setViewType: (viewType: "table" | "card" | "list") => void}) {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -28,15 +28,15 @@ export function TableView() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setViewType("table")}>
             <Table className="mr-2 h-4 w-4" />
             Table View
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setViewType("card")}>
             <Grid className="mr-2 h-4 w-4" />
             Card View
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setViewType("list")}>
             <List className="mr-2 h-4 w-4" />
             List View
           </DropdownMenuItem>
