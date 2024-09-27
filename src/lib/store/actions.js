@@ -42,6 +42,8 @@ export const SET_UNREAD_EMAIL = "SET_UNREAD_EMAIL";
 export const SET_UNREAD_EMAIL_SUCCESS = "SET_UNREAD_EMAIL_SUCCESS";
 export const SET_UNREAD_EMAIL_FAILURE = "SET_UNREAD_EMAIL_FAILURE";
 
+export const SET_FILER_APPLIED = "SET_FILTER_APPLIED"
+
 // Action Creators
 export const getChatGroup = (payload) => {
     return{
@@ -237,5 +239,12 @@ export const setUnreadEmailFailure = (error) => {
     return{
         type: SET_UNREAD_EMAIL_FAILURE,
         payload: error
+    }
+}
+
+export const setFilterApplied = (payload) => {
+    return{
+        type: SET_FILER_APPLIED,
+        payload
     }
 }

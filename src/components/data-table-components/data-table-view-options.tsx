@@ -30,8 +30,8 @@ export function DataTableViewOptions<TData>({
           size="sm"
           className="h-8"
         >
-          <Columns className="mr-2 h-4 w-4" />
-          Columns
+          <Columns className="lg:mr-2 h-4 w-4" />
+          <span className="lg:inline hidden">Columns</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent  className="w-[150px]">

@@ -393,29 +393,32 @@ export function DataTableToolbar<TData>({
                 ))}
               </SelectContent>
             </Select>
+            <div className="flex gap-2.5 w-full">
+              <Input
+                placeholder="Enter value"
+                value={filter.value}
+                onChange={(event) =>
+                  updateFilter(filter.id, "value", event.target.value)
+                }
+                className="border-secondary"
+              />
 
-            <Input
-              placeholder="Enter value"
-              value={filter.value}
-              onChange={(event) =>
-                updateFilter(filter.id, "value", event.target.value)
-              }
-              className="border-secondary"
-            />
-
-            <Button
-              variant="outline"
-              onClick={() => removeFilterRow(filter.id)}
-              className={cn(buttonClass)}
-            >
-              <XIcon className="h-4 w-4" />
-            </Button>
+              <Button
+                variant="outline"
+                onClick={() => removeFilterRow(filter.id)}
+                className="border-secondary"
+              >
+                <XIcon className="h-5 w-5" />
+              </Button>
+              </div>
           </div>
         ))}
 
         <div className="flex flex-wrap mt-3 items-center justify-between">
           <div className=" flex flex-wrap items-center gap-2.5">
+            <div className="hidden lg:inline">
             <DataTableViewOptions table={table} />
+            </div>
             <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
               <div className="w-full flex items-center gap-2.5 md:w-fit">
                 <span>From</span>
@@ -425,7 +428,7 @@ export function DataTableToolbar<TData>({
                   placeholder="From Date"
                 />
               </div>
-              <div className="flex w-full items-center gap-2.5 md:w-fit">
+              <div className="flex w-full items-center gap-7 md:gap-2.5 md:w-fit">
                 <span>To</span>
                 <CalendarDatePicker
                   date={toDate}
@@ -508,7 +511,10 @@ export function DataTableToolbar<TData>({
             </DropdownMenu>
           </div>
           <div className="flex items-center gap-2.5">
-          <TableView />
+          <div className="inline lg:hidden">
+            <DataTableViewOptions table={table} />
+            </div>
+            <TableView />
             <Button className="mt-2 md:mt-0">
               <PlusIcon className="h-4 w-4 mr-2" />
               New

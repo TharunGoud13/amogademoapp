@@ -28,6 +28,7 @@ import {
   SET_UNREAD_EMAIL,
   SET_UNREAD_EMAIL_SUCCESS,
   SET_UNREAD_EMAIL_FAILURE,
+  SET_FILER_APPLIED
 } from "./actions";
 
 // Initial State
@@ -60,6 +61,7 @@ const initialState = {
   unreadEmailResponse: [],
   unreadEmailLoading: false,
   unreadEmailError: null,
+  filterApplied:false
 };
 
 // Reducer
@@ -232,6 +234,12 @@ const reducer = (state = initialState, action) => {
           unreadEmailLoading: false,
           unreadEmailError: action.payload,
         };
+
+        case SET_FILER_APPLIED:
+          return {
+           ...state,
+            filterApplied: action.payload,
+          };
 
     default:
       return state;

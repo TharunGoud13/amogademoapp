@@ -45,10 +45,12 @@ export function DataTableDateHeader<TData, TValue>({
         from.setDate(now.getDate() - 10)
         break;
       case "Today":
-        from.setDate(now.getDate() - 1)
+        from.setDate(now.getDate());
         break;
       case "This Week":
-        from.setDate(now.getDate() - now.getDay());
+        const dayOfWeek = now.getDay();
+        const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        from.setDate(now.getDate() - diffToMonday);
         break;
       case "This Month":
         from = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -110,6 +112,6 @@ export function DataTableDateHeader<TData, TValue>({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+      </div>
   );
 }
