@@ -81,7 +81,7 @@ type DatePeriod = (typeof DATE_PERIODS)[number];
 
 export function DataTableToolbar<TData>({
   table,
-  setViewType
+  setViewType,
 }: DataTableToolbarProps<TData>) {
   const [activePeriod, setActivePeriod] = useState<DatePeriod>("Recent");
   const [fromDate, setFromDate] = useState<any>(undefined);
@@ -339,7 +339,7 @@ export function DataTableToolbar<TData>({
           }}
           className="border-secondary"
         />
-        <div className="flex my-2.5 gap-2 flex-wrap">
+        <div className="flex my-2.5 gap-2 items-center flex-wrap">
           {DATE_PERIODS.map((period) => (
             <Button
               key={period}
@@ -354,7 +354,26 @@ export function DataTableToolbar<TData>({
               {period}
             </Button>
           ))}
+          <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
+            <div className="w-full flex items-center gap-2.5 md:w-fit">
+              <span>From</span>
+              <CalendarDatePicker
+                date={fromDate}
+                onDateSelect={handleFromDateSelect}
+                placeholder="From Date"
+              />
+            </div>
+            <div className="flex w-full items-center gap-7 md:gap-2.5 md:w-fit">
+              <span>To</span>
+              <CalendarDatePicker
+                date={toDate}
+                onDateSelect={handleToDateSelect}
+                placeholder="To Date"
+              />
+            </div>
+          </div>
         </div>
+
         {filters.map((filter: any, index: any) => (
           <div
             key={filter.id}
@@ -412,16 +431,16 @@ export function DataTableToolbar<TData>({
               >
                 <XIcon className="h-5 w-5" />
               </Button>
-              </div>
+            </div>
           </div>
         ))}
 
-        <div className="flex flex-wrap mt-3 items-center md:justify-between">
-          <div className=" flex flex-wrap items-center gap-2.5">
+        <div className="flex  mt-3 gap-2.5 items-center md:justify-between">
+          <div className=" flex  items-center gap-2.5">
             {/* <div className="hidden lg:inline">
             <DataTableViewOptions table={table} />
             </div> */}
-            <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
+            {/* <div className="flex items-center flex-wrap md:flex-nowrap my-2.5 gap-4">
               <div className="w-full flex items-center gap-2.5 md:w-fit">
                 <span>From</span>
                 <CalendarDatePicker
@@ -438,7 +457,7 @@ export function DataTableToolbar<TData>({
                   placeholder="To Date"
                 />
               </div>
-            </div>
+            </div> */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -512,12 +531,12 @@ export function DataTableToolbar<TData>({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="flex items-center gap-2.5">         
+          <div className="flex items-center gap-2.5">
             <DataTableViewOptions table={table} />
             <TableView setViewType={setViewType} />
             <Button className="mt-2 md:mt-0">
-              <PlusIcon className="h-4 w-4 mr-2" />
-              New
+              <PlusIcon className="h-4 w-4 md:mr-2" />
+             <span className="hidden md:inline">New</span>
             </Button>
           </div>
         </div>
