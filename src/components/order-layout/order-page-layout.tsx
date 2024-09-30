@@ -31,6 +31,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { CheckSquare, ClipboardList, Edit, MessageCircle, MoreVertical } from "lucide-react";
 import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
+import ChartsView from "./ChartsView";
 
 type ColumnMetaType = {
   className?: string;
@@ -41,7 +42,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "list";
+type ViewType = "table" | "card" | "list" | "chart";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -135,7 +136,6 @@ export function DataTable<TData, TValue>({
       </div>
     </div>
   );
-  console.log("Table data:", table.getRowModel().rows.length);
   const renderCardView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {table.getRowModel().rows.length === 0 && <h1 className="text-center w-screen">No Data.</h1>}
@@ -178,20 +178,27 @@ export function DataTable<TData, TValue>({
     </div>
   );
 
-  // const renderListView = () => (
-  //   <ul className="divide-y divide-gray-200">
-  //     {table.getRowModel().rows.map((row) => (
-  //       <li key={row.id} className="py-4">
-  //         {row.getVisibleCells().map((cell) => (
-  //           <div key={cell.id} className="mb-1">
-  //             <strong>{cell.column.columnDef.header as string}: </strong>
-  //             {flexRender(cell.column.columnDef.cell, cell.getContext())}
-  //           </div>
-  //         ))}
-  //       </li>
-  //     ))}
-  //   </ul>
-  // );
+  const renderListView = () => (
+    <ul className="divide-y divide-gray-200">
+      {table.getRowModel().rows.map((row) => (
+        <li key={row.id} className="py-4">
+          {row.getVisibleCells().map((cell) => (
+            <div key={cell.id} className="mb-1">
+              <strong>{cell.column.columnDef.header as string}: </strong>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </div>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
+
+  const renderChartView = () => (
+    <div>
+      <ChartsView chartData={table.getRowModel().rows.map((row) => row.original as any)}/>
+      {/* <ChartsView chartData={chartData}/> */}
+    </div>
+  );
 
   const renderView = () => {
     switch (viewType) {
@@ -200,8 +207,10 @@ export function DataTable<TData, TValue>({
       case "card":
         return renderCardView();
       case "list":
-        // return renderListView();
-        console.log("list view data")
+        return renderListView();
+        // console.log("list view data")
+      case "chart":
+        return renderChartView();
       default:
         return renderTableView();
     }
