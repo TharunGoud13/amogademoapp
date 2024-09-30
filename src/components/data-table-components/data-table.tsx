@@ -41,7 +41,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "list";
+type ViewType = "table" | "card" | "list" | "chart";
 
 export function DataTable<TData, TValue>({
   columns,
