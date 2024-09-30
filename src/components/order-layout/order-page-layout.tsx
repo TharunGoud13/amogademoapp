@@ -32,6 +32,7 @@ import { Button } from "../ui/button";
 import { CheckSquare, ClipboardList, Edit, MessageCircle, MoreVertical } from "lucide-react";
 import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
 import ChartsView from "./ChartsView";
+import FlowView from "./FlowView";
 
 type ColumnMetaType = {
   className?: string;
@@ -42,7 +43,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "list" | "chart";
+type ViewType = "table" | "card" | "list" | "chart" | "flow";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -196,9 +197,14 @@ export function DataTable<TData, TValue>({
   const renderChartView = () => (
     <div>
       <ChartsView chartData={table.getRowModel().rows.map((row) => row.original as any)}/>
-      {/* <ChartsView chartData={chartData}/> */}
     </div>
   );
+
+  const renderFlowView = () => (
+    <div>
+      <FlowView data={table.getRowModel().rows.map((row) => row.original as any)}/>
+    </div>
+  )
 
   const renderView = () => {
     switch (viewType) {
@@ -208,9 +214,10 @@ export function DataTable<TData, TValue>({
         return renderCardView();
       case "list":
         return renderListView();
-        // console.log("list view data")
       case "chart":
         return renderChartView();
+      case "flow":
+        return renderFlowView()
       default:
         return renderTableView();
     }

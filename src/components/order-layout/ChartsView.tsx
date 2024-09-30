@@ -31,7 +31,6 @@ const ChartsView = ({ chartData }: any) => {
       color: "#3b82f6",
     },
   } satisfies ChartConfig;
-  console.log("chart-----", chartData);
 
   const pieChartData = [
     { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
