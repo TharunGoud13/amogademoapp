@@ -179,7 +179,7 @@ export function DataTable<TData, TValue>({
   );
 
   const renderListView = () => (
-    <ul className="divide-y divide-gray-200">
+    <ul className="divide-y hidden md:block divide-gray-200">
       {table.getRowModel().rows.map((row) => (
         <li key={row.id} className="py-4">
           {row.getVisibleCells().map((cell) => (
