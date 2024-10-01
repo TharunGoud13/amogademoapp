@@ -12,9 +12,9 @@ const FlowView = ({ data }:any) => {
   const filteredData = data.filter((item:any) => item.status === selectedTab);
 
   return (
-    <div className="hidden md:block">
-      <Tabs defaultValue="pending" onValueChange={setSelectedTab}>
-        <TabsList className="w-full grid gap-10 grid-cols-4">
+    <div className="">
+      <Tabs defaultValue="pending" className="flex flex-wrap" onValueChange={setSelectedTab}>
+        <TabsList className="grid grid-cols-4 gap-3 md:gap-0">
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="processing">Processing</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>

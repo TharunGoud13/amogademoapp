@@ -75,7 +75,7 @@ const ChartsView = ({ chartData }: any) => {
 
   const yAxisDomain = [0, Math.ceil(maxValue * 1.1)];
   return (
-    <div className="hidden md:block">
+    <div className="">
       <Tabs defaultValue="line-chart">
         <TabsList>
           <TabsTrigger value="line-chart">Line Chart</TabsTrigger>
