@@ -33,6 +33,7 @@ import { CheckSquare, ClipboardList, Edit, MessageCircle, MoreVertical } from "l
 import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
 import ChartsView from "./ChartsView";
 import FlowView from "./FlowView";
+import AssistantView from "./AssistantView";
 
 type ColumnMetaType = {
   className?: string;
@@ -43,7 +44,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "list" | "chart" | "flow";
+type ViewType = "table" | "card" | "assistant" | "chart" | "flow";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -180,18 +181,7 @@ export function DataTable<TData, TValue>({
   );
 
   const renderListView = () => (
-    <ul className="divide-y hidden md:block divide-gray-200">
-      {table.getRowModel().rows.map((row) => (
-        <li key={row.id} className="py-4">
-          {row.getVisibleCells().map((cell) => (
-            <div key={cell.id} className="mb-1">
-              <strong>{cell.column.columnDef.header as string}: </strong>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </div>
-          ))}
-        </li>
-      ))}
-    </ul>
+    <AssistantView data={table.getRowModel().rows.map((row) => row.original as any)} />
   );
 
   const renderChartView = () => (
@@ -212,7 +202,7 @@ export function DataTable<TData, TValue>({
         return renderTableView();
       case "card":
         return renderCardView();
-      case "list":
+      case "assistant":
         return renderListView();
       case "chart":
         return renderChartView();

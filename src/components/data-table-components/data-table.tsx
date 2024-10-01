@@ -41,7 +41,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "list" | "chart" | "flow";
+type ViewType = "table" | "card" | "assistant" | "chart" | "flow";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -200,7 +200,7 @@ export function DataTable<TData, TValue>({
         return renderTableView();
       case "card":
         return renderCardView();
-      case "list":
+      case "assistant":
         // return renderListView();
         console.log("list view data")
       default:

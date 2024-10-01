@@ -13,12 +13,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import { BarChartIcon, Calendar, Columns, Grid, List, SlidersHorizontal, Table, Workflow } from "lucide-react";
+import { BarChartIcon, Bot, Calendar, Columns, Grid, List, SlidersHorizontal, Table, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
 const buttonClass = "h-8 border  shadow-sm  transition-colors"
-export function TableView({setViewType}: {setViewType: (viewType: "table" | "card" | "list" | "chart" | "flow") => void}) {
+export function TableView({setViewType}: {setViewType: (viewType: "table" | "card" | "assistant" | "chart" | "flow") => void}) {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -36,9 +36,9 @@ export function TableView({setViewType}: {setViewType: (viewType: "table" | "car
             <Grid className="mr-2 h-4 w-4" />
             Card View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setViewType("list")}>
-            <List className="mr-2 h-4 w-4" />
-            List View
+          <DropdownMenuItem onClick={() => setViewType("assistant")}>
+            <Bot className="mr-2 h-4 w-4" />
+            Assistant
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setViewType("chart")}>
             <BarChartIcon className="mr-2 h-4 w-4" />
