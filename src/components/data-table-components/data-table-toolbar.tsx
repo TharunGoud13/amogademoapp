@@ -42,7 +42,7 @@ import {
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  setViewType: (viewType: "table" | "card" | "assistant" | "chart" | "flow") => void;
+  setViewType: (viewType: "table" | "card" | "assistant" | "chart" | "flow" | "calendar") => void;
 }
 
 const OPERATORS = [

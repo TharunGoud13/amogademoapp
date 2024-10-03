@@ -34,6 +34,7 @@ import { DataTableRowActions } from "../data-table-components/data-table-row-act
 import ChartsView from "./ChartsView";
 import FlowView from "./FlowView";
 import AssistantView from "./AssistantView";
+import CalendarView from "./CalendarView";
 
 type ColumnMetaType = {
   className?: string;
@@ -44,7 +45,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-type ViewType = "table" | "card" | "assistant" | "chart" | "flow";
+type ViewType = "table" | "card" | "assistant" | "chart" | "flow" | "calendar";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -196,6 +197,12 @@ export function DataTable<TData, TValue>({
     </div>
   )
 
+  const renderCalendarView = () => (
+    <div>
+      <CalendarView data={table.getRowModel().rows.map((row) => row.original as any)}/>
+    </div>
+  )
+
   const renderView = () => {
     switch (viewType) {
       case "table":
@@ -208,6 +215,8 @@ export function DataTable<TData, TValue>({
         return renderChartView();
       case "flow":
         return renderFlowView()
+      case "calendar":
+        return renderCalendarView()
       default:
         return renderTableView();
     }
