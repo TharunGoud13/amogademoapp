@@ -273,7 +273,7 @@ export default function CalendarView({ data }: { data: Event[] }) {
                 className={`p-1 border ${
                   day.isCurrentMonth ? "bg-white" : "bg-gray-100 text-gray-400"
                 } ${
-                  isToday(dayDate) ? "bg-blue-100 border-blue-500 border-2" : ""
+                  isToday(dayDate) ? "!bg-blue-100 border-blue-500 border-2" : ""
                 } h-24 overflow-hidden`}
               >
                 <span className={`block text-sm mb-1 ${isToday(dayDate) ? "font-bold text-blue-600" : ""}`}>
@@ -336,7 +336,7 @@ export default function CalendarView({ data }: { data: Event[] }) {
         <div className="relative">
           <div ref={weekViewRef} className="overflow-x-auto">
             <div className="grid grid-cols-8 gap-1" style={{ width: "200%" }}>
-              <div className="sticky left-0 bg-white z-10"></div>
+              <div className="sticky left-0  z-10"></div>
               {weekDays.map((day, index) => (
                 <div
                   key={index}
@@ -348,7 +348,7 @@ export default function CalendarView({ data }: { data: Event[] }) {
               ))}
               {Array.from({ length: 24 }).map((_, hour) => (
                 <React.Fragment key={hour}>
-                  <div className="sticky left-0 bg-white z-10 text-right pr-2 text-sm text-gray-500">
+                  <div className="sticky left-0 z-10 text-right pr-2 text-sm text-gray-500">
                     {hour === 0
                       ? "12 AM"
                       : hour < 12
@@ -362,7 +362,7 @@ export default function CalendarView({ data }: { data: Event[] }) {
                       key={`${hour}-${dayIndex}`}
                       className="border-t relative min-h-[48px]"
                     >
-                      {data
+                      {events
                         .filter(
                           (event) =>
                             event.start.getDate() === day.getDate() &&
@@ -438,10 +438,7 @@ export default function CalendarView({ data }: { data: Event[] }) {
           </Button>
         </div>
         <div className="flex-grow overflow-y-auto h-[calc(100vh-250px)]">
-          <div className="sticky top-0 bg-white z-10 flex py-2 px-4 font-semibold border-b">
-            <div className="w-16"></div>
-            <div className="flex-grow">Events</div>
-          </div>
+          
           {Array.from({ length: 24 }).map((_, hour) => {
             const hourStart = new Date(dayStart);
             hourStart.setHours(hour);
