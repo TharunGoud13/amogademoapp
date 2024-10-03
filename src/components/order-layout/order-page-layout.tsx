@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
 
   const renderTableView = () => (
     <div className="rounded-md border overflow-hidden">
-      <div className="overflow-x-auto hidden md:block relative">
+      <div className="overflow-x-auto relative">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -216,9 +216,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} setViewType={setViewType} />
-      <div className={`${viewType == "card" ? "block" : "md:hidden"} `}>
+      {/* <div className={`${viewType == "card" ? "block" : "md:hidden"} `}>
         {renderCardView()}
-      </div>
+      </div> */}
       {renderView()}
       <DataTablePagination table={table} />
     </div>

@@ -1,8 +1,5 @@
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -25,21 +22,22 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "../ui/badge";
 import { DataTableRowActions } from "../data-table-components/data-table-row-actions";
 
-
 const status = ["pending", "processing", "completed", "cancelled"];
 
 const AssistantView = ({ data }: any) => {
   const [messages, setMessages] = useState<
-    Array<{ sender: string; text?: string; type?: string,data?: any[] }>
+    Array<{ sender: string; text?: string; type?: string; data?: any[] }>
   >([]);
   const [input, setInput] = useState("");
 
+  useEffect(() => {
+    setMessages([{ sender: "bot", type: "buttons", data: status }]);
+  }, []);
 
   const handleSend = () => {
     if (input.trim()) {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
-      // Simulate bot response
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -59,140 +57,137 @@ const AssistantView = ({ data }: any) => {
   };
 
   const handleRestart = () => {
-    setMessages([]);
+    setMessages([{ sender: "bot", type: "buttons", data: status }]);
     setInput("");
   };
 
   return (
     <div className="flex flex-col h-[90vh]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      <div className="flex mb-2 flex-wrap  justify-center gap-0.5 md:gap-2">
-        
-        {status.map((button: string, index: string | number) => (
-          <Button
-            className="rounded-full"
-            onClick={() => handleButton(button)}
+      <div className="flex-1 overflow-y-auto md:p-4 space-y-4">
+        {messages.map((message, index) => (
+          <div
             key={index}
+            className={`flex ${
+              message.sender === "user" ? "justify-end" : "justify-start"
+            } items-end space-x-2`}
           >
-            {button}
-          </Button>
-        ))}
-      </div>
-        {
-          messages.map((message, index) => (
+            {message.sender === "bot" && (
+              <Avatar>
+                <AvatarFallback>
+                  <Bot size={24} />
+                </AvatarFallback>
+              </Avatar>
+            )}
             <div
-              key={index}
-              className={`flex ${
-                message.sender === "user" ? "justify-end" : "justify-start"
-              } items-end space-x-2`}
+              className={`max-w-[70%] ${
+                message.sender === "user"
+                  ? "bg-blue-500 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl"
+                  : "bg-secondary rounded-tl-2xl rounded-tr-2xl rounded-br-2xl"
+              } p-3 shadow`}
             >
-              {message.sender === "bot" && (
-                <Avatar>
-                  <AvatarFallback>
-                    <Bot size={24} />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              <div
-                className={`max-w-[70%] ${
-                  message.sender === "user"
-                    ? "bg-blue-500 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl"
-                    : "bg-secondary rounded-tl-2xl rounded-tr-2xl rounded-br-2xl"
-                } p-3 shadow`}
-              >
-                {message.type === "carousel" && message.data ? (
-                  <div className="w-[full] max-w-md">
-                    <Carousel>
-                      <CarouselContent>
-                        {message.data.map((order: any) => (
-                          <CarouselItem key={order.id}>
-                            <Card key={order.id} className="w-full">
-                              <CardContent className="p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <h3 className="text-lg font-bold">
-                                      {order.number}
-                                    </h3>
-                                    <p className="text-sm text-gray-500">
-                                      {new Date(
-                                        order.date_created
-                                      ).toLocaleDateString("en-GB", {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "numeric",
-                                      })}
-                                    </p>
-                                  </div>
-                                  <Badge
-                                    variant={
-                                      order.status === "completed"
-                                        ? "default"
-                                        : order.status === "cancelled"
-                                        ? "destructive"
-                                        : "secondary"
-                                    }
-                                  >
-                                    {order.status}
-                                  </Badge>
-                                </div>
-                                <div className="mb-4">
-                                  <p className="font-semibold">
-                                    {order.billing.first_name}{" "}
-                                    {order.billing.last_name}
-                                  </p>
-                                  <p className="text-sm">
-                                    {order.billing.email}
-                                  </p>
-                                  <p className="text-sm">
-                                    {order.billing.phone}
+              {message.type === "carousel" && message.data ? (
+                <div className="w-full max-w-md">
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {message.data.map((order: any) => (
+                        <CarouselItem key={order.id}>
+                          <Card key={order.id} className="w-full">
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <h3 className="text-lg font-bold">
+                                    {order.number}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">
+                                    {new Date(
+                                      order.date_created
+                                    ).toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    })}
                                   </p>
                                 </div>
-                                <div className="text-xl font-bold mb-4">
-                                  {order.currency_symbol}{" "}
-                                  {parseFloat(order.total).toFixed(2)}
+                                <Badge
+                                  variant={
+                                    order.status === "completed"
+                                      ? "default"
+                                      : order.status === "cancelled"
+                                      ? "destructive"
+                                      : "secondary"
+                                  }
+                                >
+                                  {order.status}
+                                </Badge>
+                              </div>
+                              <div className="mb-4">
+                                <p className="font-semibold">
+                                  {order.billing.first_name}{" "}
+                                  {order.billing.last_name}
+                                </p>
+                                <p className="text-sm">{order.billing.email}</p>
+                                <p className="text-sm">{order.billing.phone}</p>
+                              </div>
+                              <div className="text-xl font-bold mb-4">
+                                {order.currency_symbol}{" "}
+                                {parseFloat(order.total).toFixed(2)}
+                              </div>
+                              <div className="flex justify-between items-center space-x-2">
+                                <div>
+                                  <Button variant="ghost" size="icon">
+                                    <Edit className="h-5 w-5" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon">
+                                    <MessageCircle className="h-5 w-5" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon">
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
                                 </div>
-                                <div className="flex justify-between items-center space-x-2">
-                                  <div>
-                                    <Button variant="ghost" size="icon">
-                                      <Edit className="h-5 w-5" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon">
-                                      <MessageCircle className="h-5 w-5" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon">
-                                      <CheckSquare className="h-5 w-5" />
-                                    </Button>
-                                  </div>
-                                  <div>
-                                    <DataTableRowActions row={order} />
-                                  </div>
+                                <div>
+                                  <DataTableRowActions row={order} />
                                 </div>
-                              </CardContent>
-                            </Card>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious />
-                      <CarouselNext />
-                    </Carousel>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </div>
+              ) : message.type === "buttons" ? (
+                <div>
+                  <p className="mb-2">{message.text}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {message.data?.map((button: string, idx: number) => (
+                      <Button
+                        key={idx}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleButton(button)}
+                      >
+                        {button}
+                      </Button>
+                    ))}
                   </div>
-                ) 
-                : (
-                  <p>{message.text}</p>
-                )}
-              </div>
-              {message.sender === "user" && (
-                <Avatar>
-                  <AvatarFallback>
-                    <User size={24} />
-                  </AvatarFallback>
-                </Avatar>
+                </div>
+              ) : (
+                <p>{message.text}</p>
               )}
             </div>
-          ))
-        }
+            {message.sender === "user" && (
+              <Avatar>
+                <AvatarFallback>
+                  <User size={24} />
+                </AvatarFallback>
+              </Avatar>
+            )}
+          </div>
+        ))}
       </div>
-      
+
       <div className="pt-4">
         <div className="flex space-x-2">
           <Input
