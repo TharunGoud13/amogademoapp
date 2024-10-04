@@ -1,19 +1,24 @@
-import createNextIntlPlugin from 'next-intl/plugin'
+import createNextIntlPlugin from 'next-intl/plugin';
+import withPWA from 'next-pwa';
 
-const withNextIntl = createNextIntlPlugin()
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental:{
-        instrumentationHook:true,
-        
+    experimental: {
+        instrumentationHook: true,
     },
-    images:{
-        domains:["avatars.githubusercontent.com","lh3.googleusercontent.com","secure.gravatar.com"]
+    images: {
+        domains: ["avatars.githubusercontent.com", "lh3.googleusercontent.com", "secure.gravatar.com"]
     },
-    reactStrictMode:false,
-    compiler:{
+    reactStrictMode: false,
+    compiler: {
         removeConsole: process.env.NODE_ENV === "production"
     }
 };
 
-export default withNextIntl(nextConfig);
+const withPWAConfig = withPWA({
+    dest: 'public'
+});
+
+export default withPWAConfig(withNextIntl(nextConfig));
