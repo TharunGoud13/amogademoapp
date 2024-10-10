@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node server.js",
-    "lint": "next lint",
-    "node": "node server.js"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
