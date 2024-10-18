@@ -35,7 +35,7 @@ jobs:
           docker build -t amogademo/nextjs-app .
           docker push amogademo/nextjs-app
 
-      - name: SSH into server and pull the Docker image
+      - name: SSH into server and setup Traefik and pull the Docker image
         uses: appleboy/ssh-action@v0.1.5  # Correct version for the SSH action
         with:
           host: 219.93.129.48
@@ -43,6 +43,20 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 2222
           script: |
+            # Navigate to the directory containing the Traefik docker-compose.yml
+            cd ~/traefik
+            
+            # Start Traefik if it's not already running
+            docker-compose up -d
+            
+            # Pull the latest Docker image for the Next.js app
             docker pull amogademo/nextjs-app
+            
+            # Navigate to the directory containing your Next.js app docker-compose.yml
+            cd ~/nextjs-app
+            
+            # Stop the current Next.js app if it's running
             docker-compose down
+            
+            # Start the Next.js app in detached mode
             docker-compose up -d

@@ -1,7 +1,19 @@
-version: '3'
+version: '3.7'
+
 services:
+  nextjs-app:
+    image: amogademo/nextjs-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextjs-app.rule=Host(`demoapps.morr.biz`)"  # Change this to your domain
+      - "traefik.http.routers.nextjs-app.entrypoints=web,websecure"
+      - "traefik.http.routers.nextjs-app.tls.certresolver=myresolver"  # Enable Let's Encrypt for HTTPS
+    networks:
+      - web
+
+networks:
   web:
-    image: amogademo/amogademo
-    ports:
-      - "3000:3000"
-    restart: always
+    external: true
