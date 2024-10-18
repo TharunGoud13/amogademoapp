@@ -71,7 +71,7 @@ export function ProductTable<TData, TValue>({
   })
 
   return (
-    <div className="space-y-4 pt-5">
+    <div className="space-y-4 pt-2">
       <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>

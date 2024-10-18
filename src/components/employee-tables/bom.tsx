@@ -6,10 +6,10 @@ import { BOM_RAW_URL, GET_ORDER_ITEMS } from "@/constants/envConfig";
 import { FC, useEffect, useState } from "react";
 import { bomRaw, loginLog } from "@/lib/store/actions";
 import { connect } from "react-redux";
-import { Spin } from "antd";
 import { useSession } from "next-auth/react";
 import { context, trace } from "@opentelemetry/api";
 import IpAddress from "@/lib/IpAddress";
+import Spinner from "../ui/Spinner";
 
 
 const myHeaders = new Headers();
@@ -109,8 +109,8 @@ const  Bom:FC<any> = ({bomRawResponse,bomRaw,bomRawLoading,loginLog,bomRawError}
   
   return (
     <>
-      <div className=" h-full flex-1 flex-col space-y-8  ">
-        <span className="flex justify-center">{bomRawLoading && <div> <Spin/> <span className="ml-[10px] ">Loading Data...</span></div>}</span>
+      <div className=" h-full flex-1 flex-col  ">
+        <span className="flex justify-center">{bomRawLoading && <div className="flex items-center"> <Spinner/> <span className="ml-[10px] ">Loading Data...</span></div>}</span>
         <ProductTable data={bomRawResponse} columns={columns} />
       </div>
     </>

@@ -15,9 +15,9 @@ import {
 import { connect } from "react-redux";
 import { GET_EMAILS } from "@/constants/envConfig";
 import { toast } from "@/components/ui/use-toast";
-import { Spin } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
+import Spinner from "../ui/Spinner";
 
 interface MailProps {
   loginLog: any;
@@ -188,7 +188,7 @@ const Mail: React.FC<MailProps> = ({
           </div>
           {loading && (
             <div className="flex justify-center items-center gap-2.5">
-              <Spin />{" "}
+              <Spinner/>
               <span className="font-md text-lg">Syncing emails...</span>
             </div>
           )}

@@ -1,25 +1,32 @@
-# Use Node.js 20.15.0 as the base image
-FROM node:20.15.0-alpine
+# Dockerfile
+FROM node:20.15.0-alpine as builder
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) files to the container
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code to the container
+# Copy the rest of the application files
 COPY . .
-
-# CMD npm run dev
 
 # Build the Next.js app
 RUN npm run build
 
-# Expose the port Next.js will run on
+# Production image
+FROM node:20.15.0-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy built files from the builder stage
+COPY --from=builder /app/ ./
+
+# Expose port
 EXPOSE 3000
 
-# Start the Next.js app
-CMD ["npm", "run", "start"]
+# Start the application
+CMD ["npm", "start"]
