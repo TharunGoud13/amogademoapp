@@ -1,19 +1,48 @@
-version: '3.7'
+name: Deploy Next.js App to Docker
 
-services:
-  nextjs-app:
-    image: amogademo/nextjs-app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nextjs-app.rule=Host(`demoapps.morr.biz`)"  # Change this to your domain
-      - "traefik.http.routers.nextjs-app.entrypoints=web,websecure"
-      - "traefik.http.routers.nextjs-app.tls.certresolver=myresolver"  # Enable Let's Encrypt for HTTPS
-    networks:
-      - web
+on:
+  push:
+    branches:
+      - main
 
-networks:
-  web:
-    external: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t amogademo/nextjs-app .
+          docker push amogademo/nextjs-app
+
+      - name: SSH into server and pull the Docker image
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 219.93.129.48
+          username: administrator
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 2222
+          script: |
+            docker pull amogademo/nextjs-app
+            docker-compose down
+            docker-compose up -d
