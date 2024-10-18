@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3  # Updated to v3 for Node.js setup
         with:
-          node-version: '20'  # Set to Node.js 20 (to match your server version)
+          node-version: '20.15.0'  # Set to Node.js 20 (to match your server version)
 
       - name: Install dependencies
         run: npm install
@@ -36,7 +36,7 @@ jobs:
           docker push amogademo/nextjs-app
 
       - name: SSH into server and pull the Docker image
-        uses: appleboy/ssh-action@v0.1.11
+        uses: appleboy/ssh-action@v0.1.5  # Correct version for the SSH action
         with:
           host: 219.93.129.48
           username: administrator
